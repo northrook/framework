@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-final class FrameworkBundle extends AbstractBundle
+final class CoreBundle extends AbstractBundle
 {
     /** @var string[] */
     private const array CONFIG = [
