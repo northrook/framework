@@ -1,0 +1,38 @@
+{
+  "name": "northrook/framework",
+  "description": "A framework built on core Symfony components. y",
+  "type": "symfony-bundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Martin",
+      "email": "mn@northrook.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Core\\": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": ">=8.3",
+    "symfony/framework-bundle": "@stable",
+    "symfony/security-core": "@stable",
+    "symfony/security-csrf": "@stable",
+    "symfony/serializer": "^7.1",
+    "symfony/yaml": "^7.1",
+    "northrook/logger": "dev-main",
+    "northrook/clerk": "dev-main",
+    "northrook/support": "dev-main",
+    "northrook/filesystem": "dev-main",
+    "northrook/array-access": "dev-main"
+  },
+  "conflict": {
+    "northrook/core": "*"
+  },
+  "scripts": {
+    "phpstan": "vendor/bin/phpstan analyse"
+  }
+}
