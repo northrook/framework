@@ -24,8 +24,6 @@
     "ext-mbstring": "*",
     "symfony/framework-bundle": "@stable",
     "symfony/security-bundle": "@stable",
-    "symfony/security-core": "@stable",
-    "symfony/security-csrf": "@stable",
     "symfony/serializer": "@stable",
     "symfony/yaml": "@stable",
     "symfony/monolog-bundle": "@stable",
