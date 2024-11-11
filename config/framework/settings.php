@@ -6,8 +6,9 @@
 
 declare( strict_types = 1 );
 
-namespace Core\Framework;
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Core\Framework\Settings;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return static function( ContainerConfigurator $container ) : void

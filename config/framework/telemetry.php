@@ -6,7 +6,7 @@
 
 declare( strict_types = 1 );
 
-namespace Core\Framework;
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\Framework\Telemetry\ClerkProfiler;
 use Core\Framework\Telemetry\PipelineCollector;
