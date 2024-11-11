@@ -9,6 +9,10 @@ use Core\Framework\Controller\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[
+        Route( '/', 'core:public' ),
+    // Template( 'welcome.latte' ) // wrapping body - like Admin UI
+]
 final class PublicController extends Controller
 {
 

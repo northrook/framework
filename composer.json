@@ -26,6 +26,7 @@
     "symfony/security-bundle": "@stable",
     "symfony/serializer": "@stable",
     "symfony/yaml": "@stable",
+    "symfony/form": "@stable",
     "symfony/monolog-bundle": "@stable",
     "symfony/profiler-pack": "@stable",
     "symfony/debug-bundle": "@stable",

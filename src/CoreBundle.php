@@ -18,6 +18,7 @@ final class CoreBundle extends AbstractBundle
             '../config/framework/response.php',
             '../config/framework/services.php',
             '../config/framework/settings.php',
+            '../config/framework/controllers/public.php',
     ];
 
     /**
