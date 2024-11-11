@@ -6,6 +6,7 @@ namespace Core;
 
 use Core\Framework\Compiler\ApplicationConfigPass;
 use Core\Framework\Compiler\RegisterCoreServicesPass;
+use Northrook\Clerk;
 use Override;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;

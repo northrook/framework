@@ -16,5 +16,4 @@ return static function( ContainerConfigurator $controller ) : void {
         ->set( PublicController::class )
         ->tag( 'controller.service_arguments' )
         ->tag( 'monolog.logger', ['channel' => 'request'] );
-
 };

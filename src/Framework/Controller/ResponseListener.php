@@ -4,6 +4,7 @@ namespace Core\Framework\Controller;
 
 use Core\Framework\Controller;
 use Core\Framework\DependencyInjection\ServiceContainer;
+use Northrook\Clerk;
 use Northrook\Logger\Log;
 use Stringable;
 use Support\Reflect;
@@ -25,10 +26,14 @@ final class ResponseListener
      */
     private array $responseTemplateCache = [];
 
-    public function __construct() {}
+    public function __construct()
+    {
+        Clerk::event( __METHOD__, $this::class );
+    }
 
     public function onKernelController( ControllerEvent $event ) : void
     {
+        Clerk::event( __METHOD__, $this::class );
         if ( !$this->handleController( $event->getRequest() ) ) {
             return;
         }
@@ -41,6 +46,7 @@ final class ResponseListener
 
     public function onKernelView( ViewEvent $event ) : void
     {
+        Clerk::event( __METHOD__, $this::class );
         $event->setResponse( $this->resolveViewResponse( $event->getControllerResult() ) );
     }
 
@@ -57,6 +63,7 @@ final class ResponseListener
 
     public function onKernelTerminate( TerminateEvent $event ) : void
     {
+        Clerk::event( __METHOD__, $this::class );
         if ( !$this->handleController( $event->getRequest() ) ) {
             return;
         }
@@ -76,6 +83,7 @@ final class ResponseListener
      */
     private function getTemplateAttributes( Request $request ) : array
     {
+        Clerk::event( __METHOD__, $this::class );
         $caller = $request->attributes->get( '_controller' );
 
         \assert( \is_string( $caller ) );
@@ -104,11 +112,13 @@ final class ResponseListener
      */
     private function handleController( Request $request ) : bool
     {
+        Clerk::event( __METHOD__, $this::class );
         return \is_subclass_of( get_class_name( $request->attributes->get( '_controller' ) ), Controller::class );
     }
 
     private function resolveViewResponse( mixed $content ) : Response
     {
+        Clerk::event( __METHOD__, $this::class );
         if ( \is_string( $content ) || $content instanceof Stringable ) {
             $content = (string) $content;
         }
@@ -119,6 +129,7 @@ final class ResponseListener
                     message   : 'Controller return value is {type}, the {Response} object requires {string}|{null}. {null} was provided instead.',
                     context   : [ 'type' => \gettype( $content ) ],
             );
+            Clerk::event( __METHOD__ . '::EXCEPTION', $this::class );
             $content = null;
         }
 

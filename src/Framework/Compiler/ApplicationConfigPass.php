@@ -145,7 +145,7 @@ final class ApplicationConfigPass extends ConfigCompilerPass
         $routes = [
                 'app.controller' => [
                         'resource' => [
-                                'path'      => '../src/Controller/',
+                                'path'      => '../../src/Controller/',
                                 'namespace' => 'App\Controller',
                         ],
                         'type'     => 'attribute',
