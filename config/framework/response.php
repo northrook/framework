@@ -4,33 +4,32 @@
 // config\framework\response
 // -------------------------------------------------------------------
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\Framework\Controller\ResponseListener;
 use Core\Framework\Response\{Document, Headers, Parameters};
 
-return static function( ContainerConfigurator $container ) : void
-{
+return static function( ContainerConfigurator $container ) : void {
     $container->services()
-            // Response EventSubscriber;
-              ->set( ResponseListener::class )
-              ->tag( 'kernel.event_listener', [ 'event' => 'kernel.controller' ] )
-              ->tag( 'kernel.event_listener', [ 'event' => 'kernel.view' ] )
-              ->tag( 'kernel.event_listener', [ 'event' => 'kernel.response' ] )
-              ->tag( 'kernel.event_listener', [ 'event' => 'kernel.terminate' ] );
+        // Response EventSubscriber;
+        ->set( ResponseListener::class )
+        ->tag( 'kernel.event_listener', ['event' => 'kernel.controller'] )
+        ->tag( 'kernel.event_listener', ['event' => 'kernel.view'] )
+        ->tag( 'kernel.event_listener', ['event' => 'kernel.response'] )
+        ->tag( 'kernel.event_listener', ['event' => 'kernel.terminate'] );
 
     $container->services()->defaults()
-              ->tag( 'controller.service_arguments' )
-              ->autowire()
+        ->tag( 'controller.service_arguments' )
+        ->autowire()
 
-            // ResponseHeaderBag Service
-              ->set( Headers::class )
+        // ResponseHeaderBag Service
+        ->set( Headers::class )
 
-            // Document Properties
-              ->set( Document::class )
+        // Document Properties
+        ->set( Document::class )
 
-            // Template Parameters
-              ->set( Parameters::class );
+        // Template Parameters
+        ->set( Parameters::class );
 };

@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\{Request, Response};
 final class PipelineCollector extends AbstractDataCollector
 {
     #[Override]
-    public static function getTemplate() : ?string
+    public static function getTemplate() : string
     {
         return '@Core/profiler/pipeline.html.twig';
     }

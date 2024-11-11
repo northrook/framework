@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Core\Framework\Autowire;
 
@@ -19,18 +19,18 @@ trait UrlGenerator
     public function generateRoutePath( string $name, array $parameters = [], bool $relative = false ) : string
     {
         return $this->urlGenerator()->generate(
-                $name,
-                $parameters,
-                $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH,
+            $name,
+            $parameters,
+            $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH,
         );
     }
 
     public function generateRouteUrl( string $name, array $parameters = [], bool $relative = false ) : string
     {
         return $this->urlGenerator()->generate(
-                $name,
-                $parameters,
-                $relative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL,
+            $name,
+            $parameters,
+            $relative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL,
         );
     }
 }

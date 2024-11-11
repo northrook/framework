@@ -1,28 +1,26 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Core\Controller;
 
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[
-        Route( '/', 'core:public' ),
+    Route( '/', 'core:public' ),
     // Template( 'welcome.latte' ) // wrapping body - like Admin UI
 ]
 final class PublicController extends Controller
 {
-
     #[
-            Route( [ '/', '/{route}' ], 'index' ),
+        Route( ['/', '/{route}'], 'index' ),
         // Template( 'demo.latte' ) // content template
     ]
     public function index() : string
     {
-        return <<<HTML
+        return <<<'HTML'
             <!DOCTYPE html>
             <html lang="en">
             <head>

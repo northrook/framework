@@ -6,7 +6,7 @@ namespace Core\Framework\Autowire;
 
 use Core\Framework\Controller;
 use Core\Framework\DependencyInjection\ServiceContainer;
-use Symfony\Component\HttpFoundation\{Request};
+use Symfony\Component\HttpFoundation\Request;
 use function Support\get_class_name;
 
 trait CurrentRequest
@@ -20,6 +20,9 @@ trait CurrentRequest
 
     final protected function isManagedRequest() : bool
     {
-        return \is_subclass_of( get_class_name( $this->getRequest()->attributes->get( '_controller' ) ), Controller::class );
+        return \is_subclass_of(
+            get_class_name( $this->getRequest()->attributes->get( '_controller' ) ),
+            Controller::class,
+        );
     }
 }

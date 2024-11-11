@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Core\Framework;
 
@@ -32,14 +32,14 @@ abstract class Controller implements ServiceContainerInterface
         $responseType = $this->getRequest()->headers->has( 'HX-Request' ) ? OnContent::class : OnDocument::class;
 
         $autowire = [
-                Headers::class,
-                Parameters::class,
-                Document::class,
-                Pathfinder::class,
+            Headers::class,
+            Parameters::class,
+            Document::class,
+            Pathfinder::class,
         ];
 
         foreach ( ( new ReflectionClass( $this ) )->getMethods() as $method ) {
-            if ( !$method->getAttributes( $responseType ) ) {
+            if ( ! $method->getAttributes( $responseType ) ) {
                 continue;
             }
 

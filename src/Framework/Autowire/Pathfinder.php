@@ -11,7 +11,8 @@ trait Pathfinder
     use ServiceContainer;
 
     /**
-     * @param  ?string                                $get
+     * @param ?string $get
+     *
      * @return null|\Core\Framework\Pathfinder|string
      */
     final protected function pathfinder( ?string $get = null ) : \Core\Framework\Pathfinder|null|string

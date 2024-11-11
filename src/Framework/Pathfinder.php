@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Core\Framework;
 
@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use function Support\getProjectRootDirectory;
 use Throwable;
+use LengthException;
 
 /**
  * @template TKey of array-key
@@ -22,8 +23,8 @@ final readonly class Pathfinder
     private ArrayStore $pathfinderCache;
 
     public function __construct(
-            private ParameterBagInterface $parameterBag,
-            private string                $pathfinderCachePath,
+        private ParameterBagInterface $parameterBag,
+        private string                $pathfinderCachePath,
     ) {}
 
     public function get( string $path ) : ?string
@@ -48,7 +49,7 @@ final readonly class Pathfinder
     }
 
     /**
-     * @param string  $path
+     * @param string $path
      *
      * @return TValue
      */
@@ -66,23 +67,23 @@ final readonly class Pathfinder
         if ( false === $separator ) {
             $value = $this->getParameter( name : $path );
 
-            if ( !$value ) {
-                Log::warning( 'No value for {path}.', [ 'path' => $path ] );
+            if ( ! $value ) {
+                Log::warning( 'No value for {path}.', ['path' => $path] );
                 return null;
             }
 
-            Log::info( 'Resolved {value} from  {path}.', [ 'value' => $value, 'path' => $path ] );
+            Log::info( 'Resolved {value} from  {path}.', ['value' => $value, 'path' => $path] );
             return $value;
         }
 
         // Split the $path by the first $separator
-        [ $root, $tail ] = \explode( '/', $path, 2 );
+        [$root, $tail] = \explode( '/', $path, 2 );
 
         // Resolve the $root key.
         $parameter = $this->getParameter( $root );
 
         // Bail early on empty parameters
-        if ( !$parameter ) {
+        if ( ! $parameter ) {
             return null;
         }
 
@@ -96,7 +97,7 @@ final readonly class Pathfinder
     }
 
     /**
-     * @param string  $name  {@see ParameterBagInterface::get}
+     * @param string $name {@see ParameterBagInterface::get}
      *
      * @return null|non-empty-string
      */
@@ -106,14 +107,14 @@ final readonly class Pathfinder
             $parameter = $this->parameterBag->get( $name );
             \assert( \is_string( $parameter ) || \is_null( $parameter ) );
         }
-        catch ( Throwable | ParameterNotFoundException $exception ) {
+        catch ( Throwable|ParameterNotFoundException $exception ) {
             Log::exception(
-                    exception : $exception,
-                    message   : '{pathfinder} requested the non-existent parameter {parameter}.',
-                    context   : [
-                                        'pathfinder' => $this::class,
-                                        'parameter'  => $name,
-                                ],
+                exception : $exception,
+                message   : '{pathfinder} requested the non-existent parameter {parameter}.',
+                context   : [
+                    'pathfinder' => $this::class,
+                    'parameter'  => $name,
+                ],
             );
             return null;
         }
@@ -131,8 +132,8 @@ final readonly class Pathfinder
     private function pathfinder() : ArrayStore
     {
         return $this->pathfinderCache ??= new ArrayStore(
-                $this->pathfinderCachePath,
-                $this::class,
+            $this->pathfinderCachePath,
+            $this::class,
         );
     }
 
@@ -149,14 +150,14 @@ final readonly class Pathfinder
      * // => '.\assets\scripts\example.js'
      * ```
      *
-     * @param string  ...$path
+     * @param string ...$path
      */
     public static function normalize( string ...$path ) : string
     {
         // Normalize separators
-        $nroamlized = \str_replace( [ '\\', '/' ], DIRECTORY_SEPARATOR, $path );
+        $nroamlized = \str_replace( ['\\', '/'], DIRECTORY_SEPARATOR, $path );
 
-        $isRelative = DIRECTORY_SEPARATOR === $nroamlized[ 0 ];
+        $isRelative = DIRECTORY_SEPARATOR === $nroamlized[0];
 
         // Implode->Explode for separator deduplication
         $exploded = \explode( DIRECTORY_SEPARATOR, \implode( DIRECTORY_SEPARATOR, $nroamlized ) );
@@ -170,15 +171,12 @@ final readonly class Pathfinder
         if ( ( $length = \mb_strlen( $path ) ) > ( $limit = PHP_MAXPATHLEN - 2 ) ) {
             $length = (string) $length;
             $limit  = (string) $limit;
-            throw new \LengthException(
-                    __METHOD__ . " resulted in a string of $length} characters, exceeding the {$limit} character limit."
-                    . PHP_EOL . 'Operation was halted to prevent overflow.',
-            );
+            throw new LengthException( __METHOD__." resulted in a string of {$length}} characters, exceeding the {$limit} character limit.".PHP_EOL.'Operation was halted to prevent overflow.');
         }
 
         // Preserve intended relative paths
         if ( $isRelative ) {
-            $path = DIRECTORY_SEPARATOR . $path;
+            $path = DIRECTORY_SEPARATOR.$path;
         }
 
         return $path;
@@ -190,15 +188,15 @@ final readonly class Pathfinder
     {
         $string = \str_replace( '\\', '/', $string );
 
-        if ( !\str_contains( $string, '/' ) ) {
+        if ( ! \str_contains( $string, '/' ) ) {
             return $string;
         }
 
-        [ $root, $tail ] = \explode( '/', $string, 2 );
+        [$root, $tail] = \explode( '/', $string, 2 );
         if ( $tail ) {
-            $tail = '/' . \str_replace( '.', ':', $tail );
+            $tail = '/'.\str_replace( '.', ':', $tail );
         }
-        return $root . $tail;
+        return $root.$tail;
     }
 
     private function getProjectRootDirectory() : string
@@ -214,14 +212,14 @@ final readonly class Pathfinder
         return $path;
     }
 
-    private function isLocalPath( string $path ) : false | string
+    private function isLocalPath( string $path ) : false|string
     {
         static $projectRootDirectory;
         $projectRootDirectory ??= $this::normalize( $this->getProjectRootDirectory() );
 
         $normalizedPath = $this::normalize( $path );
 
-        if ( !\str_starts_with( $normalizedPath, $projectRootDirectory ) ) {
+        if ( ! \str_starts_with( $normalizedPath, $projectRootDirectory ) ) {
             return false;
         }
 
