@@ -15,7 +15,7 @@ return static function( ContainerConfigurator $container ) : void {
     $container->services()
             //
         ->set( ResponseRenderer::class )
-        ->tag( 'kernel.event_listener' )->args( [service( TemplateEngine::class )] )
+        ->tag( 'kernel.event_listener' )
             //
         ->set( TemplateEngine::class )
         ->tag( 'core.service_locator' )

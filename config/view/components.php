@@ -12,5 +12,6 @@ use Core\View\ComponentFactory;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
-        ->set( ComponentFactory::class )->args( [] );
+        ->set( ComponentFactory::class )
+        ->args( [[]] );
 };

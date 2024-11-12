@@ -2,42 +2,43 @@
 
 namespace Core\View;
 
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Core\Framework\DependencyInjection\ServiceContainer;
+use Symfony\Component\HttpKernel\Event\{ExceptionEvent, ResponseEvent};
 
 final class ResponseRenderer
 {
-    public function __construct( private readonly TemplateEngine $templateEngine ) {}
+    use ServiceContainer;
 
-    public function __invoke( ResponseEvent $event ) : void
+    protected readonly ?string $htmxRequest;
+
+    protected readonly ?string $requestType;
+
+    protected readonly ?string $contentTemplate;
+
+    protected readonly ?string $documentTemplate;
+
+    public function __construct() {}
+
+    public function __invoke( ResponseEvent|ExceptionEvent $event ) : void
     {
         if ( ! $event->getRequest()->attributes->get( '_request_type' ) ) {
             return;
         }
 
-        [$htmx_request, $request_type, $content_template, $document_template] = $this->getAttributes( $event );
+        $this->setProperties( $event );
 
-        dump( $this, $htmx_request, $request_type, $content_template, $document_template );
+        $template = 'document' === $this->requestType ? $this->documentTemplate : $this->contentTemplate;
 
-        if ( $content_template ) {
-            dump(
-                $this->templateEngine->render( $content_template, [] ),
-            );
-        }
+        $content = $this->serviceLocator( TemplateEngine::class )->render( $template );
+
+        dump( $this, $event, $content );
     }
 
-    private function getAttributes( ResponseEvent $event ) : array
+    private function setProperties( ResponseEvent $event ) : void
     {
-        $attributes = \array_intersect_key(
-            [
-                '_htmx_request'      => null,
-                '_request_type'      => null,
-                '_content_template'  => null,
-                '_document_template' => null,
-            ],
-            $event->getRequest()->attributes->all(),
-        );
-
-        dump( $attributes );
-        return $attributes;
+        $this->htmxRequest      ??= $event->getRequest()->attributes->get( '_htmx_request' );
+        $this->requestType      ??= $event->getRequest()->attributes->get( '_request_type' );
+        $this->contentTemplate  ??= $event->getRequest()->attributes->get( '_content_template' );
+        $this->documentTemplate ??= $event->getRequest()->attributes->get( '_document_template' );
     }
 }

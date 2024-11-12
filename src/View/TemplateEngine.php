@@ -78,7 +78,7 @@ final class TemplateEngine
 
     final public function engine( ?Loader $loader = null ) : Engine
     {
-        $this->engine ??= $this->startEngine( $loader );
+        $this->engine ?? $this->startEngine( $loader );
 
         if ( $loader ) {
             $this->engine->setLoader( $loader );

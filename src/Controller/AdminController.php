@@ -9,7 +9,7 @@ use Core\Framework\Controller\Template;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[
-    Route( '/', 'admin:' ),
+    Route( '/admin/', 'admin:' ),
     // Template( 'welcome.latte' ) // wrapping body - like Admin UI
 ]
 final class AdminController extends Controller
