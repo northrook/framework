@@ -21,11 +21,13 @@ final class ResponseRenderer
 
     public function __invoke( ResponseEvent|ExceptionEvent $event ) : void
     {
-        if ( ! $event->getRequest()->attributes->get( '_request_type' ) ) {
+        $viewTemplate = $event->getRequest()->attributes->get( '_view_template' );
+
+        if ( ! \is_string( $viewTemplate ) ) {
             return;
         }
 
-        $template = 'document' === $this->requestType ? $this->documentTemplate : $this->contentTemplate;
+        $template = $event->getRequest()->attributes->get( $viewTemplate );
 
         $content = $this->serviceLocator( TemplateEngine::class )->render( $template );
 

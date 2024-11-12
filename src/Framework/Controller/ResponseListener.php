@@ -17,6 +17,10 @@ final class ResponseListener
 {
     use ServiceContainer;
 
+    protected const string
+        DOCUMENT = '_document_template',
+        CONTENT  = '_content_template';
+
     /**
      * For debugging - will be cached later.
      *
@@ -42,7 +46,7 @@ final class ResponseListener
         $isHtmx = $event->getRequest()->headers->has( 'hx-request' );
 
         $event->getRequest()->attributes->set( '_htmx_request', $isHtmx );
-        $event->getRequest()->attributes->set( '_document_request', ! $isHtmx );
+        $event->getRequest()->attributes->set( '_view_template', $isHtmx ? $this::CONTENT : $this::DOCUMENT );
     }
 
     public function onKernelView( ViewEvent $event ) : void
