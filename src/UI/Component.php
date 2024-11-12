@@ -43,7 +43,6 @@ abstract class Component implements ComponentInterface
         $this->element    = new Element( $tag, $attributes, $content );
         $this->attributes = $this->element->attributes;
 
-        $this->setComponentName();
         $this->setComponentUniqueId(
             $uniqueId ?? \serialize( [$tag, $attributes, $content, $this->element] ).\spl_object_id( $this ),
         );
@@ -65,13 +64,26 @@ abstract class Component implements ComponentInterface
      */
     abstract protected function build() : string;
 
-    private function setComponentName() : void
+    private function setComponentUniqueId( ?string $hash = null ) : void
     {
-        if ( isset( $this->name ) ) {
+        dump( $hash );
+        if ( \strlen( $hash ) === 16 && \ctype_alnum( $hash ) ) {
+            $this->uniqueId ??= \strtolower( $hash );
             return;
         }
+        $this->uniqueId ??= \hash( algo : 'xxh3', data : $hash );
+    }
 
-        $name = $this::NAME ?? $this::class;
+    final public static function componentName() : string
+    {
+        static $name = null;
+
+        if ( $name ) {
+            dump( __METHOD__ );
+            return $name;
+        }
+
+        $name = self::NAME ?? self::class;
 
         $name = \strtolower( classBasename( $name ) );
 
@@ -89,22 +101,7 @@ abstract class Component implements ComponentInterface
             throw new InvalidArgumentException( $name );
         }
 
-        $this->name = $name;
-    }
-
-    private function setComponentUniqueId( ?string $hash = null ) : void
-    {
-        dump( $hash );
-        if ( \strlen( $hash ) === 16 && \ctype_alnum( $hash ) ) {
-            $this->uniqueId ??= \strtolower( $hash );
-            return;
-        }
-        $this->uniqueId ??= \hash( algo : 'xxh3', data : $hash );
-    }
-
-    final public function componentName() : string
-    {
-        return $this->name;
+        return $name;
     }
 
     final public function componentUniqueId() : string

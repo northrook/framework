@@ -4,7 +4,7 @@ namespace Core\View;
 
 interface ComponentInterface
 {
-    public function componentName() : string;
+    public static function componentName() : string;
 
     public function componentUniqueId() : string;
 

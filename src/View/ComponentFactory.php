@@ -23,7 +23,7 @@ final class ComponentFactory
     /**
      * Provide a [class-string, args[]] array.
      *
-     * @param array<class-string, ClassInfo> $components
+     * @param array<class-string, array{name: string, class:class-string, tags: string[]}> $components
      */
     public function __construct( private readonly array $components = [] ) {}
 

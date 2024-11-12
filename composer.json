@@ -35,7 +35,8 @@
     "northrook/support": "dev-main",
     "northrook/filesystem": "dev-main",
     "northrook/array-access": "dev-main",
-    "northrook/html-element": "dev-main"
+    "northrook/html-element": "dev-main",
+    "latte/latte": "^3.0"
   },
   "conflict": {
     "northrook/core": "*"
