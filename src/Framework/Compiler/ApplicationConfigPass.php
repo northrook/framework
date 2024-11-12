@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Core\Framework\Compiler;
 
 use Override;
-use Core\Framework\DependencyInjection\ConfigCompilerPass;
+use Core\Framework\DependencyInjection\CompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-final class ApplicationConfigPass extends ConfigCompilerPass
+final class ApplicationConfigPass extends CompilerPass
 {
     #[Override]
     public function compile( ContainerBuilder $container ) : void

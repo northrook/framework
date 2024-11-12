@@ -34,7 +34,8 @@
     "northrook/clerk": "dev-main",
     "northrook/support": "dev-main",
     "northrook/filesystem": "dev-main",
-    "northrook/array-access": "dev-main"
+    "northrook/array-access": "dev-main",
+    "northrook/html-element": "dev-main"
   },
   "conflict": {
     "northrook/core": "*"

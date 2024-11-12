@@ -8,7 +8,8 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\Framework\{Pathfinder, Settings};
+use Core\Service\Request;
+use Core\Framework\{CurrentRequest, Pathfinder, Settings};
 use Core\Framework\Response\{Document, Headers, Parameters};
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -26,7 +27,11 @@ return static function( ContainerConfigurator $container ) : void {
         ->tag( 'controller.service_arguments' )
         ->autowire()
 
-            // Find and return registered paths
+        // Current Request handler
+        ->set( CurrentRequest::class )
+        ->args( [service( 'request_stack' )] )
+
+        // Find and return registered paths
         ->set( Pathfinder::class )
         ->args(
             [

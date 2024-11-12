@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Core\Framework\Compiler;
 
-use Core\Framework\DependencyInjection\{ConfigCompilerPass, ServiceContainer};
+use Core\Framework\DependencyInjection\{CompilerPass, ServiceContainer};
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Reference};
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use function Support\uses_trait;
 
-final class RegisterCoreServicesPass extends ConfigCompilerPass
+final class RegisterCoreServicesPass extends CompilerPass
 {
     public function compile( ContainerBuilder $container ) : void
     {

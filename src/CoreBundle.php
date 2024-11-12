@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core;
 
 use Core\Framework\Compiler\{ApplicationConfigPass, RegisterCoreServicesPass};
+use Core\View\Compiler\RegisterViewComponentsPass;
 use Override;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -19,6 +20,7 @@ final class CoreBundle extends AbstractBundle
         '../config/framework/settings.php',
         '../config/framework/telemetry.php',
         '../config/framework/controllers/public.php',
+        '../config/view/components.php',
     ];
 
     /**
@@ -42,7 +44,8 @@ final class CoreBundle extends AbstractBundle
 
         $container
             ->addCompilerPass( new RegisterCoreServicesPass() )
-            ->addCompilerPass( new ApplicationConfigPass() );
+            ->addCompilerPass( new ApplicationConfigPass() )
+            ->addCompilerPass( new RegisterViewComponentsPass() );
     }
 
     /**
