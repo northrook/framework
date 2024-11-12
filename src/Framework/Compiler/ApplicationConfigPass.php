@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\Framework\Compiler;
 
 use Override;
-use Core\Framework\DependencyInjection\CompilerPass;
+use Core\Symfony\DependencyInjection\CompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class ApplicationConfigPass extends CompilerPass

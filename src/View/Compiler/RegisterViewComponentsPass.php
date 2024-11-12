@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Core\View\Compiler;
 
-use Core\Framework\DependencyInjection\CompilerPass;
 use Core\View\{ComponentFactory};
 use Symfony\Component\DependencyInjection\{ContainerBuilder};
+use Core\Symfony\DependencyInjection\CompilerPass;
+
 class RegisterViewComponentsPass extends CompilerPass
 {
     public function compile( ContainerBuilder $container ) : void

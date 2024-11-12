@@ -1,7 +1,7 @@
 <?php
 
 // -------------------------------------------------------------------
-// config\view\components
+// config\view\renderer
 // -------------------------------------------------------------------
 
 declare(strict_types=1);
@@ -11,17 +11,21 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Core\View\{ComponentFactory, Latte\FrameworkExtension, Latte\GlobalVariables, ResponseRenderer, TemplateEngine};
 
 return static function( ContainerConfigurator $container ) : void {
+    //
     $container->services()
             //
         ->set( ResponseRenderer::class )
-        ->tag( 'kernel.event_listener' )
+        ->tag( 'kernel.event_listener' )->args( [service( TemplateEngine::class )] )
             //
         ->set( TemplateEngine::class )
         ->tag( 'core.service_locator' )
         ->args(
             [
                 '%dir.root%', // $projectDirectory
-                [], // $templateDirectories
+                [
+                    '%dir.templates%',
+                    '%dir.core.templates%',
+                ], // $templateDirectories
                 '%dir.cache.latte%', // $cacheDirectory
                 '%kernel.default_locale%', // $locale
                 '%kernel.debug%', // $autoRefresh

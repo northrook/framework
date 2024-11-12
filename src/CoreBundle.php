@@ -21,6 +21,7 @@ final class CoreBundle extends AbstractBundle
         '../config/framework/telemetry.php',
         '../config/framework/controllers/public.php',
         '../config/view/components.php',
+        '../config/view/renderer.php',
     ];
 
     /**

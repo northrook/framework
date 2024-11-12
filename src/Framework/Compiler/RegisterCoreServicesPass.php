@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Core\Framework\Compiler;
 
-use Core\Framework\DependencyInjection\{CompilerPass, ServiceContainer};
+use Core\Symfony\DependencyInjection\CompilerPass;
+use Core\Framework\DependencyInjection\ServiceContainer;
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Reference};
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use function Support\uses_trait;
 
 final class RegisterCoreServicesPass extends CompilerPass
@@ -24,16 +24,19 @@ final class RegisterCoreServicesPass extends CompilerPass
 
     private function registerTaggedServices( ContainerBuilder $container ) : void
     {
-        echo __METHOD__.PHP_EOL;
         $serviceLocatorArguments = $container->getDefinition( 'core.service_locator' )->getArguments()[0] ?? [];
 
         foreach ( $container->findTaggedServiceIds( 'core.service_locator' ) as $id => $unused ) {
             $taggedService = $container->getDefinition( $id );
             $serviceId     = $taggedService->innerServiceId ?? $taggedService->getClass();
-            if ( ! $serviceId ) {
-                throw new ServiceNotFoundException( id  : $id, msg : $this::class." could not find a serviceId for '{$id}' when parsing services tagged with 'core.service_locator'.");
+            if ( $serviceId ) {
+                $serviceLocatorArguments[$id] = new Reference( $serviceId );
             }
-            $serviceLocatorArguments[$id] = new Reference( $serviceId );
+            else {
+                $this->console->error(
+                    $this::class." could not find a serviceId for '{$id}' when parsing services tagged with 'core.service_locator'.",
+                );
+            }
         }
 
         $container->getDefinition( 'core.service_locator' )->setArguments( [$serviceLocatorArguments] );
@@ -48,7 +51,7 @@ final class RegisterCoreServicesPass extends CompilerPass
                 uses_trait( $class, ServiceContainer::class, true )
                 && $container->hasDefinition( $class )
             ) {
-                echo "Added method call 'setServiceLocator' to '{$class}'.\n";
+                $this->console->success( "{$class}::setServiceLocator.\n" );
                 $container->getDefinition( $class )
                     ->addMethodCall(
                         'setServiceLocator',

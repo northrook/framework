@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Core\Framework\DependencyInjection;
 
@@ -30,11 +30,11 @@ trait ServiceContainer
     /**
      * @final
      *
-     * @param null|'debug'|'dev'|'prod'|'test'  $is
+     * @param null|'debug'|'dev'|'prod'|'test' $is
      *
      * @return bool|string
      */
-    final protected function applicationEnvironment( ?string $is = null ) : string | bool
+    final protected function applicationEnvironment( ?string $is = null ) : string|bool
     {
         $env   = (string) $this->getParameterBag()->get( 'kernel.environment' );
         $debug = (bool) $this->getParameterBag()->get( 'kernel.debug' );
@@ -68,8 +68,8 @@ trait ServiceContainer
      *
      * @template Service
      *
-     * @param class-string<Service>  $get
-     * @param bool                   $nullable
+     * @param class-string<Service> $get
+     * @param bool                  $nullable
      *
      * @return null|Service
      */

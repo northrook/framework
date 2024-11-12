@@ -36,7 +36,8 @@
     "northrook/filesystem": "dev-main",
     "northrook/array-access": "dev-main",
     "northrook/html-element": "dev-main",
-    "latte/latte": "^3.0"
+    "latte/latte": "^3.0",
+    "northrook/core-symfony": "dev-main"
   },
   "conflict": {
     "northrook/core": "*"
