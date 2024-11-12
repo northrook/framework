@@ -24,4 +24,4 @@ return static function( ContainerConfigurator $container ) : void {
     $container->services()
         ->set( ComponentFactory::class )
         ->args( [$components] );
-};å
+};
