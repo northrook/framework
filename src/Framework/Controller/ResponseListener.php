@@ -42,7 +42,7 @@ final class ResponseListener
         $isHtmx = $event->getRequest()->headers->has( 'hx-request' );
 
         $event->getRequest()->attributes->set( '_htmx_request', $isHtmx );
-        $event->getRequest()->attributes->set( '_request_type', $isHtmx ? 'content' : 'document' );
+        $event->getRequest()->attributes->set( '_document_request', ! $isHtmx );
     }
 
     public function onKernelView( ViewEvent $event ) : void

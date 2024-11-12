@@ -25,20 +25,10 @@ final class ResponseRenderer
             return;
         }
 
-        $this->setProperties( $event );
-
         $template = 'document' === $this->requestType ? $this->documentTemplate : $this->contentTemplate;
 
         $content = $this->serviceLocator( TemplateEngine::class )->render( $template );
 
         dump( $this, $event, $content );
-    }
-
-    private function setProperties( ResponseEvent $event ) : void
-    {
-        $this->htmxRequest      ??= $event->getRequest()->attributes->get( '_htmx_request' );
-        $this->requestType      ??= $event->getRequest()->attributes->get( '_request_type' );
-        $this->contentTemplate  ??= $event->getRequest()->attributes->get( '_content_template' );
-        $this->documentTemplate ??= $event->getRequest()->attributes->get( '_document_template' );
     }
 }
