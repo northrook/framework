@@ -6,19 +6,29 @@ namespace Core\Controller;
 
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
+use Core\Framework\Response\{Document, Parameters};
 use Symfony\Component\Routing\Attribute\Route;
 
 #[
     Route( '/', 'public:' ),
-    // Template( 'welcome.latte' ) // wrapping body - like Admin UI
+    Template( 'welcome.latte' ) // wrapping body - like Admin UI
 ]
 final class PublicController extends Controller
 {
     #[
         Route( ['/', '/{route}'], 'index' ),
-        // Template( 'demo.latte' ) // content template
+        Template( 'demo.latte' ) // content template
     ]
-    public function index() : string
+    public function index(
+        Document   $document,
+        Parameters $parameters,
+    ) : void {
+        $document( 'Index Demo Template' );
+        $parameters->set( 'content', 'Hello there!' );
+    }
+
+    #[Route( 'hello', 'boilerplate' )]
+    public function boilerplate() : string
     {
         return <<<'HTML'
             <!DOCTYPE html>

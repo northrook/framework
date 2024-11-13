@@ -43,7 +43,6 @@ final class TemplateEngine
         string       $template,
         object|array $parameters = [],
         ?string      $block = null,
-        bool         $postProcessing = true,
     ) : string {
         $content = $this->engine()->renderToString(
             $this->templateLoader->load( $template ),

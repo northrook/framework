@@ -3,6 +3,7 @@
 namespace Core\View;
 
 use Core\Framework\DependencyInjection\ServiceContainer;
+use Core\Framework\Response\Parameters;
 use Symfony\Component\HttpKernel\Event\{ExceptionEvent, ResponseEvent};
 
 final class ResponseRenderer
@@ -27,10 +28,18 @@ final class ResponseRenderer
             return;
         }
 
-        $template = $event->getRequest()->attributes->get( $viewTemplate );
+        $this->template()->clearTemplateCache();
 
-        $content = $this->serviceLocator( TemplateEngine::class )->render( $template );
+        $template   = $event->getRequest()->attributes->get( $viewTemplate );
+        $parameters = $this->serviceLocator( Parameters::class );
 
-        dump( $this, $event, $content );
+        $content = $this->template()->render( $template, $parameters );
+
+        dump( $this, $event, $parameters, $content );
+    }
+
+    private function template() : TemplateEngine
+    {
+        return $this->serviceLocator( TemplateEngine::class );
     }
 }
