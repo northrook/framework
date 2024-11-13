@@ -18,10 +18,12 @@ final class FrameworkExtension extends LatteExtension
     // use NodeCompilerMethods, UrlGenerator;
     use UrlGenerator;
 
+    private array $registetedTags = [];
+
     public function __construct(
         public readonly ComponentFactory $factory,
     ) {
-        dump($this->factory->getRegisteredComponents());
+        dump($this->factory);
     }
 
     public function getFunctions() : array

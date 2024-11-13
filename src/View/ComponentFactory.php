@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Core\View;
 
 use Core\Framework\DependencyInjection\ServiceContainer;
-use Support\ClassInfo;
 use Symfony\Polyfill\Intl\Icu\Exception\NotImplementedException;
 use function Support\classBasename;
 
@@ -24,8 +23,13 @@ final class ComponentFactory
      * Provide a [class-string, args[]] array.
      *
      * @param array<class-string, array{name: string, class:class-string, tags: string[]}> $components
+     * @param array                                                                        $tags
      */
-    public function __construct( private readonly array $components = [] ) {}
+    public function __construct(
+        private readonly array $components = [],
+        private readonly array $tags = [],
+    ) {
+    }
 
     /**
      * @param class-string $class
@@ -74,7 +78,6 @@ final class ComponentFactory
     }
 
     /**
-     * @return array<string, class-string|ClassInfo>
      */
     public function getRegisteredComponents() : array
     {

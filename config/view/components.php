@@ -13,9 +13,9 @@ use Core\View\ComponentFactory;
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
         ->set( ComponentFactory::class )
-        ->args(
-            /** Replaced by {@see \Core\View\Compiler\RegisterViewComponentsPass} */
-            [[]],
-        )
+        // ->args(
+        //     /** Replaced by {@see \Core\View\Compiler\RegisterCoreComponentsPass} */
+        //     [[]],
+        // )
         ->tag( 'core.service_locator' );
 };
