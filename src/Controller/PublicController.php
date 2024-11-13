@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Controller;
 
+use Core\Framework\Attribute\OnDocument;
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
 use Core\Framework\Response\{Document, Parameters};
@@ -15,6 +16,20 @@ use Symfony\Component\Routing\Attribute\Route;
 ]
 final class PublicController extends Controller
 {
+    #[OnDocument]
+    public function onDocumentResponse( Document $document ) : void
+    {
+        $document->add(
+            [
+                'html.lang'   => 'en',
+                'html.id'     => 'top',
+                'html.theme'  => $document->get( 'theme.name' ) ?? 'system',
+                'html.status' => 'init',
+            ],
+        )
+            ->add( 'meta.viewport', 'width=device-width,initial-scale=1' );
+    }
+
     #[
         Route( ['/', '/{route}'], 'index' ),
         Template( 'demo.latte' ) // content template
