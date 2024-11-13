@@ -14,6 +14,7 @@ use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\HttpKernel\Event\{ControllerEvent, ResponseEvent, TerminateEvent, ViewEvent};
 use function Support\explode_class_callable;
+use ReflectionException;
 
 final class ResponseListener extends ResponseEventListener
 {
@@ -48,23 +49,37 @@ final class ResponseListener extends ResponseEventListener
 
     public function onKernelView( ViewEvent $event ) : void
     {
+        if ( ! $this->handleController( $event->getRequest() ) ) {
+            return;
+        }
+
         Clerk::event( __METHOD__, $this::class );
+
+        $controller = $event->controllerArgumentsEvent->getController();
+
+        if ( \is_array( $controller ) && $controller[0] instanceof Controller ) {
+            $controller = $controller[0];
+            try {
+                Reflect::class( $controller )
+                    ->getMethod( 'controllerResponseMethods' )
+                    ->invoke( $controller );
+            }
+            catch ( ReflectionException $e ) {
+                Log::exception( $e );
+            }
+        }
+
         $event->setResponse( $this->resolveViewResponse( $event->getControllerResult() ) );
     }
 
     /**
+     * @param ResponseEvent $event
      */
     public function onKernelResponse( ResponseEvent $event ) : void
     {
         if ( ! $this->handleController( $event->getRequest() ) ) {
             return;
         }
-
-        $controller = Reflect::class( $this->controller );
-
-        $controller->getMethod( 'controllerResponseMethods' )->invoke( $controller );
-
-        dd( $controller );
 
         $event->getRequest()->attributes->add(
             $this->getTemplateAttributes( $event->getRequest() ),
