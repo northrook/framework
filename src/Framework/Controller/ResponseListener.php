@@ -52,11 +52,19 @@ final class ResponseListener extends ResponseEventListener
         $event->setResponse( $this->resolveViewResponse( $event->getControllerResult() ) );
     }
 
+    /**
+     */
     public function onKernelResponse( ResponseEvent $event ) : void
     {
         if ( ! $this->handleController( $event->getRequest() ) ) {
             return;
         }
+
+        $controller = Reflect::class( $this->controller );
+
+        $controller->getMethod( 'controllerResponseMethods' )->invoke( $controller );
+
+        dd( $controller );
 
         $event->getRequest()->attributes->add(
             $this->getTemplateAttributes( $event->getRequest() ),
