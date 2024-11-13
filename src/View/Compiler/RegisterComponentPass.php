@@ -20,12 +20,13 @@ abstract class RegisterComponentPass extends CompilerPass
         $tags       = [];
 
         foreach ( $this->register() as $component ) {
-            [$name, $class, $tags] = $this->parse( $component );
+            [$name, $class, $tags, $autowire] = $this->parse( $component );
 
             $components[$name] = [
-                'name'  => $name,
-                'class' => $class,
-                'tags'  => $tags,
+                'name'     => $name,
+                'class'    => $class,
+                'tags'     => $tags,
+                'autowire' => $autowire,
             ];
 
             foreach ( $component['tags'] as $tag ) {
@@ -33,6 +34,7 @@ abstract class RegisterComponentPass extends CompilerPass
             }
         }
 
+        $this->console->info( $this::class.' Registered '.\count( $components ).' components.' );
         $componentFactory->setArguments( [$components, $tags] );
     }
 
@@ -48,8 +50,12 @@ abstract class RegisterComponentPass extends CompilerPass
 
         $componentNode = Reflect::getAttribute( $register->reflect(), ComponentNode::class );
 
+        $constructor = $register->reflect()->getConstructor();
+        dump($constructor);
+
+        /** @type class-string<ComponentInterface> $register */
         return [
-            $register->class::class,
+            $register->class::componentName(),
             $register->class,
             $componentNode->tags ?? [],
         ];

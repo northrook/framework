@@ -32,6 +32,21 @@ final class ComponentFactory
     }
 
     /**
+     * Renders a component at runtime.
+     *
+     * @param class-string|string  $component
+     * @param array<string, mixed> $arguments
+     *
+     * @return string
+     */
+    public function render(
+        string $component,
+        array  $arguments = [],
+    ) : string {
+        return '';
+    }
+
+    /**
      * @param class-string $class
      * @param mixed        ...$args
      *
@@ -82,5 +97,10 @@ final class ComponentFactory
     public function getRegisteredComponents() : array
     {
         return $this->components;
+    }
+
+    public function hasTag( string $tag ) : bool
+    {
+        return \array_key_exists( $tag, $this->tags );
     }
 }
