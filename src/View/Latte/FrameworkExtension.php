@@ -20,7 +20,9 @@ final class FrameworkExtension extends LatteExtension
 
     public function __construct(
         public readonly ComponentFactory $factory,
-    ) {}
+    ) {
+        dump($this->factory->getRegisteredComponents());
+    }
 
     public function getFunctions() : array
     {
@@ -45,8 +47,6 @@ final class FrameworkExtension extends LatteExtension
 
     public function parseTemplate( Node $node ) : int|Node
     {
-        dump( $this->factory->getRegisteredComponents() );
-
         if ( $node instanceof ExpressionNode ) {
             return NodeTraverser::DontTraverseChildren;
         }

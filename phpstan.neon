@@ -26,3 +26,7 @@ parameters:
 		-
 			message: "#Method .+ should return .+ but returns mixed.#"
 			path: *.php
+
+		-
+			message: "PHPDoc tag @phpstan-assert-if-true for .+ has no value type specified .+#"
+			path: *.php

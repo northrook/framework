@@ -4,7 +4,7 @@ namespace Core\View\Render;
 
 use Northrook\HTML\Element;
 
-final class ViewContent
+final class HtmlContent
 {
     private array $content;
 
@@ -24,7 +24,7 @@ final class ViewContent
      */
     public static function contentArray( string|array $content ) : array
     {
-        $content = new ViewContent( $content );
+        $content = new HtmlContent( $content );
 
         return (array) $content->parseContent();
     }
@@ -36,7 +36,7 @@ final class ViewContent
      */
     public static function contentString( string|array $content ) : string
     {
-        $content = ViewContent::contentArray( $content );
+        $content = HtmlContent::contentArray( $content );
 
         $string = '';
 

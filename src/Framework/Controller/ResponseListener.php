@@ -4,6 +4,7 @@ namespace Core\Framework\Controller;
 
 use Core\Framework\Controller;
 use Core\Framework\DependencyInjection\ServiceContainer;
+use Core\Symfony\EventListener\ResponseEventListener;
 use Northrook\Clerk;
 use Northrook\Logger\Log;
 use Stringable;
@@ -11,9 +12,9 @@ use Support\Reflect;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\HttpKernel\Event\{ControllerEvent, ResponseEvent, TerminateEvent, ViewEvent};
-use function Support\{explode_class_callable, get_class_name};
+use function Support\explode_class_callable;
 
-final class ResponseListener
+final class ResponseListener extends ResponseEventListener
 {
     use ServiceContainer;
 
@@ -30,11 +31,6 @@ final class ResponseListener
      *  }>
      */
     private array $responseTemplateCache = [];
-
-    public function __construct()
-    {
-        Clerk::event( __METHOD__, $this::class );
-    }
 
     public function onKernelController( ControllerEvent $event ) : void
     {
@@ -106,19 +102,6 @@ final class ResponseListener
             '_document_template' => $controllerTemplate?->name,
             '_content_template'  => $methodTemplate?->name,
         ];
-    }
-
-    /**
-     * Check if the passed {@see Request} is extending the {@see Controller}.
-     *
-     * @param Request $request
-     *
-     * @return bool
-     */
-    private function handleController( Request $request ) : bool
-    {
-        Clerk::event( __METHOD__, $this::class );
-        return \is_subclass_of( get_class_name( $request->attributes->get( '_controller' ) ), Controller::class );
     }
 
     private function resolveViewResponse( mixed $content ) : Response
