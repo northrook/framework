@@ -75,7 +75,7 @@ final class ComponentFactory
         );
 
         $this->instantiated[$component][] = $create->componentUniqueId();
-        return $create->render();
+        return $create->render() ?? '';
     }
 
     /**

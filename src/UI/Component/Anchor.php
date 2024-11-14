@@ -8,7 +8,6 @@ use Core\View\ComponentInterface;
 use Core\View\Template\Compiler\NodeCompiler;
 use Core\View\Template\Render;
 use Latte\Compiler\Nodes\AuxiliaryNode;
-use Latte\Compiler\Nodes\Html\ElementNode;
 use Psr\Log\LoggerInterface;
 use ValueError;
 
@@ -34,9 +33,9 @@ final class Anchor extends Component
         ?LoggerInterface $logger = null,
     ) : ComponentInterface {
         $href       = $arguments['href']       ?? throw new ValueError( 'The [a href] value is required.' );
-        $tag        = $arguments['tag']        ?? 'a';
         $attributes = $arguments['attributes'] ?? [];
         $content    = $arguments['content']    ?? '';
+        $tag        = $arguments['tag']        ?? 'a';
 
         unset( $arguments );
 
@@ -102,30 +101,19 @@ final class Anchor extends Component
 
     public static function templateNode( NodeCompiler $node ) : AuxiliaryNode
     {
-        foreach ( $node->iterateChildNodes() as $key => $childNode ) {
-            if ( $childNode instanceof ElementNode && \in_array( $childNode->name, ['small', 'p'] ) ) {
-                $classes = $childNode->getAttribute( 'class' );
+        $attributes = $node->attributes();
 
-                $childNode->attributes->append(
-                    $node::attributeNode(
-                        'class',
-                        [
-                            'subheading',
-                            $classes,
-                        ],
-                    ),
-                );
+        $href = $node->arguments()['href'] ?? $attributes['href'] ?? null;
 
-                continue;
-            }
-        }
+        unset( $attributes['href'] );
 
         return Render::auxiliaryNode(
             self::componentName(),
             [
-                'tag'        => $node->tag,
-                'content'    => $node->parseContent(),
+                'href'       => $href,
                 'attributes' => $node->attributes(),
+                'content'    => $node->parseContent(),
+                'tag'        => $node->tag,
             ],
         );
     }
