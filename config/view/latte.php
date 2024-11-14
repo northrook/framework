@@ -13,6 +13,14 @@ use Core\View\Latte\Extension\{CacheExtension, FormatterExtension, OptimizerExte
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 return static function( ContainerConfigurator $container ) : void {
+    $container->parameters()->set(
+        'settings.latte',
+        [
+            'autoRefresh' => false,
+            'cacheTTL'    => \Cache\AUTO,
+        ],
+    );
+
     //
     $container->services()
 

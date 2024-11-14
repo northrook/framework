@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace Core\View;
 
 use Core\Framework\DependencyInjection\ServiceContainer;
+use Core\UI\Component;
+use Core\View\Exception\ComponentNotFoundException;
+use Northrook\Logger\{Level, Log};
+use Psr\Log\LoggerInterface;
 use Symfony\Polyfill\Intl\Icu\Exception\NotImplementedException;
-use function Support\classBasename;
+use function Support\{classBasename};
+use const Cache\AUTO;
 
 final class ComponentFactory
 {
@@ -15,7 +20,7 @@ final class ComponentFactory
     /**
      * `[ className => componentName ]`.
      *
-     * @var array<class-string, string>
+     * @var array<class-string|string, array<int, string>>>
      */
     private array $instantiated = [];
 
@@ -24,10 +29,12 @@ final class ComponentFactory
      *
      * @param array<class-string, array{name: string, class:class-string, tags: string[], autowire: class-string[]}> $components
      * @param array                                                                                                  $tags
+     * @param ?LoggerInterface                                                                                       $logger
      */
     public function __construct(
-        private readonly array $components = [],
-        private readonly array $tags = [],
+        private readonly array            $components = [],
+        private readonly array            $tags = [],
+        private readonly ?LoggerInterface $logger = null,
     ) {
     }
 
@@ -36,14 +43,39 @@ final class ComponentFactory
      *
      * @param class-string|string  $component
      * @param array<string, mixed> $arguments
+     * @param ?int                 $cache
      *
      * @return string
      */
     public function render(
         string $component,
         array  $arguments = [],
+        ?int   $cache = AUTO,
     ) : string {
-        return '';
+        $render = $this->components[$component] ?? null;
+
+        if ( ! $render ) {
+            Log::exception( new ComponentNotFoundException( $component ), Level::CRITICAL );
+            return '';
+        }
+
+        \assert( \is_subclass_of( $render['class'], ComponentInterface::class ) );
+
+        foreach ( $render['autowire'] as $argument => $class ) {
+            $render['autowire'][$argument] = $this->serviceLocator( $class, true );
+        }
+
+        $uniqueId = null;
+
+        $create = $render['class']::create(
+            $arguments,
+            $render['autowire'],
+            $uniqueId,
+            $this->logger,
+        );
+
+        $this->instantiated[$component][] = $create->componentUniqueId();
+        return $create->render();
     }
 
     /**
@@ -97,6 +129,17 @@ final class ComponentFactory
     public function getRegisteredComponents() : array
     {
         return $this->components;
+    }
+
+    public function getByTag( string $tag ) : array
+    {
+        $component = $this->tags[$tag] ?? null;
+
+        if ( ! $component ) {
+            throw new ComponentNotFoundException( $tag );
+        }
+
+        return $this->components[$component];
     }
 
     public function hasTag( string $tag ) : bool

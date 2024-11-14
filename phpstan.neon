@@ -5,6 +5,10 @@ parameters:
 	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
 		-
+			message: '#Expression on left side of \?\? is always null.#'
+			path: *.php
+
+		-
 			message: '#Access to an undefined static property .+::\$.+#'
 			path: *.php
 

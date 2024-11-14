@@ -10,12 +10,15 @@ use InvalidArgumentException;
 use Northrook\HTML\Element;
 use Northrook\HTML\Element\Attributes;
 use Northrook\Logger\Log;
+use Psr\Log\LoggerInterface;
 use function Support\classBasename;
 use Throwable;
 
 abstract class Component implements ComponentInterface
 {
     protected const ?string NAME = null;
+
+    private readonly string $html;
 
     protected readonly Element $element;
 
@@ -30,12 +33,14 @@ abstract class Component implements ComponentInterface
      * @param array                                               $attributes
      * @param array<array-key, Printable|string>|Printable|string $content
      * @param null|string                                         $uniqueId
+     * @param ?LoggerInterface                                    $logger
      */
     public function __construct(
-        string                 $tag,
-        array                  $attributes = [],
-        array|string|Printable $content = [],
-        ?string                $uniqueId = null,
+        string                              $tag,
+        array                               $attributes = [],
+        array|string|Printable              $content = [],
+        ?string                             $uniqueId = null,
+        protected readonly ?LoggerInterface $logger = null,
     ) {
         $subtypes = \explode( ':', $tag );
         $tag      = \array_shift( $subtypes );
@@ -66,7 +71,6 @@ abstract class Component implements ComponentInterface
 
     private function setComponentUniqueId( ?string $hash = null ) : void
     {
-        dump( $hash );
         if ( \strlen( $hash ) === 16 && \ctype_alnum( $hash ) ) {
             $this->uniqueId ??= \strtolower( $hash );
             return;
@@ -111,11 +115,16 @@ abstract class Component implements ComponentInterface
     final public function render() : ?string
     {
         try {
-            return $this->build();
+            return $this->html ??= $this->build();
         }
         catch ( Throwable $exception ) {
             Log::exception( $exception );
             return null;
         }
+    }
+
+    final public function __toString() : string
+    {
+        return $this->render();
     }
 }

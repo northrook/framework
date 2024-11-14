@@ -13,9 +13,14 @@ use Core\View\ComponentFactory;
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
         ->set( ComponentFactory::class )
-        // ->args(
-        //     /** Replaced by {@see \Core\View\Compiler\RegisterCoreComponentsPass} */
-        //     [[]],
-        // )
-        ->tag( 'core.service_locator' );
+        ->args(
+            [
+                /** Replaced by {@see \Core\View\Compiler\RegisterCoreComponentsPass} */
+                [], // $components
+                [], // $tags
+                service( 'logger' )->nullOnInvalid(),
+            ],
+        )
+        ->tag( 'core.service_locator' )
+        ->tag( 'monolog.logger', ['channel' => 'components'] );
 };

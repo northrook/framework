@@ -4,37 +4,70 @@ namespace Core\UI\Component;
 
 use Core\UI\Component;
 use Core\View\Attribute\ComponentNode;
+use Core\View\ComponentInterface;
+use Core\View\Template\Compiler\NodeCompiler;
+use Core\View\Template\Render;
+use Latte\Compiler\Nodes\AuxiliaryNode;
+use Latte\Compiler\Nodes\Html\ElementNode;
+use Psr\Log\LoggerInterface;
+use ValueError;
 
 #[ComponentNode( 'a', 'a:primary', 'a:underline' )]
 final class Anchor extends Component
 {
-    public readonly string $href;
-
     public function __construct(
-        string       $href,
-        string       $tag = 'a',
-        array        $attributes = [],
-        array|string $content = [],
-        ?string      $uniqueId = null,
+        string           $href,
+        array            $attributes = [],
+        array|string     $content = [],
+        string           $tag = 'a',
+        ?string          $uniqueId = null,
+        ?LoggerInterface $logger = null,
     ) {
-        $this->setHref( $href, $attributes );
-        parent::__construct( $tag, $attributes, $content, $uniqueId );
+        $attributes['href'] = $href;
+        parent::__construct( $tag, $attributes, $content, $uniqueId, $logger );
+    }
+
+    public static function create(
+        array            $arguments,
+        array            $autowire = [],
+        ?string          $uniqueId = null,
+        ?LoggerInterface $logger = null,
+    ) : ComponentInterface {
+        $href       = $arguments['href']       ?? throw new ValueError( 'The [a href] value is required.' );
+        $tag        = $arguments['tag']        ?? 'a';
+        $attributes = $arguments['attributes'] ?? [];
+        $content    = $arguments['content']    ?? '';
+
+        unset( $arguments );
+
+        return new Anchor(
+            $href,
+            $attributes,
+            $content,
+            $tag,
+            $uniqueId,
+            $logger,
+        );
     }
 
     /**
-     * @param ?string                 $set
-     * @param array<array-key, mixed> $attributes
+     * @param ?string $set
      *
      * @return $this
      */
-    public function setHref( ?string $set, array &$attributes ) : self
+    public function setHref( ?string $set = null ) : self
     {
-        if ( ! $set && \is_string( $attributes['href'] ?? null ) ) {
-            $set = $attributes['href'];
-            unset( $attributes['href'] );
-        }
-        else {
-            $set = '#';
+        $set ??= $this->element->attributes->pull( 'href' ) ?? '#';
+
+        if ( '#' === $set ) {
+            $this->logger->notice(
+                'The {tag} component has {attribute} set to {href}.',
+                [
+                    'tag'       => $this->element->tag,
+                    'attribute' => 'href',
+                    'href'      => $set,
+                ],
+            );
         }
 
         // TODO : Validate schema://example.com
@@ -46,8 +79,7 @@ final class Anchor extends Component
         // TODO : sniff type
         // TODO : sniff name|id
 
-        $this->href = $set;
-
+        $this->attributes->set( 'href', $set );
         return $this;
     }
 
@@ -63,8 +95,38 @@ final class Anchor extends Component
 
     protected function build() : string
     {
-        $this->attributes->set( 'href', $this->href );
+        $this->setHref();
 
         return (string) $this->element;
+    }
+
+    public static function templateNode( NodeCompiler $node ) : AuxiliaryNode
+    {
+        foreach ( $node->iterateChildNodes() as $key => $childNode ) {
+            if ( $childNode instanceof ElementNode && \in_array( $childNode->name, ['small', 'p'] ) ) {
+                $classes = $childNode->getAttribute( 'class' );
+
+                $childNode->attributes->append(
+                    $node::attributeNode(
+                        'class',
+                        [
+                            'subheading',
+                            $classes,
+                        ],
+                    ),
+                );
+
+                continue;
+            }
+        }
+
+        return Render::auxiliaryNode(
+            self::componentName(),
+            [
+                'tag'        => $node->tag,
+                'content'    => $node->parseContent(),
+                'attributes' => $node->attributes(),
+            ],
+        );
     }
 }

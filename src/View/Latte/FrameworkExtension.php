@@ -65,6 +65,10 @@ final class FrameworkExtension extends LatteExtension
             return $node;
         }
 
+        if ( $this->factory->hasTag( $node->name ) ) {
+            dump( $node->name );
+        }
+
         return $node;
     }
 
