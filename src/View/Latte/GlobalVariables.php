@@ -2,7 +2,7 @@
 
 namespace Core\View\Latte;
 
-use Support\PropertyAccessor;
+use Support\{PropertyAccessor, Time};
 use Symfony\Component\HttpFoundation\{Request, RequestStack};
 use Symfony\Component\HttpFoundation\Session\{SessionInterface};
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -36,7 +36,9 @@ final readonly class GlobalVariables
         private RequestStack              $requestStack,
         private ?TokenStorageInterface    $tokenStorage,
         private CsrfTokenManagerInterface $csrfTokenManager,
-    ) {}
+    ) {
+        // TODO : Readonly site settings for timestamp etc
+    }
 
     public function __get( string $property )
     {
@@ -58,6 +60,23 @@ final readonly class GlobalVariables
         };
 
         return $get;
+    }
+
+    /**
+     * Returns a formatted time string, based on {@see date()}.
+     *
+     * @param null|int    $timestamp
+     * @param null|string $format
+     * @param ?string     $timezone
+     *
+     * @return Time
+     */
+    public function time( ?int $timestamp = null, ?string $format = null, ?string $timezone = null ) : Time
+    {
+        // TODO : Get from settings
+        $timestamp ??= Time::FORMAT_SORTABLE;
+        $timezone  ??= 'UTC';
+        return new Time( $format, $timezone, $timestamp );
     }
 
     public function csrfToken( string $tokenId ) : string

@@ -7,6 +7,7 @@ use Core\View\{Attribute\ComponentNode, ComponentFactory, ComponentInterface};
 use Exception\NotImplementedException;
 use Support\{ClassInfo, Reflect};
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use ReflectionNamedType;
 
 abstract class RegisterComponentPass extends CompilerPass
 {
@@ -17,7 +18,7 @@ abstract class RegisterComponentPass extends CompilerPass
         $componentFactory = $container->getDefinition( ComponentFactory::class );
 
         $components = [];
-        $tags       = [];
+        $matchTags  = [];
 
         foreach ( $this->register() as $component ) {
             [$name, $class, $tags, $autowire] = $this->parse( $component );
@@ -29,13 +30,12 @@ abstract class RegisterComponentPass extends CompilerPass
                 'autowire' => $autowire,
             ];
 
-            foreach ( $component['tags'] as $tag ) {
-                $tags[$tag] = $class;
+            foreach ( $tags as $tag ) {
+                $matchTags[$tag] = $name;
             }
         }
 
-        $this->console->info( $this::class.' Registered '.\count( $components ).' components.' );
-        $componentFactory->setArguments( [$components, $tags] );
+        $componentFactory->setArguments( [$components, $matchTags] );
     }
 
     private function parse( string|ClassInfo|ComponentInterface $register ) : array
@@ -48,16 +48,27 @@ abstract class RegisterComponentPass extends CompilerPass
             throw new NotImplementedException( $register->class, ComponentInterface::class );
         }
 
-        $componentNode = Reflect::getAttribute( $register->reflect(), ComponentNode::class );
+        $autowire = [];
 
-        $constructor = $register->reflect()->getConstructor();
-        dump($constructor);
+        foreach ( $register->reflect()->getConstructor()->getParameters() as $param ) {
+            if ( ! $param->getType() instanceof ReflectionNamedType ) {
+                continue;
+            }
+
+            $typeHint = $param->getType()->getName();
+            if ( \class_exists( $typeHint ) ) {
+                $autowire[$param->getName()] = $param->getType()->getName();
+            }
+        }
+
+        $componentNode = Reflect::getAttribute( $register->reflect(), ComponentNode::class );
 
         /** @type class-string<ComponentInterface> $register */
         return [
             $register->class::componentName(),
             $register->class,
             $componentNode->tags ?? [],
+            $autowire,
         ];
     }
 }

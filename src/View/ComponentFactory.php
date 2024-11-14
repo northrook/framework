@@ -22,8 +22,8 @@ final class ComponentFactory
     /**
      * Provide a [class-string, args[]] array.
      *
-     * @param array<class-string, array{name: string, class:class-string, tags: string[]}> $components
-     * @param array                                                                        $tags
+     * @param array<class-string, array{name: string, class:class-string, tags: string[], autowire: class-string[]}> $components
+     * @param array                                                                                                  $tags
      */
     public function __construct(
         private readonly array $components = [],

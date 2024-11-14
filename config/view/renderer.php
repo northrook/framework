@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\View\{ComponentFactory, Latte\FrameworkExtension, Latte\GlobalVariables, ResponseRenderer, TemplateEngine};
+use Core\View\{Latte, ResponseRenderer, TemplateEngine};
 
 return static function( ContainerConfigurator $container ) : void {
     //
@@ -32,28 +32,14 @@ return static function( ContainerConfigurator $container ) : void {
                 '%kernel.default_locale%', // $locale
                 '%kernel.debug%', // $autoRefresh
                 [
-                    service( FrameworkExtension::class ),
+                    service( Latte\FrameworkExtension::class ),
+                    service( Latte\Extension\FormatterExtension::class ),
+                    service( Latte\Extension\OptimizerExtension::class ),
+                    service( Latte\Extension\CacheExtension::class ),
                 ], // $extensions
                 [
-                    'get' => service( GlobalVariables::class ),
+                    'get' => service( Latte\GlobalVariables::class ),
                 ], // $variables
-            ],
-        )
-
-            //
-        ->set( FrameworkExtension::class )
-        ->args( [service( ComponentFactory::class )] )
-
-            // Global Parameters
-        ->set( GlobalVariables::class )
-        ->tag( 'core.service_locator' )
-        ->args(
-            [
-                param( 'kernel.environment' ),
-                param( 'kernel.debug' ),
-                service( 'request_stack' ),
-                service( 'security.token_storage' )->ignoreOnInvalid(),
-                service( 'security.csrf.token_manager' ),
             ],
         );
 };

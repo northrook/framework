@@ -6,6 +6,7 @@ namespace Core\View\Latte;
 
 use Core\Framework\Autowire\UrlGenerator;
 use Core\View\ComponentFactory;
+use Core\View\Latte\Node\InlineStringableNode;
 use Latte\Compiler\{Node, NodeTraverser};
 use Latte\Compiler\Nodes\Html\ElementNode;
 use Latte\Compiler\Nodes\Php\ExpressionNode;
@@ -23,7 +24,14 @@ final class FrameworkExtension extends LatteExtension
     public function __construct(
         public readonly ComponentFactory $factory,
     ) {
-        dump($this->factory);
+        dump( $this->factory );
+    }
+
+    public function getTags() : array
+    {
+        return [
+            'inline' => [InlineStringableNode::class, 'create'],
+        ];
     }
 
     public function getFunctions() : array
