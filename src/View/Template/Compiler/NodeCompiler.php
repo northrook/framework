@@ -2,7 +2,7 @@
 
 namespace Core\View\Template\Compiler;
 
-use Core\View\Template\Compiler\NodeCompiler\{ChildNode, PrintedNode};
+use Core\View\Template\Compiler\NodeCompiler\{ChildNode, ComponentArguments, PrintedNode};
 use Latte\ContentType;
 use Latte\Essential\Nodes\PrintNode;
 use Latte\Compiler\{Node, NodeHelpers, PrintContext};

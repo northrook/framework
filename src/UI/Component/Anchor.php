@@ -11,7 +11,7 @@ use Latte\Compiler\Nodes\AuxiliaryNode;
 use Psr\Log\LoggerInterface;
 use ValueError;
 
-#[ComponentNode( 'a', 'a:primary', 'a:underline' )]
+#[ComponentNode( ['a', 'a:primary', 'a:underline'] )]
 final class Anchor extends Component
 {
     public function __construct(
