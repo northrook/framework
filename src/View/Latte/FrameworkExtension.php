@@ -66,6 +66,11 @@ final class FrameworkExtension extends LatteExtension
             return $node;
         }
 
+        if ( \str_starts_with( $node->name, 'ui:' ) ) {
+            // TODO : handle blind call to ui:{component}
+            dump( $node->name );
+        }
+
         if ( $this->factory->hasTag( $node->name ) ) {
             $parse = $this->factory->getByTag( $node->name );
 
