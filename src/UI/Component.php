@@ -80,12 +80,6 @@ abstract class Component implements ComponentInterface
 
     final public static function componentName() : string
     {
-        static $name = null;
-
-        if ( $name ) {
-            return $name;
-        }
-
         $name = self::NAME ?? static::class;
 
         $name = \strtolower( classBasename( $name ) );
