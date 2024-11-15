@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Core\UI;
 
-use Core\View\ComponentInterface;
+use Core\View\Render\ComponentInterface;
 use Interface\Printable;
 use InvalidArgumentException;
 use Northrook\HTML\Element;
 use Northrook\HTML\Element\Attributes;
 use Northrook\Logger\Log;
 use Psr\Log\LoggerInterface;
-use function Support\classBasename;
 use Throwable;
+use function Support\classBasename;
 
 abstract class Component implements ComponentInterface
 {

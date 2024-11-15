@@ -1,15 +1,16 @@
 <?php
 
-namespace Core\View;
+namespace Core\View\Controller;
 
 use Core\Framework\Controller;
 use Core\Framework\DependencyInjection\ServiceContainer;
 use Core\Framework\Response\{Document, Headers, Parameters};
 use Core\Symfony\EventListener\ResponseEventListener;
 use Core\View\Render\ViewDocument;
+use Core\View\TemplateEngine;
+use InvalidArgumentException;
 use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Logger\Log;
-use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\HttpKernel\Event\{ExceptionEvent, ResponseEvent};
 
@@ -34,6 +35,9 @@ final class ResponseRenderer extends ResponseEventListener
         }
 
         $this->content = $this->handleContent( $event );
+
+        // Handle Notifications and Assets here
+        // assets be pulled by componentName => [asset] from AssetManager
 
         if ( ! $this->document()->isPublic ) {
             $this->document()->set( 'robots', 'noindex, nofollow' );

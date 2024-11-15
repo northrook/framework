@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Core\View;
 
 use Core\Framework\DependencyInjection\ServiceContainer;
-use Core\UI\Component;
 use Core\View\Exception\ComponentNotFoundException;
+use Core\View\Render\ComponentInterface;
 use Northrook\Logger\{Level, Log};
 use Psr\Log\LoggerInterface;
 use Symfony\Polyfill\Intl\Icu\Exception\NotImplementedException;
@@ -20,7 +20,7 @@ final class ComponentFactory
     /**
      * `[ className => componentName ]`.
      *
-     * @var array<class-string|string, array<int, string>>>
+     * @var array<class-string|string, array<int, string>>
      */
     private array $instantiated = [];
 
@@ -117,11 +117,19 @@ final class ComponentFactory
     }
 
     /**
-     * @return array<class-string, string>
+     * @return array<class-string, array<int, string>>
+     */
+    public function getInstantiated() : array
+    {
+        return $this->instantiated;
+    }
+
+    /**
+     * @return array<int, string>
      */
     public function getInstantiatedComponents() : array
     {
-        return $this->instantiated;
+        return \array_keys( $this->instantiated );
     }
 
     /**

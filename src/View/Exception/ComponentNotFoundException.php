@@ -2,7 +2,7 @@
 
 namespace Core\View\Exception;
 
-use Core\View\ComponentInterface;
+use Core\View\Render\ComponentInterface;
 use InvalidArgumentException;
 use Throwable;
 

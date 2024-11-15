@@ -4,7 +4,7 @@ namespace Core\UI\Component;
 
 use Core\UI\Component;
 use Core\View\Attribute\ComponentNode;
-use Core\View\ComponentInterface;
+use Core\View\Render\ComponentInterface;
 use Core\View\Template\Compiler\NodeCompiler;
 use Core\View\Template\Render;
 use Latte\Compiler\Nodes\AuxiliaryNode;

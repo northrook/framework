@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\View\Latte;
 
 use Core\Framework\Autowire\UrlGenerator;
-use Core\View\{ComponentFactory, ComponentInterface};
+use Core\View\{ComponentFactory, Render\ComponentInterface};
 use Core\View\Latte\Node\InlineStringableNode;
 use Core\View\Template\Compiler\NodeCompiler;
 use Latte\Compiler\{Node, NodeTraverser};

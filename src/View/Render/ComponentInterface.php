@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\View;
+namespace Core\View\Render;
 
 use Core\View\Template\Compiler\NodeCompiler;
 use Latte\Compiler\Nodes\AuxiliaryNode;

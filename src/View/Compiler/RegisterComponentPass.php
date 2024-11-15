@@ -3,12 +3,15 @@
 namespace Core\View\Compiler;
 
 use Core\Symfony\DependencyInjection\CompilerPass;
-use Core\View\{Attribute\ComponentNode, ComponentFactory, ComponentInterface};
+use Core\View\{Attribute\ComponentNode, ComponentFactory, Render\ComponentInterface};
 use Exception\NotImplementedException;
+use ReflectionNamedType;
 use Support\{ClassInfo, Reflect};
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use ReflectionNamedType;
 
+/**
+ * @
+ */
 abstract class RegisterComponentPass extends CompilerPass
 {
     abstract public function register() : array;
@@ -63,7 +66,7 @@ abstract class RegisterComponentPass extends CompilerPass
 
         $componentNode = Reflect::getAttribute( $register->reflect(), ComponentNode::class );
 
-        /** @type class-string<ComponentInterface> $register */
+        /** @type class-string<\Core\View\Render\ComponentInterface> $register */
         return [
             $register->class::componentName(),
             $register->class,
