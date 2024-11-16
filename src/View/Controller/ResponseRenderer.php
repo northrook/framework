@@ -24,7 +24,7 @@ final class ResponseRenderer extends ResponseEventListener
         PLAIN    = 'plain';
 
     #[ExpectedValues( valuesFromClass : self::class )]
-    protected string $type;
+    protected string $type = self::DOCUMENT;
 
     protected string $content;
 
@@ -58,6 +58,17 @@ final class ResponseRenderer extends ResponseEventListener
         $this->responseHeaders( $event );
     }
 
+    /**
+     * Determine if the {@see Response} `$content` is a template.
+     *
+     * - Empty `$content` will use {@see Controller} attribute templates.
+     * - If the `$content` contains no whitespace, and ends with `.latte`, it is a template
+     * - All other strings will be considered as `text/plain`
+     *
+     * @param ResponseEvent $event
+     *
+     * @return string
+     */
     protected function handleContent( ResponseEvent $event ) : string
     {
         if ( isset( $this->content ) ) {
@@ -85,8 +96,6 @@ final class ResponseRenderer extends ResponseEventListener
 
         $this->template()->clearTemplateCache();
 
-        $parameters = $this->parameters();
-
         $this->content = $this->template()->render( $template, $this->parameters() );
 
         return $this->content;
@@ -95,6 +104,8 @@ final class ResponseRenderer extends ResponseEventListener
     protected function resolveTemplate( Request $request ) : ?string
     {
         $viewTemplate = $request->attributes->get( '_view_template' );
+
+        dump( $viewTemplate );
 
         $this->type = match ( $viewTemplate ) {
             '_document_template' => $this::DOCUMENT,
@@ -153,31 +164,5 @@ final class ResponseRenderer extends ResponseEventListener
         // TODO : X-Robots
         // TODO : lang
         // TODO : cache
-    }
-
-    /**
-     * Determine if the {@see Response} `$content` is a template.
-     *
-     * - Empty `$content` will use {@see Controller} attribute templates.
-     * - If the `$content` contains no whitespace, and ends with `.latte`, it is a template
-     * - All other strings will be considered as `text/plain`
-     *
-     * @param false|string $content
-     *
-     * @return bool
-     */
-    private function renderContentTemplate( false|string $content = null ) : bool
-    {
-        // If the string is empty, use Controller attributes
-        if ( ! $content ) {
-            return true;
-        }
-
-        // Any whitespace and we can safely assume it not a template string
-        if ( \str_contains( $content, ' ' ) ) {
-            return false;
-        }
-
-        return (bool) ( \str_ends_with( $content, '.latte' ) );
     }
 }

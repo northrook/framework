@@ -3,6 +3,7 @@
 namespace Core\UI\Component;
 
 use Core\UI\Component;
+use Core\View\Attribute\ComponentNode;
 use Core\View\Render\ComponentInterface;
 use Core\View\Template\Compiler\NodeCompiler;
 use Core\View\Template\Render;
@@ -10,6 +11,7 @@ use Latte\Compiler\Nodes\AuxiliaryNode;
 use Psr\Log\LoggerInterface;
 use ValueError;
 
+#[ComponentNode( 'icon' )]
 final class Icon extends Component
 {
     public function __construct(

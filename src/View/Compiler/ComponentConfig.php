@@ -20,18 +20,21 @@ final readonly class ComponentConfig
 
     public array $autowire;
 
-    private array $config;
+    public bool $isStatic;
+
+    public bool $allowChildren;
 
     /**
      * @param array{name: string, class: class-string, tags: string[], config: array<string, bool|int|string>, autowire: array<string, class-string>} $config
      */
     public function __construct( array $config )
     {
-        $this->name     = $config['name'];
-        $this->class    = $config['class'];
-        $this->tags     = $config['tags'];
-        $this->autowire = $config['autowire'];
-        $this->config   = $config['config'];
+        $this->name          = $config['name'];
+        $this->class         = $config['class'];
+        $this->tags          = $config['tags'];
+        $this->autowire      = $config['autowire'];
+        $this->isStatic      = $config['config']['static']         ?? false;
+        $this->allowChildren = $config['config']['allow_children'] ?? true;
 
         unset( $config );
     }
@@ -66,7 +69,8 @@ final readonly class ComponentConfig
             'class'  => $component->class,
             'tags'   => $compilerNode->tags ?? [],
             'config' => [
-                'static' => $compilerNode->static,
+                'static'        => $compilerNode?->static        ?? false,
+                'allowChildren' => $compilerNode?->allowChildren ?? true,
             ],
             'autowire' => $autowire,
         ];

@@ -19,8 +19,9 @@ final readonly class ComponentNode
     /**
      * @param non-empty-lowercase-string[] $tag
      * @param bool                         $static
+     * @param bool                         $allowChildren
      */
-    public function __construct( string|array $tag, public bool $static = false )
+    public function __construct( string|array $tag, public bool $static = false, public bool $allowChildren = true )
     {
         if ( \is_string( $tag ) ) {
             $tag = [$tag];
@@ -32,6 +33,7 @@ final readonly class ComponentNode
                 Log::warning( 'Unknown tag: '.$string );
             }
         }
+
         $this->tags = $tag;
     }
 }

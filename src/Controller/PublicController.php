@@ -30,7 +30,7 @@ final class PublicController extends Controller
     }
 
     #[
-        Route( ['/', '/{route}'], 'index' ),
+        Route( ['/', '/{route}'], 'index', priority : -100 ),
         Template( 'welcome.latte' ) // content template
     ]
     public function index(
@@ -48,9 +48,11 @@ final class PublicController extends Controller
     public function demo(
         Document   $document,
         Parameters $parameters,
-    ) : void {
+    ) : string {
         $document( 'Index Demo Template' );
         $parameters->set( 'content', 'Hello there!' );
+
+        return 'demo.latte';
     }
 
     #[Route( 'hello', 'boilerplate' )]

@@ -11,6 +11,7 @@ use const Cache\AUTO;
  */
 final class Render
 {
+
     public static function auxiliaryNode(
         string $component,
         array  $arguments = [],
