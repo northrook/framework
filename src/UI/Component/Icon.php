@@ -11,16 +11,17 @@ use Latte\Compiler\Nodes\AuxiliaryNode;
 use Psr\Log\LoggerInterface;
 use ValueError;
 
-#[ComponentNode( 'icon', )]
+
+#[ComponentNode( 'icon:{get}', 'static' )]
 final class Icon extends Component
 {
     public function __construct(
-        string           $get,
-        array            $attributes = [],
-        ?string          $tooltip = null,
-        string           $tag = 'i',
-        ?string          $uniqueId = null,
-        ?LoggerInterface $logger = null,
+            string           $get,
+            array            $attributes = [],
+            ?string          $tooltip = null,
+            string           $tag = 'i',
+            ?string          $uniqueId = null,
+            ?LoggerInterface $logger = null,
     ) {
         parent::__construct( $tag, $attributes, [], $uniqueId, $logger );
     }
@@ -31,10 +32,10 @@ final class Icon extends Component
     }
 
     public static function create(
-        array            $arguments,
-        array            $autowire = [],
-        ?string          $uniqueId = null,
-        ?LoggerInterface $logger = null,
+            array            $arguments,
+            array            $autowire = [],
+            ?string          $uniqueId = null,
+            ?LoggerInterface $logger = null,
     ) : ComponentInterface {
         $get        = $arguments['get']        ?? throw new ValueError( 'No [icon get] value is provided.' );
         $attributes = $arguments['attributes'] ?? [];
@@ -52,13 +53,13 @@ final class Icon extends Component
         unset( $attributes['href'] );
 
         return Render::auxiliaryNode(
-            self::componentName(),
-            [
-                'href'       => $href,
-                'attributes' => $node->attributes(),
-                'content'    => $node->parseContent(),
-                'tag'        => $node->tag,
-            ],
+                self::componentName(),
+                [
+                        'href'       => $href,
+                        'attributes' => $node->attributes(),
+                        'content'    => $node->parseContent(),
+                        'tag'        => $node->tag,
+                ],
         );
     }
 }

@@ -47,10 +47,10 @@ final class FrameworkExtension extends LatteExtension
     public function getPasses() : array
     {
         return [
-            'static_components'         => [$this, 'earlyCompilerPass'],
-            'after::static_components'  => self::order( [$this, 'afterEarlyCompilerPass'], after: '*' ),
-            'before::static_components' => self::order( [$this, 'beforeEarlyCompilerPass'], before: '*' ),
-            self::class                 => [$this, 'traverseTemplateNodes'],
+            // 'static_components'         => [$this, 'earlyCompilerPass'],
+            // 'after::static_components'  => self::order( [$this, 'afterEarlyCompilerPass'], after: '*' ),
+            // 'before::static_components' => self::order( [$this, 'beforeEarlyCompilerPass'], before: '*' ),
+            self::class => [$this, 'traverseTemplateNodes'],
         ];
     }
 
@@ -84,24 +84,47 @@ final class FrameworkExtension extends LatteExtension
             return $node;
         }
 
+        // TODO :: handle blind call to ui:{component}
         if ( \str_starts_with( $node->name, 'ui:' ) ) {
-            // TODO : handle blind call to ui:{component}
             dump( $node->name );
         }
 
-        if ( $this->factory->hasTag( $node->name ) ) {
-            $parse = $this->factory->getByTag( $node->name );
+        [$tag, $arg] = $this->nodeTag( $node );
 
-            \assert( \is_subclass_of( $parse['class'], ComponentInterface::class ) );
-
-            $compiler = new NodeCompiler( $node );
-
-            dump( $this->factory->getComponentConfig( $node->name ) );
-
-            return $parse['class']::templateNode( $compiler );
+        if ( ! $this->factory->hasTag( $tag ) ) {
+            return $node;
         }
 
+        $component = $this->factory->getComponentConfig( $tag );
+
+        dump( $component );
+
+        // if ( $this->factory->hasTag( $node->name ) ) {
+        //     $parse = $this->factory->getByTag( $node->name );
+        //
+        //     \assert( \is_subclass_of( $parse['class'], ComponentInterface::class ) );
+        //
+        //     $compiler = new NodeCompiler( $node );
+        //
+        //     dump( $this->factory->getComponentConfig( $node->name ) );
+        //
+        //     return $parse['class']::templateNode( $compiler );
+        // }
+
         return $node;
+    }
+
+    private function nodeTag( ElementNode $node ) : array
+    {
+        $tag = $node->name;
+        $arg = null;
+
+        if ( \str_contains( $tag, ':' ) ) {
+            [$tag, $arg] = \explode( ':', $tag );
+            $tag .= ':';
+        }
+
+        return [$tag, $arg];
     }
 
     #[Override]

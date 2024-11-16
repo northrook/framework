@@ -29,7 +29,24 @@ abstract class RegisterComponentPass extends CompilerPass
             $components[$component['name']] = $component;
 
             foreach ( $component['tags'] as $tag ) {
-                $matchTags[$tag] = $component['name'];
+                if ( ! $tag || \preg_match( '#[^a-z]#', $tag[0] ) ) {
+                    $reason = $tag ? null : 'Tags cannot be empty.';
+                    $reason ??= ':' === $tag[0] ? 'Tags cannot start with a separator.'
+                            : 'Tags must start with a letter.';
+                    $this->console->error( ['Invalid component tag.', 'Value: '.$tag, $reason] );
+
+                    continue;
+                }
+
+                $subtype = \strpos( $tag, ':' );
+
+                if ( $subtype ) {
+                    [$tag, $subtype]                = \explode( ':', $tag );
+                    $matchTags["{$tag}:"][$subtype] = $component['name'];
+                }
+                else {
+                    $matchTags[$tag] = $component['name'];
+                }
             }
         }
 

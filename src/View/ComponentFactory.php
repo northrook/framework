@@ -140,6 +140,21 @@ final class ComponentFactory
         return $this->components;
     }
 
+    public function componentNameByTag( string $tag ) : string
+    {
+        $component = $this->tags[$tag] ?? null;
+
+        if ( ! $component ) {
+            throw new ComponentNotFoundException( $tag );
+        }
+
+        if ( \is_array( $component ) ) {
+            $component = \end( $component );
+        }
+
+        return $component;
+    }
+
     public function getComponentConfig( string $tag ) : ComponentConfig
     {
         $component = $this->tags[$tag] ?? null;
@@ -153,13 +168,7 @@ final class ComponentFactory
 
     public function getByTag( string $tag ) : array
     {
-        $component = $this->tags[$tag] ?? null;
-
-        if ( ! $component ) {
-            throw new ComponentNotFoundException( $tag );
-        }
-
-        return $this->components[$component];
+        return $this->components[$this->componentNameByTag( $tag )];
     }
 
     public function hasTag( string $tag ) : bool

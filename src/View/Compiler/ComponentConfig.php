@@ -19,7 +19,8 @@ final readonly class ComponentConfig
 
     public array $tags;
 
-    public array $autowire;
+    /** @var array<string, string> */
+    public array $parameters;
 
     #[ExpectedValues( values : ['live', 'static', 'runtime'] )]
     public string $type;
@@ -33,7 +34,7 @@ final readonly class ComponentConfig
      *     tags: string[],
      *     type: string,
      *     allowChildren: bool,
-     *     autowire: array<string, class-string>
+     *     parameters: array<string, string>
      *     }  $config
      */
     public function __construct( array $config )
@@ -41,14 +42,6 @@ final readonly class ComponentConfig
         foreach ( $config as $property => $value ) {
             $this->{$property} = $value;
         }
-        // $this->name          = $config['name'];
-        // $this->class         = $config['class'];
-        // $this->tags          = $config['tags'];
-        // $this->type          = $config['type'];
-        // $this->autowire      = $config['autowire'];
-        // $this->allowChildren = $config['allowChildren'];
-        //
-        // unset( $config );
     }
 
     public static function compile( string|ClassInfo|ComponentInterface $component ) : array
@@ -61,17 +54,20 @@ final readonly class ComponentConfig
             throw new NotImplementedException( $component->class, ComponentInterface::class );
         }
 
-        $autowire = [];
+        $parameters = [];
 
-        foreach ( $component->reflect()->getConstructor()->getParameters() as $param ) {
+        foreach ( $component->reflect()->getConstructor()->getParameters() as $index => $param ) {
             if ( ! $param->getType() instanceof ReflectionNamedType ) {
                 continue;
             }
 
-            $typeHint = $param->getType()->getName();
-            if ( \class_exists( $typeHint ) ) {
-                $autowire[$param->getName()] = $typeHint;
-            }
+            $parameter = $param->getName();
+
+            $typeHint = $param->allowsNull() ? '?' : '';
+
+            $typeHint .= $param->getType()->getName();
+
+            $parameters[$parameter] = $typeHint;
         }
 
         $compilerNode = Reflect::getAttribute( $component->reflect(), ComponentNode::class );
@@ -84,7 +80,7 @@ final readonly class ComponentConfig
             'tags'          => $compilerNode->tags,
             'type'          => $compilerNode->type,
             'allowChildren' => $compilerNode->allowChildren,
-            'autowire'      => $autowire,
+            'parameters'    => $parameters,
         ];
     }
 }
