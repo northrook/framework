@@ -3,12 +3,15 @@
 namespace Core\UI\Component;
 
 use Core\UI\Component;
+use Core\View\Attribute\ComponentNode;
 use Core\View\Render\ComponentInterface;
 use Core\View\Template\Compiler\NodeCompiler;
 use Core\View\Template\Render;
 use Latte\Compiler\Nodes\AuxiliaryNode;
+use Northrook\HTML\Element\Tag;
 use Psr\Log\LoggerInterface;
 
+#[ComponentNode( Tag::HEADING )]
 final class Heading extends Component
 {
     protected function build() : string

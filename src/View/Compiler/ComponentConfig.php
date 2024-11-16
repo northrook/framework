@@ -8,6 +8,7 @@ use Core\View\Attribute\ComponentNode;
 use Core\View\Render\ComponentInterface;
 use Exception\NotImplementedException;
 use Support\{ClassInfo, Reflect};
+use JetBrains\PhpStorm\ExpectedValues;
 use ReflectionNamedType;
 
 final readonly class ComponentConfig
@@ -20,23 +21,34 @@ final readonly class ComponentConfig
 
     public array $autowire;
 
-    public bool $isStatic;
+    #[ExpectedValues( values : ['live', 'static', 'runtime'] )]
+    public string $type;
 
     public bool $allowChildren;
 
     /**
-     * @param array{name: string, class: class-string, tags: string[], config: array<string, bool|int|string>, autowire: array<string, class-string>} $config
+     * @param array{
+     *     name: string,
+     *     class: class-string,
+     *     tags: string[],
+     *     type: string,
+     *     allowChildren: bool,
+     *     autowire: array<string, class-string>
+     *     }  $config
      */
     public function __construct( array $config )
     {
-        $this->name          = $config['name'];
-        $this->class         = $config['class'];
-        $this->tags          = $config['tags'];
-        $this->autowire      = $config['autowire'];
-        $this->isStatic      = $config['config']['static']         ?? false;
-        $this->allowChildren = $config['config']['allow_children'] ?? true;
-
-        unset( $config );
+        foreach ( $config as $property => $value ) {
+            $this->{$property} = $value;
+        }
+        // $this->name          = $config['name'];
+        // $this->class         = $config['class'];
+        // $this->tags          = $config['tags'];
+        // $this->type          = $config['type'];
+        // $this->autowire      = $config['autowire'];
+        // $this->allowChildren = $config['allowChildren'];
+        //
+        // unset( $config );
     }
 
     public static function compile( string|ClassInfo|ComponentInterface $component ) : array
@@ -64,15 +76,15 @@ final readonly class ComponentConfig
 
         $compilerNode = Reflect::getAttribute( $component->reflect(), ComponentNode::class );
 
+        $compilerNode ??= new ComponentNode();
+
         return [
-            'name'   => $component->class::componentName(),
-            'class'  => $component->class,
-            'tags'   => $compilerNode->tags ?? [],
-            'config' => [
-                'static'        => $compilerNode?->static        ?? false,
-                'allowChildren' => $compilerNode?->allowChildren ?? true,
-            ],
-            'autowire' => $autowire,
+            'name'          => $component->class::componentName(),
+            'class'         => $component->class,
+            'tags'          => $compilerNode->tags,
+            'type'          => $compilerNode->type,
+            'allowChildren' => $compilerNode->allowChildren,
+            'autowire'      => $autowire,
         ];
     }
 }

@@ -11,7 +11,7 @@ use Latte\Compiler\Nodes\AuxiliaryNode;
 use Psr\Log\LoggerInterface;
 use ValueError;
 
-#[ComponentNode( 'icon' )]
+#[ComponentNode( 'icon', )]
 final class Icon extends Component
 {
     public function __construct(
