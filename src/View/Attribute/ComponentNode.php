@@ -13,7 +13,7 @@ use Northrook\Logger\Log;
 // :: Priority - nodes like the Icon needs to be parsed first, as they may be deeply nested
 
 /**
- * @used-by \Core\View\Compiler\ComponentConfig, \Core\View\ComponentFactory
+ * @used-by \Core\View\Compiler\ComponentBuilder, \Core\View\ComponentFactory
  *
  * @author  Martin Nielsen
  */

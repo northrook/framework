@@ -95,9 +95,13 @@ final class FrameworkExtension extends LatteExtension
             return $node;
         }
 
-        $component = $this->factory->getComponentConfig( $tag );
+        $component = $this->factory->build();
 
-        dump( $component );
+        if ( 'runtime' === $component->type ) {
+            return $component->class::templateNode( new NodeCompiler( $node ) );
+        }
+
+        // dump( $component );
 
         // if ( $this->factory->hasTag( $node->name ) ) {
         //     $parse = $this->factory->getByTag( $node->name );

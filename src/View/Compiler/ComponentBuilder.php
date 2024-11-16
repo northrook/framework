@@ -11,10 +11,11 @@ use Support\{ClassInfo, Reflect};
 use JetBrains\PhpStorm\ExpectedValues;
 use ReflectionNamedType;
 
-final readonly class ComponentConfig
+final readonly class ComponentBuilder
 {
     public string $name;
 
+    /** @var class-string<ComponentInterface> */
     public string $class;
 
     public array $tags;
@@ -44,7 +45,7 @@ final readonly class ComponentConfig
         }
     }
 
-    public static function compile( string|ClassInfo|ComponentInterface $component ) : array
+    public static function config( string|ClassInfo|ComponentInterface $component ) : array
     {
         if ( ! $component instanceof ComponentInterface ) {
             $component = new ClassInfo( $component );

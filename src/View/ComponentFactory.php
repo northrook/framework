@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\View;
 
 use Core\Framework\DependencyInjection\ServiceContainer;
-use Core\View\Compiler\ComponentConfig;
+use Core\View\Compiler\ComponentBuilder;
 use Core\View\Exception\ComponentNotFoundException;
 use Core\View\Render\ComponentInterface;
 use Northrook\Logger\{Level, Log};
@@ -77,6 +77,13 @@ final class ComponentFactory
 
         $this->instantiated[$component][] = $create->componentUniqueId();
         return $create->render() ?? '';
+    }
+
+    public function build( ?string $component = null, ?string $tag = null ) : ComponentBuilder
+    {
+        $component ??= $this->componentNameByTag( $tag );
+
+        return new ComponentBuilder( $this->components[$component] );
     }
 
     /**
@@ -155,7 +162,7 @@ final class ComponentFactory
         return $component;
     }
 
-    public function getComponentConfig( string $tag ) : ComponentConfig
+    public function getComponentConfig( string $tag ) : ComponentBuilder
     {
         $component = $this->tags[$tag] ?? null;
 
@@ -163,7 +170,7 @@ final class ComponentFactory
             throw new ComponentNotFoundException( $tag );
         }
 
-        return new ComponentConfig( $this->components[$component] );
+        return new ComponentBuilder( $this->components[$component] );
     }
 
     public function getByTag( string $tag ) : array
