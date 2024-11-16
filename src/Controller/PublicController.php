@@ -12,7 +12,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[
     Route( '/', 'public:' ),
-    Template( 'welcome.latte' ) // wrapping body - like Admin UI
 ]
 final class PublicController extends Controller
 {
@@ -32,9 +31,21 @@ final class PublicController extends Controller
 
     #[
         Route( ['/', '/{route}'], 'index' ),
-        Template( 'demo.latte' ) // content template
+        Template( 'welcome.latte' ) // content template
     ]
     public function index(
+        Document   $document,
+        Parameters $parameters,
+    ) : void {
+        $document( 'Index Demo Template' );
+        $parameters->set( 'content', 'Hello there!' );
+    }
+
+    #[
+        Route( ['/demo'], 'demo' ),
+        Template( 'demo.latte' ) // content template
+    ]
+    public function demo(
         Document   $document,
         Parameters $parameters,
     ) : void {

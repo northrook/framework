@@ -24,17 +24,12 @@ abstract class RegisterComponentPass extends CompilerPass
         $matchTags  = [];
 
         foreach ( $this->register() as $component ) {
-            [$name, $class, $tags, $autowire] = $this->parse( $component );
+            $component = ComponentConfig::compile( $component );
 
-            $components[$name] = [
-                'name'     => $name,
-                'class'    => $class,
-                'tags'     => $tags,
-                'autowire' => $autowire,
-            ];
+            $components[$component['name']] = $component;
 
-            foreach ( $tags as $tag ) {
-                $matchTags[$tag] = $name;
+            foreach ( $component['tags'] as $tag ) {
+                $matchTags[$tag] = $component['name'];
             }
         }
 

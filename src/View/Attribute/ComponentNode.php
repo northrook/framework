@@ -8,19 +8,19 @@ use Attribute;
 use Northrook\HTML\Element\Tag;
 use Northrook\Logger\Log;
 
-
 // :: Replace Node in template, or as Runtime Callable via Factory
 // :: Priority - nodes like the Icon needs to be parsed first, as they may be deeply nested
 
 #[Attribute( Attribute::TARGET_CLASS )]
-final class ComponentNode
+final readonly class ComponentNode
 {
     public array $tags;
 
     /**
      * @param non-empty-lowercase-string[] $tag
+     * @param bool                         $static
      */
-    public function __construct( string|array $tag )
+    public function __construct( string|array $tag, public bool $static = false )
     {
         if ( \is_string( $tag ) ) {
             $tag = [$tag];

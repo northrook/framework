@@ -78,6 +78,8 @@ final class FrameworkExtension extends LatteExtension
 
             $compiler = new NodeCompiler( $node );
 
+            dump( $this->factory->getComponentConfig( $node->name ) );
+
             return $parse['class']::templateNode( $compiler );
         }
 

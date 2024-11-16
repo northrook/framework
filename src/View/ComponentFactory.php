@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core\View;
 
 use Core\Framework\DependencyInjection\ServiceContainer;
+use Core\View\Compiler\ComponentConfig;
 use Core\View\Exception\ComponentNotFoundException;
 use Core\View\Render\ComponentInterface;
 use Northrook\Logger\{Level, Log};
@@ -137,6 +138,17 @@ final class ComponentFactory
     public function getRegisteredComponents() : array
     {
         return $this->components;
+    }
+
+    public function getComponentConfig( string $tag ) : ComponentConfig
+    {
+        $component = $this->tags[$tag] ?? null;
+
+        if ( ! $component ) {
+            throw new ComponentNotFoundException( $tag );
+        }
+
+        return new ComponentConfig( $this->components[$component] );
     }
 
     public function getByTag( string $tag ) : array
