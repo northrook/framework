@@ -47,8 +47,26 @@ final class FrameworkExtension extends LatteExtension
     public function getPasses() : array
     {
         return [
-            self::class => [$this, 'traverseTemplateNodes'],
+            'static_components'         => [$this, 'earlyCompilerPass'],
+            'after::static_components'  => self::order( [$this, 'afterEarlyCompilerPass'], after: '*' ),
+            'before::static_components' => self::order( [$this, 'beforeEarlyCompilerPass'], before: '*' ),
+            self::class                 => [$this, 'traverseTemplateNodes'],
         ];
+    }
+
+    public function earlyCompilerPass( TemplateNode $templateNode ) : void
+    {
+        dump( __METHOD__, $templateNode, '---' );
+    }
+
+    public function beforeEarlyCompilerPass( TemplateNode $templateNode ) : void
+    {
+        dump( __METHOD__, $templateNode, '---' );
+    }
+
+    public function afterEarlyCompilerPass( TemplateNode $templateNode ) : void
+    {
+        dump( __METHOD__, $templateNode, '---' );
     }
 
     public function traverseTemplateNodes( TemplateNode $templateNode ) : void
