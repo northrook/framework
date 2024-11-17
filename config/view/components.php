@@ -12,13 +12,19 @@ use Core\View\ComponentFactory;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
+
+            // Component Service Locator
+        ->set( 'core.component_locator' )
+        ->tag( 'container.service_locator' )
+
+            // The Factory
         ->set( ComponentFactory::class )
         ->args(
             [
                 /** Replaced by {@see \Core\View\Compiler\RegisterCoreComponentsPass} */
                 [], // $components
                 [], // $tags
-                service( 'logger' )->nullOnInvalid(),
+                service( 'core.component_locator' ),
             ],
         )
         ->tag( 'core.service_locator' )

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\View\Compiler;
 
 use Core\View\Attribute\ComponentNode;
-use Core\View\Render\ComponentInterface;
+use Core\View\Component\ComponentInterface;
 use Exception\NotImplementedException;
 use Support\{ClassInfo, Reflect};
 use JetBrains\PhpStorm\ExpectedValues;
@@ -15,7 +15,7 @@ final readonly class ComponentBuilder
 {
     public string $name;
 
-    /** @var class-string<ComponentInterface> */
+    /** @var class-string<\Core\View\Component\ComponentInterface> */
     public string $class;
 
     public array $tags;

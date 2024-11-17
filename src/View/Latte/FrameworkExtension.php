@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\View\Latte;
 
 use Core\Framework\Autowire\UrlGenerator;
-use Core\View\{ComponentFactory, Render\ComponentInterface};
+use Core\View\{ComponentFactory, Component\ComponentInterface};
 use Core\View\Latte\Node\InlineStringableNode;
 use Core\View\Template\Compiler\NodeCompiler;
 use Latte\Compiler\{Node, NodeTraverser};
@@ -46,6 +46,7 @@ final class FrameworkExtension extends LatteExtension
     #[Override]
     public function getPasses() : array
     {
+        dump( __METHOD__ );
         return [
             // 'static_components'         => [$this, 'earlyCompilerPass'],
             // 'after::static_components'  => self::order( [$this, 'afterEarlyCompilerPass'], after: '*' ),

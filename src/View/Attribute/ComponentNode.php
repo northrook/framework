@@ -32,7 +32,7 @@ final readonly class ComponentNode
     public array $tags;
 
     /**
-     * Configure how this {@see \Core\View\Render\ComponentInterface} is handled.
+     * Configure how this {@see \Core\View\Component\ComponentInterface} is handled.
      *
      * ### Tag
      * Assign one or more HTML tags to trigger this component.

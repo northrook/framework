@@ -7,10 +7,11 @@ namespace Core\View;
 use Core\Framework\DependencyInjection\ServiceContainer;
 use Core\View\Compiler\ComponentBuilder;
 use Core\View\Exception\ComponentNotFoundException;
-use Core\View\Render\ComponentInterface;
+use Core\View\Component\ComponentInterface;
 use Northrook\Logger\{Level, Log};
 use Psr\Log\LoggerInterface;
 use Support\Arr;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Polyfill\Intl\Icu\Exception\NotImplementedException;
 use function Support\{classBasename};
 use const Cache\AUTO;
@@ -31,13 +32,29 @@ final class ComponentFactory
      *
      * @param array<class-string, array{name: string, class:class-string, tags: string[], autowire: class-string[]}> $components
      * @param array                                                                                                  $tags
-     * @param ?LoggerInterface                                                                                       $logger
+     * @param ServiceLocator                                                                                         $componentLocator
      */
     public function __construct(
-        private readonly array            $components = [],
-        private readonly array            $tags = [],
-        private readonly ?LoggerInterface $logger = null,
+        private readonly array          $components = [],
+        private readonly array          $tags = [],
+        private readonly ServiceLocator $componentLocator,
     ) {
+    }
+
+    /**
+     * Begin the Build proccess of a component.
+     *
+     * @param string $component
+     *
+     * @return ComponentInterface
+     */
+    public function build( string $component ) : ComponentInterface
+    {
+        if ( ! $this->hasComponent( $component ) ) {
+            throw new ComponentNotFoundException( $component );
+        }
+
+        return new ComponentBuilder( $this->components[$component] );
     }
 
     /**
@@ -75,15 +92,6 @@ final class ComponentFactory
 
         $this->instantiated[$component][] = $create->componentUniqueId();
         return $create->render() ?? '';
-    }
-
-    public function build( string $component ) : ComponentBuilder
-    {
-        if ( ! $this->hasComponent( $component ) ) {
-            throw new ComponentNotFoundException( $component );
-        }
-
-        return new ComponentBuilder( $this->components[$component] );
     }
 
     /**

@@ -8,7 +8,7 @@ class RegisterCoreComponentsPass extends RegisterComponentPass
 {
     public function register() : array
     {
-        $coreComponent = \glob( \dirname( __DIR__, 2 ).'/UI/Component/*.php' );
+        $coreComponent = \glob( \dirname( __DIR__, 2 ).'/UI/Component/Icon.php' );
 
         if ( ! $coreComponent ) {
             $this->console->warning( 'No Core Components found.' );

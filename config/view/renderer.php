@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\View\{Controller\ResponseRenderer, Latte, TemplateEngine};
+use Core\View\{Controller\ResponseRenderer, IconRenderer, Latte, TemplateEngine};
 
 return static function( ContainerConfigurator $container ) : void {
     //
@@ -17,6 +17,11 @@ return static function( ContainerConfigurator $container ) : void {
         ->set( ResponseRenderer::class )
         ->tag( 'kernel.event_listener', ['event' => 'kernel.response'] )
         ->tag( 'kernel.event_listener', ['event' => 'kernel.exception'] )
+
+            //
+        ->set( IconRenderer::class )
+        ->tag( 'core.service_locator' )
+        ->autowire()
 
             //
         ->set( TemplateEngine::class )

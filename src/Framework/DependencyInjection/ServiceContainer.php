@@ -14,7 +14,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 use Throwable;
 
 /**
- * @implements ServiceContainerInterface
+ * @implements <ServiceContainerInterface>
  *
  * @author Martin Nielsen <mn@northrook.com>
  */

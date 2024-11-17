@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core\UI;
 
-use Core\View\Render\ComponentInterface;
+use Core\View\Component\ComponentInterface;
 use Interface\Printable;
 use InvalidArgumentException;
 use Northrook\HTML\Element;
