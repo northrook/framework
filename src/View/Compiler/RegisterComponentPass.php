@@ -28,7 +28,7 @@ abstract class RegisterComponentPass extends CompilerPass
         $matchTags  = [];
 
         foreach ( $this->register() as $component ) {
-            $register = new ComponentParser( $component );
+            $register = new ComponentParser( $component, $this->console );
 
             dump( $register );
 

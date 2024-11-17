@@ -9,6 +9,7 @@ use Core\View\Component\ComponentInterface;
 use Exception\NotImplementedException;
 use Support\{ClassInfo, Reflect};
 use JetBrains\PhpStorm\ExpectedValues;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @internal
@@ -16,6 +17,8 @@ use JetBrains\PhpStorm\ExpectedValues;
  */
 final readonly class ComponentParser
 {
+    private ComponentNode $componentNode;
+
     /** @var non-empty-lowercase-string */
     public string $name;
 
@@ -30,19 +33,43 @@ final readonly class ComponentParser
     #[ExpectedValues( values : ['live', 'static', 'runtime'] )]
     public string $type;
 
-    public function __construct( string|ClassInfo $component )
+    public function __construct( string|ClassInfo $component, private SymfonyStyle $console )
     {
         $this->parse( $component );
         $this->validateComponent();
+        $this->nodeAttribute();
 
         $this->class = $this->component->class;
 
         $this->name = $this->class::componentName();
 
-        $node = $this->nodeAttribute();
+        $this->tags = $this->componentNodeTags();
+    }
 
-        $this->type = $node->type;
-        $this->tags = $node->tags;
+    protected function componentNodeTags() : array
+    {
+        $set = [];
+
+        foreach ( $this->componentNode->tags as $tag ) {
+            if ( ! $tag || \preg_match( '#[^a-z]#', $tag[0] ) ) {
+                $reason = $tag ? null : 'Tags cannot be empty.';
+                $reason ??= ':' === $tag[0] ? 'Tags cannot start with a separator.'
+                        : 'Tags must start with a letter.';
+                $this->console->error( ['Invalid component tag.', 'Value: '.$tag, $reason] );
+
+                continue;
+            }
+
+            if ( \str_contains( $tag, ':' ) ) {
+                [$tag, $subtype]          = \explode( ':', $tag );
+                $set["{$tag}:"][$subtype] = $this->name;
+            }
+            else {
+                $set[$tag] = $this->name;
+            }
+        }
+
+        return $set;
     }
 
     private function parse( string|ClassInfo &$component ) : void
@@ -58,8 +85,10 @@ final readonly class ComponentParser
         }
     }
 
-    private function nodeAttribute() : ComponentNode
+    private function nodeAttribute() : void
     {
-        return Reflect::getAttribute( $this->component->reflect(), ComponentNode::class ) ?? new ComponentNode();
+        $this->componentNode
+                = Reflect::getAttribute( $this->component->reflect(), ComponentNode::class )
+                  ?? new ComponentNode();
     }
 }
