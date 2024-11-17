@@ -26,7 +26,7 @@ final class Anchor extends Component
         parent::__construct( $tag, $attributes, $content, $uniqueId, $logger );
     }
 
-    public static function create(
+    public static function compile(
         array            $arguments,
         array            $autowire = [],
         ?string          $uniqueId = null,

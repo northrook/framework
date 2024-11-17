@@ -9,7 +9,6 @@ use Core\View\Compiler\ComponentBuilder;
 use Core\View\Exception\ComponentNotFoundException;
 use Core\View\Component\ComponentInterface;
 use Northrook\Logger\{Level, Log};
-use Psr\Log\LoggerInterface;
 use Support\Arr;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Polyfill\Intl\Icu\Exception\NotImplementedException;
@@ -54,7 +53,16 @@ final class ComponentFactory
             throw new ComponentNotFoundException( $component );
         }
 
-        return new ComponentBuilder( $this->components[$component] );
+        if ( $this->componentLocator->has( $component ) ) {
+            $component = $this->componentLocator->get( $component );
+
+            \assert( $component instanceof ComponentInterface );
+
+            return $component;
+        }
+
+        throw new ComponentNotFoundException( $component, 'Not found in the Component Container.' );
+        // return new ComponentBuilder( $this->components[$component] );
     }
 
     /**
@@ -68,7 +76,11 @@ final class ComponentFactory
      */
     public function render( string $component, array $arguments = [], ?int $cache = AUTO ) : string
     {
-        $render = $this->components[$component] ?? null;
+        $component = $this->build( $component );
+
+        $component->build( $arguments );
+        dump( $component );
+        return '';
 
         if ( ! $render ) {
             Log::exception( new ComponentNotFoundException( $component ), Level::CRITICAL );
@@ -83,7 +95,7 @@ final class ComponentFactory
 
         $uniqueId = null;
 
-        $create = $render['class']::create(
+        $create = $render['class']::compile(
             $arguments,
             [],
             $uniqueId,

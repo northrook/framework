@@ -14,12 +14,12 @@ use Psr\Log\LoggerInterface;
 #[ComponentNode( Tag::HEADING )]
 final class Heading extends Component
 {
-    protected function build() : string
+    protected function compile() : string
     {
         return (string) $this->element;
     }
 
-    public static function create(
+    public static function build(
         array            $arguments,
         array            $autowire = [],
         ?string          $uniqueId = null,

@@ -3,38 +3,27 @@
 namespace Core\UI\Component;
 
 use Core\View\Attribute\ComponentNode;
-use Core\View\Component\{ComponentBuilder, ComponentInterface};
+use Core\View\Component\{ComponentBuilder};
 use Core\View\IconRenderer;
 use Core\View\Template\Compiler\NodeCompiler;
 use Core\View\Template\Render;
 use Latte\Compiler\Nodes\AuxiliaryNode;
-use Psr\Log\LoggerInterface;
-use ValueError;
 
 #[ComponentNode( 'icon:{get}', 'static' )]
 final class Icon extends ComponentBuilder
 {
-    public function __construct(
-        private readonly IconRenderer $icon,
-    ) {
-    }
+    protected const string TAG = 'i';
 
-    protected function build( string $get ) : string
+    protected string $get;
+
+    public function __construct( private readonly IconRenderer $icon )
     {
-        return (string) $this->element;
     }
 
-    public static function create(
-        array            $arguments,
-        array            $autowire = [],
-        ?string          $uniqueId = null,
-        ?LoggerInterface $logger = null,
-    ) : ComponentInterface {
-        $get        = $arguments['get']        ?? throw new ValueError( 'No [icon get] value is provided.' );
-        $attributes = $arguments['attributes'] ?? [];
-        $content    = $arguments['content']    ?? '';
-        $tag        = $arguments['tag']        ?? 'a';
-        return new self( 'i' );
+    protected function compile() : string
+    {
+        $this->element->content( 'hello there, Icon Man!' );
+        return (string) $this->element;
     }
 
     public static function templateNode( NodeCompiler $node ) : AuxiliaryNode
@@ -48,7 +37,7 @@ final class Icon extends ComponentBuilder
         return Render::auxiliaryNode(
             self::componentName(),
             [
-                'href'       => $href,
+                'get'       => $href,
                 'attributes' => $node->attributes(),
                 'content'    => $node->parseContent(),
                 'tag'        => $node->tag,

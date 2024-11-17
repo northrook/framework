@@ -67,7 +67,7 @@ abstract class Component implements ComponentInterface
      *
      * @return string
      */
-    abstract protected function build() : string;
+    abstract protected function compile() : string;
 
     private function setComponentUniqueId( ?string $hash = null ) : void
     {
@@ -109,7 +109,7 @@ abstract class Component implements ComponentInterface
     final public function render() : ?string
     {
         try {
-            return $this->html ??= $this->build();
+            return $this->html ??= $this->compile();
         }
         catch ( Throwable $exception ) {
             Log::exception( $exception );

@@ -7,15 +7,19 @@ namespace Core\View\Component;
 use Northrook\HTML\Element;
 use Northrook\HTML\Element\Attributes;
 use Northrook\Logger\Log;
-use Psr\Log\LoggerInterface;
 use Throwable;
 use function Support\classBasename;
 use InvalidArgumentException;
 
+/**
+ */
 abstract class ComponentBuilder implements ComponentInterface
 {
     /** @var ?string Define a name for this component */
     protected const ?string NAME = null;
+
+    /** @var string The default tag for this component */
+    protected const string TAG = 'div';
 
     private readonly string $html;
 
@@ -27,7 +31,67 @@ abstract class ComponentBuilder implements ComponentInterface
 
     protected readonly string $uniqueId;
 
-    abstract protected function build( mixed ...$arguments ) : string;
+    protected array $subtypes = [];
+
+    final public function build(
+        array   $arguments,
+        ?string $uniqueId = null,
+    ) : ComponentInterface {
+        $this->parseArguments( $arguments );
+
+        $this->name = $this::componentName();
+
+        $this->subtypes   = \explode( ':', $arguments['tag'] ?? self::TAG );
+        $arguments['tag'] = \array_shift( $this->subtypes );
+
+        $this->element = new Element(
+            $arguments['tag'],
+            $arguments['attributes'] ?? [],
+            $arguments['content']    ?? null,
+        );
+        $this->attributes = $this->element->attributes;
+
+        $this->setComponentUniqueId(
+            $uniqueId ?? \serialize( [$arguments, $this->element] ).\spl_object_id( $this ),
+        );
+
+        unset( $arguments['attributes'], $arguments['content'] );
+
+        foreach ( $arguments as $property => $value ) {
+            if ( \property_exists( $this, $property ) && ! isset( $this->{$property} ) ) {
+                $this->{$property} = $value;
+            }
+            else {
+                Log::error(
+                    'The {component} was provided with undefined property {property}.',
+                    ['component' => $this->name, 'property' => $property],
+                );
+            }
+        }
+
+        foreach ( $this->subtypes as $subtype ) {
+            dump( $subtype );
+            if ( ! \method_exists( $this, $subtype ) ) {
+                Log::error( $this::class.' component requested unknown subtype '.$subtype );
+            }
+            else {
+                $this->{$subtype}();
+            }
+        }
+
+        return $this;
+    }
+
+    protected function parseArguments( array &$arguments ) : void
+    {
+    }
+
+    // :: Compile and return the HTML
+
+    /**
+     * @return string
+     */
+    abstract protected function compile() : string;
 
     final public static function componentName() : string
     {
@@ -60,7 +124,7 @@ abstract class ComponentBuilder implements ComponentInterface
     final public function render() : ?string
     {
         try {
-            return $this->html ??= $this->build();
+            return $this->html ??= $this->compile();
         }
         catch ( Throwable $exception ) {
             Log::exception( $exception );
@@ -71,23 +135,6 @@ abstract class ComponentBuilder implements ComponentInterface
     final public function __toString() : string
     {
         return $this->render();
-    }
-
-    /**
-     * @param array<array-key, mixed> $arguments
-     * @param array<string, object>   $autowire
-     * @param ?string                 $uniqueId
-     * @param ?LoggerInterface        $logger
-     *
-     * @return ComponentInterface
-     */
-    public static function create(
-        array            $arguments,
-        array            $autowire = [],
-        ?string          $uniqueId = null,
-        ?LoggerInterface $logger = null,
-    ) : ComponentInterface {
-        return new static();
     }
 
     private function setComponentUniqueId( ?string $hash = null ) : void

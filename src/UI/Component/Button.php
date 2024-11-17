@@ -9,7 +9,7 @@ use Latte\Compiler\Nodes\AuxiliaryNode;
 
 final class Button extends ComponentBuilder {
 
-    protected function build() : string
+    protected function compile() : string
     {
         return 'button!';
     }

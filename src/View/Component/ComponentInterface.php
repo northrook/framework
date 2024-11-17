@@ -4,7 +4,6 @@ namespace Core\View\Component;
 
 use Core\View\Template\Compiler\NodeCompiler;
 use Latte\Compiler\Nodes\AuxiliaryNode;
-use Psr\Log\LoggerInterface;
 use Stringable;
 
 // The __constructor sort has to be a set standard
@@ -22,18 +21,14 @@ interface ComponentInterface extends Stringable
      */
 
     /**
-     * @param array<array-key, mixed> $arguments
-     * @param array<string, object>   $autowire
-     * @param ?string                 $uniqueId
-     * @param ?LoggerInterface        $logger
+     * @param array<string, mixed> $arguments
+     * @param null|string          $uniqueId
      *
      * @return ComponentInterface
      */
-    public static function create(
-        array            $arguments,
-        array            $autowire = [],
-        ?string          $uniqueId = null,
-        ?LoggerInterface $logger = null,
+    public function build(
+        array   $arguments,
+        ?string $uniqueId = null,
     ) : ComponentInterface;
 
     public static function templateNode( NodeCompiler $node ) : AuxiliaryNode;
