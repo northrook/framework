@@ -10,20 +10,28 @@ use Support\{ClassInfo, Reflect};
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * @
  */
 abstract class RegisterComponentPass extends CompilerPass
 {
+    private array $components = [];
+
+    private array $tags;
+
     abstract public function register() : array;
 
     final public function compile( ContainerBuilder $container ) : void
     {
         $componentFactory = $container->getDefinition( ComponentFactory::class );
+        $componentLocator = $container->getDefinition( 'core.component_locator' );
 
         $components = [];
         $matchTags  = [];
 
         foreach ( $this->register() as $component ) {
+            $register = new ComponentParser( $component );
+
+            dump( $register );
+
             $component = ComponentBuilder::config( $component );
 
             $components[$component['name']] = $component;
@@ -50,7 +58,8 @@ abstract class RegisterComponentPass extends CompilerPass
             }
         }
 
-        $componentFactory->setArguments( [$components, $matchTags] );
+        $componentFactory->replaceArgument( 0, $components );
+        $componentFactory->replaceArgument( 1, $matchTags );
     }
 
     private function parse( string|ClassInfo|ComponentInterface $register ) : array

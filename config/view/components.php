@@ -16,6 +16,7 @@ return static function( ContainerConfigurator $container ) : void {
             // Component Service Locator
         ->set( 'core.component_locator' )
         ->tag( 'container.service_locator' )
+        ->args( [[]] )
 
             // The Factory
         ->set( ComponentFactory::class )

@@ -34,8 +34,8 @@ final class ComponentFactory
      * @param ServiceLocator                                                                                         $componentLocator
      */
     public function __construct(
-        private readonly array          $components = [],
-        private readonly array          $tags = [],
+        private readonly array          $components,
+        private readonly array          $tags,
         private readonly ServiceLocator $componentLocator,
     ) {
     }
