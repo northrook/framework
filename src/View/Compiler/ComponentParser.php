@@ -30,7 +30,7 @@ final readonly class ComponentParser
     /** @var array<int, string> */
     public array $tags;
 
-    /** @var array{render: 'live'|'runtime'|'static', tagged: array<array-key,mixed>} */
+    /** @var array{render: 'live'|'runtime'|'static', taggedProperties: array<array-key,mixed>} */
     public array $properties;
 
     #[ExpectedValues( values : ['live', 'static', 'runtime'] )]
@@ -48,8 +48,8 @@ final readonly class ComponentParser
 
         $this->tags       = $this->componentNodeTags();
         $this->properties = [
-            'render'     => $this->componentNode->render,
-            'properties' => $this->taggedProperties(),
+            'render'           => $this->componentNode->render,
+            'taggedProperties' => $this->taggedProperties(),
         ];
     }
 
@@ -58,13 +58,34 @@ final readonly class ComponentParser
         $properties = [];
 
         foreach ( $this->componentNode->tags as $tag ) {
-            if ( !\str_contains( $tag, '{' ) ) {
-                continue;
+            $tags = \explode( ':', $tag );
+            $tag  = $tags[0];
+
+            foreach ( $tags as $position => $argument ) {
+                if ( \str_contains( $argument, '{' ) ) {
+                    $property = \trim( $argument, " \t\n\r\0\x0B{}" );
+
+                    if ( $this->component->reflect()->hasProperty( $property ) ) {
+                        $tags[$position] = $property;
+                    }
+                    else {
+                        Output::error( "Property '{$property}' not found in component '{$this->name}'" );
+                    }
+
+                    continue;
+                }
+
+                if ( $position && ! $this->component->reflect()->hasMethod( $argument ) ) {
+                    Output::error( "Method {$this->class}::{$argument}' not found in component '{$this->name}'" );
+                }
+
+                $tags[$position] = null;
             }
 
-            dump( $tag );
-
+            $properties[$tag] = $tags;
         }
+
+        dump( $properties );
 
         return $properties;
     }
@@ -78,7 +99,7 @@ final readonly class ComponentParser
                 $reason = $tag ? null : 'Tags cannot be empty.';
                 $reason ??= ':' === $tag[0] ? 'Tags cannot start with a separator.'
                         : 'Tags must start with a letter.';
-                Output::error( ['Invalid component tag.', 'Value: '.$tag, $reason] );
+                Output::error( 'Invalid component tag.', 'Value: '.$tag, $reason );
 
                 continue;
             }

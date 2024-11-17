@@ -31,8 +31,6 @@ abstract class ComponentBuilder implements ComponentInterface
 
     public readonly string $uniqueId;
 
-    protected array $subtypes = [];
-
     final public function build(
         array   $arguments,
         ?string $uniqueId = null,
@@ -41,11 +39,8 @@ abstract class ComponentBuilder implements ComponentInterface
 
         $this->name = $this::componentName();
 
-        $this->subtypes   = \explode( ':', $arguments['tag'] ?? self::TAG );
-        $arguments['tag'] = \array_shift( $this->subtypes );
-
         $this->element = new Element(
-            $arguments['tag'],
+            $arguments['tag']        ?? self::TAG,
             $arguments['attributes'] ?? [],
             $arguments['content']    ?? null,
         );
@@ -60,25 +55,18 @@ abstract class ComponentBuilder implements ComponentInterface
         foreach ( $arguments as $property => $value ) {
             if ( \property_exists( $this, $property ) && ! isset( $this->{$property} ) ) {
                 $this->{$property} = $value;
-            }
-            else {
-                Log::error(
-                    'The {component} was provided with undefined property {property}.',
-                    ['component' => $this->name, 'property' => $property],
-                );
-            }
-        }
 
-        foreach ( $this->subtypes as $property ) {
-            if ( \property_exists( $this, $property ) && ! isset( $this->{$property} ) ) {
-                $this->{$property} = $value;
+                continue;
             }
-            elseif ( ! \method_exists( $this, $property ) ) {
-                Log::error( $this::class.' component requested unknown subtype '.$property );
+
+            if ( \method_exists( $this, $value ) ) {
+                $this->{$value}();
             }
-            else {
-                $this->{$property}();
-            }
+
+            Log::error(
+                'The {component} was provided with undefined property {property}.',
+                ['component' => $this->name, 'property' => $property],
+            );
         }
 
         return $this;

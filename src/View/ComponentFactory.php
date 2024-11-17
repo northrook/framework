@@ -28,9 +28,9 @@ final class ComponentFactory
     /**
      * Provide a [class-string, args[]] array.
      *
-     * @param array<class-string, array{render: 'live'|'runtime'|'static', tagged: array<array-key,mixed>} > $components
-     * @param array                                                                                          $tags
-     * @param ServiceLocator                                                                                 $componentLocator
+     * @param array<class-string, array{render: 'live'|'runtime'|'static', taggedProperties: array<array-key,mixed>} > $components
+     * @param array                                                                                                    $tags
+     * @param ServiceLocator                                                                                           $componentLocator
      */
     public function __construct(
         private readonly array          $components,
@@ -63,6 +63,22 @@ final class ComponentFactory
         throw new ComponentNotFoundException( $component, 'Not found in the Component Container.' );
     }
 
+    private function parseTaggedAttributes( array &$arguments, array $promote = [] ) : void
+    {
+        $exploded         = \explode( ':', $arguments['tag'] );
+        $arguments['tag'] = $exploded[0];
+
+        foreach ( $exploded as $position => $tag ) {
+            if ( $promote[$position] ) {
+                $arguments[ $promote[$position] ] = $tag;
+                unset( $arguments[ $position ] );
+                continue;
+            }
+            $arguments[ $position ] = $tag;
+        }
+
+    }
+
     /**
      * Renders a component at runtime.
      *
@@ -74,9 +90,31 @@ final class ComponentFactory
      */
     public function render( string $component, array $arguments = [], ?int $cache = AUTO ) : string
     {
-        $component = $this->build( $component );
+        $taggedProperties = $this->components[$component]['taggedProperties'];
 
+        $tag = $arguments['tag'] ?? null;
+
+        if ( isset( $arguments['tag'] ) ) {
+            $this->parseTaggedAttributes( $arguments, $taggedProperties );
+        }
+
+        dump( $arguments, $taggedProperties );
+
+        // if ( $properties['taggedProperties'] && isset( $arguments['tag'] ) ) {
+        //     $tags  = \explode( ':', $arguments['tag'] );
+        //     $props = $properties['taggedProperties'][$tags[0]] ?? null;
+        //
+        //     foreach ( $tags as $position => $tag ) {
+        //         if ( $props[$position] ) {
+        //             $arguments[$props[$position]] = $tag;
+        //         }
+        //     }
+        //     dump( $arguments, $properties['taggedProperties'] );
+        // }
+
+        $component = $this->build( $component );
         $component->build( $arguments );
+
         dump( $component );
         return '';
 
