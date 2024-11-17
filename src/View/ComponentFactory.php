@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Core\View;
 
 use Core\Framework\DependencyInjection\ServiceContainer;
-use Core\View\Compiler\ComponentBuilder;
 use Core\View\Exception\ComponentNotFoundException;
 use Core\View\Component\ComponentInterface;
 use Northrook\Logger\{Level, Log};
@@ -29,14 +28,14 @@ final class ComponentFactory
     /**
      * Provide a [class-string, args[]] array.
      *
-     * @param array<class-string, array{name: string, class:class-string, tags: string[], autowire: class-string[]}> $components
-     * @param array                                                                                                  $tags
-     * @param ServiceLocator                                                                                         $componentLocator
+     * @param array<class-string, 'live'|'runtime'|'static'> $components
+     * @param array                                          $tags
+     * @param ServiceLocator                                 $componentLocator
      */
     public function __construct(
-            private readonly array          $components,
-            private readonly array          $tags,
-            private readonly ServiceLocator $componentLocator,
+        private readonly array          $components,
+        private readonly array          $tags,
+        private readonly ServiceLocator $componentLocator,
     ) {
     }
 
@@ -61,10 +60,7 @@ final class ComponentFactory
             return $component;
         }
 
-        dd( $this);
-
         throw new ComponentNotFoundException( $component, 'Not found in the Component Container.' );
-        // return new ComponentBuilder( $this->components[$component] );
     }
 
     /**
@@ -98,10 +94,10 @@ final class ComponentFactory
         $uniqueId = null;
 
         $create = $render['class']::compile(
-                $arguments,
-                [],
-                $uniqueId,
-                $this->logger,
+            $arguments,
+            [],
+            $uniqueId,
+            $this->logger,
         );
 
         $this->instantiated[$component][] = $create->componentUniqueId();
@@ -148,7 +144,13 @@ final class ComponentFactory
         return $this->components;
     }
 
-    public function getComponentName( string $get ) : ?string
+    /**
+     * @param string                         $get
+     * @param null|'live'|'runtime'|'static' $type
+     *
+     * @return null|string
+     */
+    public function getComponentName( string $get, ?string $type = null ) : ?string
     {
         if ( \str_contains( $get, '\\' ) && \class_exists( $get ) ) {
             $component = Arr::search( $this->components, $get );
@@ -162,6 +164,10 @@ final class ComponentFactory
 
         if ( \is_array( $component ) ) {
             $component = \end( $component );
+        }
+
+        if ( $type && $type !== $this->components[$component] ) {
+            return null;
         }
 
         return $component;

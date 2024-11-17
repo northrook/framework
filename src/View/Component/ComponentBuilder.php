@@ -27,9 +27,9 @@ abstract class ComponentBuilder implements ComponentInterface
 
     protected readonly Attributes $attributes;
 
-    protected readonly string $name;
+    public readonly string $name;
 
-    protected readonly string $uniqueId;
+    public readonly string $uniqueId;
 
     protected array $subtypes = [];
 

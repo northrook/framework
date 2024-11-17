@@ -6,6 +6,7 @@ namespace Core\View\Attribute;
 
 use Attribute;
 use JetBrains\PhpStorm\ExpectedValues;
+use Core\View\{Compiler, Component};
 use Northrook\HTML\Element\Tag;
 use Northrook\Logger\Log;
 
@@ -13,7 +14,7 @@ use Northrook\Logger\Log;
 // :: Priority - nodes like the Icon needs to be parsed first, as they may be deeply nested
 
 /**
- * @used-by \Core\View\Compiler\ComponentBuilder, \Core\View\ComponentFactory
+ * @used-by ComponentFactory, Compiler\ComponentParser
  *
  * @author  Martin Nielsen
  */
@@ -23,16 +24,16 @@ final readonly class ComponentNode
     /** Rendered and updated from the front-end */
     public const string LIVE = 'live';
 
-    /** Rendered directly into the {@see \Core\View\TemplateEngine} cache */
+    /** Rendered directly into the {@see TemplateEngine} cache */
     public const string STATIC = 'static';
 
-    /** Rendered by the {@see \Core\View\ComponentFactory} at runtime */
+    /** Rendered by the {@see ComponentFactory} at runtime */
     public const string RUNTIME = 'runtime';
 
     public array $tags;
 
     /**
-     * Configure how this {@see \Core\View\Component\ComponentInterface} is handled.
+     * Configure how this {@see Component\ComponentInterface} is handled.
      *
      * ### Tag
      * Assign one or more HTML tags to trigger this component.
@@ -49,14 +50,14 @@ final readonly class ComponentNode
      * ### Allow children
      * Whether to allow innerHTML for this Component.
      *
-     * @param non-empty-lowercase-string[] $tag
-     * @param non-empty-lowercase-string   $type
-     * @param bool                         $allowChildren
+     * @param non-empty-lowercase-string[]  $tag
+     * @param non-empty-lowercase-string    $render
+     * @param bool                          $allowChildren
      */
     public function __construct(
-        string|array  $tag = [],
-        #[ExpectedValues( values : ['live', 'static', 'runtime'] )] public string $type = 'runtime',
-        public bool   $allowChildren = true,
+        string|array                                                              $tag = [],
+        #[ExpectedValues( values : ['live', 'static', 'runtime'] )] public string $render = 'runtime',
+        public bool                                                               $allowChildren = true,
     ) {
         if ( \is_string( $tag ) ) {
             $tag = [$tag];

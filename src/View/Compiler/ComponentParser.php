@@ -31,7 +31,7 @@ final readonly class ComponentParser
     public array $tags;
 
     #[ExpectedValues( values : ['live', 'static', 'runtime'] )]
-    public string $type;
+    public string $render;
 
     public function __construct( string|ClassInfo $component )
     {

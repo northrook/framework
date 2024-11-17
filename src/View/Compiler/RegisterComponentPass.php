@@ -2,9 +2,9 @@
 
 namespace Core\View\Compiler;
 
-use Core\Symfony\DependencyInjection\CompilerPass;
-use Core\View\{ComponentFactory};
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Core\Symfony\DependencyInjection\CompilerPass;
+use Core\View\ComponentFactory;
 
 abstract class RegisterComponentPass extends CompilerPass
 {
@@ -29,8 +29,9 @@ abstract class RegisterComponentPass extends CompilerPass
             $definition = $container->register( "component.{$register->name}", $register->class );
             $definition->setAutowired( true );
 
-            $this->components[$register->name] = $definition->getClass();
-            $components[$register->name]       = $definition;
+            $this->components[$register->name] = $register->render;
+
+            $components[$register->name] = $definition;
         }
 
         $componentLocator->setArguments( [$components] );

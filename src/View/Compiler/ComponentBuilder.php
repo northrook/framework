@@ -8,9 +8,10 @@ use Core\View\Attribute\ComponentNode;
 use Core\View\Component\ComponentInterface;
 use Exception\NotImplementedException;
 use Support\{ClassInfo, Reflect};
-use JetBrains\PhpStorm\ExpectedValues;
+use JetBrains\PhpStorm\{Deprecated, ExpectedValues};
 use ReflectionNamedType;
 
+#[Deprecated]
 final readonly class ComponentBuilder
 {
     public string $name;
@@ -76,12 +77,12 @@ final readonly class ComponentBuilder
         $compilerNode ??= new ComponentNode();
 
         return [
-            'name'          => $component->class::componentName(),
-            'class'         => $component->class,
-            'tags'          => $compilerNode->tags,
-            'type'          => $compilerNode->type,
-            'allowChildren' => $compilerNode->allowChildren,
-            'parameters'    => $parameters,
+                'name'          => $component->class::componentName(),
+                'class'         => $component->class,
+                'tags'          => $compilerNode->tags,
+                'type'          => $compilerNode->render,
+                'allowChildren' => $compilerNode->allowChildren,
+                'parameters'    => $parameters,
         ];
     }
 }

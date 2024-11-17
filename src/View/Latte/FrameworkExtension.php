@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\View\Latte;
 
 use Core\Framework\Autowire\UrlGenerator;
-use Core\View\{ComponentFactory, Component\ComponentInterface};
+use Core\View\{Attribute\ComponentNode, ComponentFactory, Component\ComponentInterface};
 use Core\View\Latte\Node\InlineStringableNode;
 use Core\View\Template\Compiler\NodeCompiler;
 use Latte\Compiler\{Node, NodeTraverser};
@@ -92,19 +92,19 @@ final class FrameworkExtension extends LatteExtension
 
         [$tag, $arg] = $this->nodeTag( $node );
 
-        $component = $this->factory->getComponentName( $tag );
+        $component = $this->factory->getComponentName( $tag, ComponentNode::RUNTIME );
 
         if ( ! $component ) {
             return $node;
         }
 
         $component = $this->factory->build( $component );
+        //
+        // if ( 'runtime' === $properties['render'] ) {
+        //     return $component->class::templateNode( new NodeCompiler( $node ) );
+        // }
 
-        if ( 'runtime' === $component->type ) {
-            return $component->class::templateNode( new NodeCompiler( $node ) );
-        }
-
-        // dump( $component );
+        dump( $component );
 
         // if ( $this->factory->hasTag( $node->name ) ) {
         //     $parse = $this->factory->getByTag( $node->name );
