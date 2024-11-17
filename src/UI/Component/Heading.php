@@ -36,7 +36,7 @@ final class Heading extends Component
 
         unset( $attributes['href'] );
 
-        return Render::auxiliaryNode(
+        return Render::templateNode(
             self::componentName(),
             [
                 'href'       => $href,

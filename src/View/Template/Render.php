@@ -12,7 +12,7 @@ use const Cache\AUTO;
 final class Render
 {
 
-    public static function auxiliaryNode(
+    public static function templateNode(
         string $component,
         array  $arguments = [],
         ?int   $cache = AUTO,

@@ -12,7 +12,7 @@ use Latte\Compiler\Nodes\AuxiliaryNode;
 #[ComponentNode( 'icon:{get}', 'static' )]
 final class Icon extends ComponentBuilder
 {
-    protected const string TAG = 'i';
+    protected const ?string TAG = 'i';
 
     protected string $get;
 
@@ -22,21 +22,24 @@ final class Icon extends ComponentBuilder
 
     protected function compile() : string
     {
-        $this->element->content( 'hello there, Icon Man!' );
+        $this->element->content( $this->icon->iconPack->get( $this->get ) );
         return (string) $this->element;
     }
 
-    public static function templateNode( NodeCompiler $node ) : AuxiliaryNode
+    public function templateNode( NodeCompiler $node ) : AuxiliaryNode
     {
-        $attributes = $node->attributes();
-
-        return Render::auxiliaryNode(
+        return Render::templateNode(
             self::componentName(),
-            [
-                'tag'        => $node->tag,
-                'attributes' => $node->attributes(),
-                'content'    => $node->parseContent(),
-            ],
+            $this->nodeArguments( $node ),
         );
+    }
+
+    public function nodeArguments( NodeCompiler $node ) : array
+    {
+        return [
+            'tag'        => $node->tag,
+            'attributes' => $node->attributes(),
+            'content'    => $node->parseContent(),
+        ];
     }
 }

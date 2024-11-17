@@ -4,6 +4,7 @@ namespace Core\View\Component;
 
 use Core\View\Template\Compiler\NodeCompiler;
 use Latte\Compiler\Nodes\AuxiliaryNode;
+use Latte\Compiler\Nodes\Html\ElementNode;
 use Stringable;
 
 // The __constructor sort has to be a set standard
@@ -31,7 +32,9 @@ interface ComponentInterface extends Stringable
         ?string $uniqueId = null,
     ) : ComponentInterface;
 
-    public static function templateNode( NodeCompiler $node ) : AuxiliaryNode;
+    public function nodeArguments( NodeCompiler $node ) : array;
+
+    public function templateNode( NodeCompiler $node ) : AuxiliaryNode;
 
     public static function componentName() : string;
 

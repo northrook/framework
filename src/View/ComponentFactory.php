@@ -118,7 +118,7 @@ final class ComponentFactory
         $component->build( $arguments );
 
         dump( $component );
-        return '';
+        return $component->render();
 
         if ( !$render ) {
             Log::exception( new ComponentNotFoundException( $component ), Level::CRITICAL );

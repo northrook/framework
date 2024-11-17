@@ -18,8 +18,8 @@ abstract class ComponentBuilder implements ComponentInterface
     /** @var ?string Define a name for this component */
     protected const ?string NAME = null;
 
-    /** @var string The default tag for this component */
-    protected const string TAG = 'div';
+    /** @var ?string The default tag for this component */
+    protected const ?string TAG = null;
 
     private readonly string $html;
 
@@ -40,10 +40,11 @@ abstract class ComponentBuilder implements ComponentInterface
         $this->name = $this::componentName();
 
         $this->element = new Element(
-            $arguments['tag']        ?? self::TAG,
-            $arguments['attributes'] ?? [],
-            $arguments['content']    ?? null,
+            tag        : $this::TAG     ?? $arguments['tag'] ?? 'div',
+            attributes : ['attributes'] ?? [],
+            content    : ['content']    ?? null,
         );
+
         $this->attributes = $this->element->attributes;
 
         $this->setComponentUniqueId(
