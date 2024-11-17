@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Core\View\Compiler;
 
+use Core\Symfony\Console\Output;
 use Core\View\Attribute\ComponentNode;
 use Core\View\Component\ComponentInterface;
 use Exception\NotImplementedException;
 use Support\{ClassInfo, Reflect};
 use JetBrains\PhpStorm\ExpectedValues;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @internal
@@ -17,6 +17,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 final readonly class ComponentParser
 {
+    private ClassInfo $component;
+
     private ComponentNode $componentNode;
 
     /** @var non-empty-lowercase-string */
@@ -25,15 +27,13 @@ final readonly class ComponentParser
     /** @var class-string<\Core\View\Component\ComponentInterface> */
     public string $class;
 
-    public ClassInfo $component;
-
     /** @var array<int, string> */
     public array $tags;
 
     #[ExpectedValues( values : ['live', 'static', 'runtime'] )]
     public string $type;
 
-    public function __construct( string|ClassInfo $component, private SymfonyStyle $console )
+    public function __construct( string|ClassInfo $component )
     {
         $this->parse( $component );
         $this->validateComponent();
@@ -55,7 +55,7 @@ final readonly class ComponentParser
                 $reason = $tag ? null : 'Tags cannot be empty.';
                 $reason ??= ':' === $tag[0] ? 'Tags cannot start with a separator.'
                         : 'Tags must start with a letter.';
-                $this->console->error( ['Invalid component tag.', 'Value: '.$tag, $reason] );
+                Output::error( ['Invalid component tag.', 'Value: '.$tag, $reason] );
 
                 continue;
             }

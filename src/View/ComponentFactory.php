@@ -34,9 +34,9 @@ final class ComponentFactory
      * @param ServiceLocator                                                                                         $componentLocator
      */
     public function __construct(
-        private readonly array          $components,
-        private readonly array          $tags,
-        private readonly ServiceLocator $componentLocator,
+            private readonly array          $components,
+            private readonly array          $tags,
+            private readonly ServiceLocator $componentLocator,
     ) {
     }
 
@@ -60,6 +60,8 @@ final class ComponentFactory
 
             return $component;
         }
+
+        dd( $this);
 
         throw new ComponentNotFoundException( $component, 'Not found in the Component Container.' );
         // return new ComponentBuilder( $this->components[$component] );
@@ -96,10 +98,10 @@ final class ComponentFactory
         $uniqueId = null;
 
         $create = $render['class']::compile(
-            $arguments,
-            [],
-            $uniqueId,
-            $this->logger,
+                $arguments,
+                [],
+                $uniqueId,
+                $this->logger,
         );
 
         $this->instantiated[$component][] = $create->componentUniqueId();
