@@ -10,6 +10,7 @@ use Core\View\Exception\ComponentNotFoundException;
 use Core\View\Render\ComponentInterface;
 use Northrook\Logger\{Level, Log};
 use Psr\Log\LoggerInterface;
+use Support\Arr;
 use Symfony\Polyfill\Intl\Icu\Exception\NotImplementedException;
 use function Support\{classBasename};
 use const Cache\AUTO;
@@ -81,7 +82,7 @@ final class ComponentFactory
 
     public function build( ?string $component = null, ?string $tag = null ) : ComponentBuilder
     {
-        $component ??= $this->componentNameByTag( $tag );
+        $component ??= $this->getComponentNameByTag( $tag );
 
         return new ComponentBuilder( $this->components[$component] );
     }
@@ -147,12 +148,16 @@ final class ComponentFactory
         return $this->components;
     }
 
-    public function componentNameByTag( string $tag ) : string
+    public function getComponentName( string $get ) : ?string
     {
-        $component = $this->tags[$tag] ?? null;
+        if ( \str_contains( $get, '\\' ) && \class_exists( $get ) ) {
+            $component = Arr::search( $this->components, $get );
+        }
+
+        $component = $this->tags[$get] ?? null;
 
         if ( ! $component ) {
-            throw new ComponentNotFoundException( $tag );
+            return null;
         }
 
         if ( \is_array( $component ) ) {
@@ -171,11 +176,6 @@ final class ComponentFactory
         }
 
         return new ComponentBuilder( $this->components[$component] );
-    }
-
-    public function getByTag( string $tag ) : array
-    {
-        return $this->components[$this->componentNameByTag( $tag )];
     }
 
     public function hasTag( string $tag ) : bool
