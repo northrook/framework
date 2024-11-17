@@ -30,17 +30,12 @@ final class Icon extends ComponentBuilder
     {
         $attributes = $node->attributes();
 
-        $href = $node->arguments()['href'] ?? $attributes['href'] ?? null;
-
-        unset( $attributes['href'] );
-
         return Render::auxiliaryNode(
             self::componentName(),
             [
-                'get'       => $href,
+                'tag'        => $node->tag,
                 'attributes' => $node->attributes(),
                 'content'    => $node->parseContent(),
-                'tag'        => $node->tag,
             ],
         );
     }

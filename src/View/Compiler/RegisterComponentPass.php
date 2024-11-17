@@ -24,12 +24,18 @@ abstract class RegisterComponentPass extends CompilerPass
         foreach ( $this->register() as $component ) {
             $register = new ComponentParser( $component );
 
+            $tagged = [];
+
+            foreach ( $register->tags as $tag ) {
+                $tagged[] = $tag;
+            }
+
             $this->tags = \array_merge( $this->tags, $register->tags );
 
             $definition = $container->register( "component.{$register->name}", $register->class );
             $definition->setAutowired( true );
 
-            $this->components[$register->name] = $register->render;
+            $this->components[$register->name] = $register->properties;
 
             $components[$register->name] = $definition;
         }

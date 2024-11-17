@@ -92,7 +92,7 @@ final class FrameworkExtension extends LatteExtension
 
         [$tag, $arg] = $this->nodeTag( $node );
 
-        $component = $this->factory->getComponentName( $tag, ComponentNode::RUNTIME );
+        $component = $this->factory->getComponentName( $tag);
 
         if ( ! $component ) {
             return $node;
@@ -105,6 +105,8 @@ final class FrameworkExtension extends LatteExtension
         // }
 
         dump( $component );
+
+        return  $component::templateNode( new NodeCompiler( $node ) );
 
         // if ( $this->factory->hasTag( $node->name ) ) {
         //     $parse = $this->factory->getByTag( $node->name );

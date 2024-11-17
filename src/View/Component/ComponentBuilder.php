@@ -69,13 +69,15 @@ abstract class ComponentBuilder implements ComponentInterface
             }
         }
 
-        foreach ( $this->subtypes as $subtype ) {
-            dump( $subtype );
-            if ( ! \method_exists( $this, $subtype ) ) {
-                Log::error( $this::class.' component requested unknown subtype '.$subtype );
+        foreach ( $this->subtypes as $property ) {
+            if ( \property_exists( $this, $property ) && ! isset( $this->{$property} ) ) {
+                $this->{$property} = $value;
+            }
+            elseif ( ! \method_exists( $this, $property ) ) {
+                Log::error( $this::class.' component requested unknown subtype '.$property );
             }
             else {
-                $this->{$subtype}();
+                $this->{$property}();
             }
         }
 

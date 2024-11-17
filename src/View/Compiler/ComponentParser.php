@@ -30,6 +30,9 @@ final readonly class ComponentParser
     /** @var array<int, string> */
     public array $tags;
 
+    /** @var array{render: 'live'|'runtime'|'static', tagged: array<array-key,mixed>} */
+    public array $properties;
+
     #[ExpectedValues( values : ['live', 'static', 'runtime'] )]
     public string $render;
 
@@ -43,7 +46,27 @@ final readonly class ComponentParser
 
         $this->name = $this->class::componentName();
 
-        $this->tags = $this->componentNodeTags();
+        $this->tags       = $this->componentNodeTags();
+        $this->properties = [
+            'render'     => $this->componentNode->render,
+            'properties' => $this->taggedProperties(),
+        ];
+    }
+
+    protected function taggedProperties() : array
+    {
+        $properties = [];
+
+        foreach ( $this->componentNode->tags as $tag ) {
+            if ( !\str_contains( $tag, '{' ) ) {
+                continue;
+            }
+
+            dump( $tag );
+
+        }
+
+        return $properties;
     }
 
     protected function componentNodeTags() : array

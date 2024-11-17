@@ -28,9 +28,9 @@ final class ComponentFactory
     /**
      * Provide a [class-string, args[]] array.
      *
-     * @param array<class-string, 'live'|'runtime'|'static'> $components
-     * @param array                                          $tags
-     * @param ServiceLocator                                 $componentLocator
+     * @param array<class-string, array{render: 'live'|'runtime'|'static', tagged: array<array-key,mixed>} > $components
+     * @param array                                                                                          $tags
+     * @param ServiceLocator                                                                                 $componentLocator
      */
     public function __construct(
         private readonly array          $components,
@@ -166,7 +166,7 @@ final class ComponentFactory
             $component = \end( $component );
         }
 
-        if ( $type && $type !== $this->components[$component] ) {
+        if ( $type && $type !== $this->components[$component]['render'] ) {
             return null;
         }
 
