@@ -49,11 +49,8 @@ final class ComponentFactory
      *
      * @return string
      */
-    public function render(
-        string $component,
-        array  $arguments = [],
-        ?int   $cache = AUTO,
-    ) : string {
+    public function render( string $component, array $arguments = [], ?int $cache = AUTO ) : string
+    {
         $render = $this->components[$component] ?? null;
 
         if ( ! $render ) {
@@ -63,15 +60,15 @@ final class ComponentFactory
 
         \assert( \is_subclass_of( $render['class'], ComponentInterface::class ) );
 
-        foreach ( $render['autowire'] as $argument => $class ) {
-            $render['autowire'][$argument] = $this->serviceLocator( $class, true );
-        }
+        // foreach ( $render['autowire'] as $argument => $class ) {
+        //     $render['autowire'][$argument] = $this->serviceLocator( $class, true );
+        // }
 
         $uniqueId = null;
 
         $create = $render['class']::create(
             $arguments,
-            $render['autowire'],
+            [],
             $uniqueId,
             $this->logger,
         );
@@ -80,32 +77,13 @@ final class ComponentFactory
         return $create->render() ?? '';
     }
 
-    public function build( ?string $component = null, ?string $tag = null ) : ComponentBuilder
+    public function build( string $component ) : ComponentBuilder
     {
-        $component ??= $this->getComponentNameByTag( $tag );
+        if ( ! $this->hasComponent( $component ) ) {
+            throw new ComponentNotFoundException( $component );
+        }
 
         return new ComponentBuilder( $this->components[$component] );
-    }
-
-    /**
-     * @param class-string $class
-     * @param mixed        ...$args
-     *
-     * @return ComponentInterface
-     */
-    public function create( string $class, mixed ...$args ) : ComponentInterface
-    {
-        $component = $this->intantiate( $class, $args );
-
-        dump( $component );
-        // if ( $component instanceof AutowireServicesInterface ) {
-        //     // TODO : Look into using Reflect instead
-        //     foreach ( $component->getAutowireServices() as $property => $autowireService ) {
-        //         $component->setAutowireService( $property, $this->serviceLocator( $autowireService ) );
-        //     }
-        // }
-
-        return $component;
     }
 
     /**
@@ -167,19 +145,35 @@ final class ComponentFactory
         return $component;
     }
 
-    public function getComponentConfig( string $tag ) : ComponentBuilder
+    public function hasComponent( string $component ) : bool
     {
-        $component = $this->tags[$tag] ?? null;
-
-        if ( ! $component ) {
-            throw new ComponentNotFoundException( $tag );
-        }
-
-        return new ComponentBuilder( $this->components[$component] );
+        return \array_key_exists( $component, $this->components );
     }
 
     public function hasTag( string $tag ) : bool
     {
         return \array_key_exists( $tag, $this->tags );
     }
+
+    // /**
+    //  * @param class-string $class
+    //  * @param mixed        ...$args
+    //  *
+    //  * @return ComponentInterface
+    //  */
+    // public function create( string $class, mixed ...$args ) : ComponentInterface
+    // {
+    //     $component = $this->intantiate( $class, $args );
+    //
+    //     dump( $component );
+    //     // if ( $component instanceof AutowireServicesInterface ) {
+    //     //     // TODO : Look into using Reflect instead
+    //     //     foreach ( $component->getAutowireServices() as $property => $autowireService ) {
+    //     //         $component->setAutowireService( $property, $this->serviceLocator( $autowireService ) );
+    //     //     }
+    //     // }
+    //
+    //     return $component;
+    // }
+
 }
