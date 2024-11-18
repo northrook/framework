@@ -29,7 +29,7 @@ abstract class RegisterComponentPass extends CompilerPass
             $definition = $container->register( "component.{$register->name}", $register->class );
             $definition->setAutowired( true );
 
-            $this->components[$register->name] = $register->properties;
+            $this->components[$register->name] = (array) $register->properties;
 
             $components[$register->name] = $definition;
         }

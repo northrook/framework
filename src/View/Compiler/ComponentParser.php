@@ -7,6 +7,7 @@ namespace Core\View\Compiler;
 use Core\Symfony\Console\Output;
 use Core\View\Attribute\ComponentNode;
 use Core\View\Component\ComponentInterface;
+use Core\View\ComponentFactory\ComponentProperties;
 use Exception\NotImplementedException;
 use Support\{ClassInfo, Reflect};
 use JetBrains\PhpStorm\ExpectedValues;
@@ -30,8 +31,7 @@ final readonly class ComponentParser
     /** @var array<int, string> */
     public array $tags;
 
-    /** @var array{render: 'live'|'runtime'|'static', taggedProperties: array<array-key,mixed>} */
-    public array $properties;
+    public ComponentProperties $properties;
 
     #[ExpectedValues( values : ['live', 'static', 'runtime'] )]
     public string $render;
@@ -46,12 +46,15 @@ final readonly class ComponentParser
 
         $this->name = $this->class::componentName();
 
-        $this->tags       = $this->componentNodeTags();
-        $this->properties = [
-            'class'            => $this->class,
-            'render'           => $this->componentNode->render,
-            'taggedProperties' => $this->taggedProperties(),
-        ];
+        $this->tags = $this->componentNodeTags();
+
+        $this->properties = new ComponentProperties(
+            $this->name,
+            $this->class,
+            $this->componentNode->render,
+            $this->tags,
+            $this->taggedProperties(),
+        );
     }
 
     protected function taggedProperties() : array
