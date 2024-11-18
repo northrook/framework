@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types = 1 );
 
 namespace Core\View\Latte;
 
@@ -8,7 +8,7 @@ use Core\Framework\Autowire\UrlGenerator;
 use Core\View\{ComponentFactory, Component\ComponentInterface};
 use Core\View\Latte\Node\InlineStringableNode;
 use Core\View\Template\Compiler\NodeCompiler;
-use Latte\Compiler\{Node, NodeTraverser};
+use Latte\Compiler\{Node, Nodes\AuxiliaryNode, NodeTraverser};
 use Latte\Compiler\Nodes\Html\ElementNode;
 use Latte\Compiler\Nodes\Php\ExpressionNode;
 use Latte\Compiler\Nodes\TemplateNode;
@@ -23,23 +23,24 @@ final class FrameworkExtension extends LatteExtension
     private array $registetedTags = [];
 
     public function __construct(
-        public readonly ComponentFactory $factory,
-    ) {
+            public readonly ComponentFactory $factory,
+    )
+    {
         dump( $this->factory );
     }
 
     public function getTags() : array
     {
         return [
-            'inline' => [InlineStringableNode::class, 'create'],
+                'inline' => [ InlineStringableNode::class, 'create' ],
         ];
     }
 
     public function getFunctions() : array
     {
         return [
-            'url'  => $this->generateRouteUrl( ... ),
-            'path' => $this->generateRoutePath( ... ),
+                'url'  => $this->generateRouteUrl( ... ),
+                'path' => $this->generateRoutePath( ... ),
         ];
     }
 
@@ -51,7 +52,7 @@ final class FrameworkExtension extends LatteExtension
             // 'static_components'         => [$this, 'earlyCompilerPass'],
             // 'after::static_components'  => self::order( [$this, 'afterEarlyCompilerPass'], after: '*' ),
             // 'before::static_components' => self::order( [$this, 'beforeEarlyCompilerPass'], before: '*' ),
-            self::class => [$this, 'traverseTemplateNodes'],
+            self::class => [ $this, 'traverseTemplateNodes' ],
         ];
     }
 
@@ -72,16 +73,16 @@ final class FrameworkExtension extends LatteExtension
 
     public function traverseTemplateNodes( TemplateNode $templateNode ) : void
     {
-        ( new NodeTraverser() )->traverse( $templateNode, [$this, 'parseTemplate'] );
+        ( new NodeTraverser() )->traverse( $templateNode, [ $this, 'parseTemplate' ] );
     }
 
-    public function parseTemplate( Node $node ) : int|Node
+    public function parseTemplate( Node $node ) : int | Node
     {
         if ( $node instanceof ExpressionNode ) {
             return NodeTraverser::DontTraverseChildren;
         }
 
-        if ( ! $node instanceof ElementNode ) {
+        if ( !$node instanceof ElementNode ) {
             return $node;
         }
 
@@ -90,24 +91,25 @@ final class FrameworkExtension extends LatteExtension
             dump( $node->name );
         }
 
-        [$tag, $arg] = $this->nodeTag( $node );
+        [ $tag, $arg ] = $this->nodeTag( $node );
 
         $component = $this->factory->getComponentName( $tag );
 
-        if ( ! $component ) {
+        if ( !$component ) {
             return $node;
         }
-
         $component = $this->factory->build( $component );
-        //
-        // if ( 'runtime' === $properties['render'] ) {
-        //     return $component->class::templateNode( new NodeCompiler( $node ) );
-        // }
 
-        dump( $component->build( $component->nodeArguments( new NodeCompiler( $node ) ) ) );
+        $html = $this->factory->render( $component::componentName(), $component::nodeArguments( new NodeCompiler( $node ) )) ;
+        return new AuxiliaryNode( static fn() => "echo '$html';");
 
-        return $component::templateNode( new NodeCompiler( $node ) );
+        $component->build($component->nodeArguments( new NodeCompiler( $node ) ));
 
+        dump($component, $component->render());
+
+        // dump($component->build( $component->nodeArguments( new NodeCompiler( $node ) ) )->render());
+
+        // return $component->templateNode( new NodeCompiler( $node ) );
         // if ( $this->factory->hasTag( $node->name ) ) {
         //     $parse = $this->factory->getByTag( $node->name );
         //
@@ -129,18 +131,18 @@ final class FrameworkExtension extends LatteExtension
         $arg = null;
 
         if ( \str_contains( $tag, ':' ) ) {
-            [$tag, $arg] = \explode( ':', $tag );
+            [ $tag, $arg ] = \explode( ':', $tag );
             $tag .= ':';
         }
 
-        return [$tag, $arg];
+        return [ $tag, $arg ];
     }
 
     #[Override]
     public function getProviders() : array
     {
         return [
-            'component' => $this->factory,
+                'component' => $this->factory,
         ];
     }
 }

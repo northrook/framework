@@ -29,17 +29,17 @@ final class Icon extends ComponentBuilder
     public function templateNode( NodeCompiler $node ) : AuxiliaryNode
     {
         return Render::templateNode(
-            self::componentName(),
-            $this->nodeArguments( $node ),
+                self::componentName(),
+                $this::nodeArguments( $node ),
         );
     }
 
-    public function nodeArguments( NodeCompiler $node ) : array
+    public static function nodeArguments( NodeCompiler $node ) : array
     {
         return [
-            'tag'        => $node->tag,
-            'attributes' => $node->attributes(),
-            'content'    => $node->parseContent(),
+                'tag'        => $node->tag,
+                'attributes' => $node->attributes(),
+                'content'    => $node->parseContent(),
         ];
     }
 }

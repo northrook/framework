@@ -28,11 +28,11 @@ interface ComponentInterface extends Stringable
      * @return ComponentInterface
      */
     public function build(
-        array   $arguments,
-        ?string $uniqueId = null,
+            array   $arguments,
+            ?string $uniqueId = null,
     ) : ComponentInterface;
 
-    public function nodeArguments( NodeCompiler $node ) : array;
+    public static function nodeArguments( NodeCompiler $node ) : array;
 
     public function templateNode( NodeCompiler $node ) : AuxiliaryNode;
 

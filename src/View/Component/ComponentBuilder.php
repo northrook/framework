@@ -32,23 +32,26 @@ abstract class ComponentBuilder implements ComponentInterface
     public readonly string $uniqueId;
 
     final public function build(
-        array   $arguments,
-        ?string $uniqueId = null,
+            array   $arguments,
+            ?string $uniqueId = null,
     ) : ComponentInterface {
+        dump(
+                $arguments,
+        );
         $this->parseArguments( $arguments );
 
-        $this->name = $this::componentName();
+        $this->name ??= $this::componentName();
 
-        $this->element = new Element(
-            tag        : $this::TAG     ?? $arguments['tag'] ?? 'div',
-            attributes : ['attributes'] ?? [],
-            content    : ['content']    ?? null,
+        $this->element ??= new Element(
+                tag        : $this::TAG     ?? $arguments['tag'] ?? 'div',
+                attributes : $arguments['attributes'] ?? [],
+                content    : $arguments['content']    ?? null,
         );
 
-        $this->attributes = $this->element->attributes;
+        $this->attributes ??= $this->element->attributes;
 
         $this->setComponentUniqueId(
-            $uniqueId ?? \serialize( [$arguments, $this->element] ).\spl_object_id( $this ),
+                $uniqueId ?? \serialize( [$arguments, $this->element] ).\spl_object_id( $this ),
         );
 
         unset( $arguments['attributes'], $arguments['content'] );
@@ -65,8 +68,8 @@ abstract class ComponentBuilder implements ComponentInterface
             }
 
             Log::error(
-                'The {component} was provided with undefined property {property}.',
-                ['component' => $this->name, 'property' => $property],
+                    'The {component} was provided with undefined property {property}.',
+                    ['component' => $this->name, 'property' => $property],
             );
         }
 
@@ -118,6 +121,7 @@ abstract class ComponentBuilder implements ComponentInterface
             return $this->html ??= $this->compile();
         }
         catch ( Throwable $exception ) {
+            dump( $exception );
             Log::exception( $exception );
             return null;
         }
