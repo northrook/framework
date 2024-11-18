@@ -65,11 +65,13 @@ final class FrameworkExtension extends LatteExtension
                     return $node;
                 }
 
-                $this->factory->
+                $component = $this->factory->getComponentProperties( $node->name );
 
-                $tag = $this->nodeTag( $node );
+                if ( ! $component ) {
+                    return $node;
+                }
 
-                dump( $tag );
+                dump( $component, (array) $component );
 
                 return $node;
             },
@@ -89,6 +91,7 @@ final class FrameworkExtension extends LatteExtension
                 if ( ! $node instanceof ElementNode ) {
                     return $node;
                 }
+                return $node;
 
                 $tag = $this->nodeTag( $node );
 

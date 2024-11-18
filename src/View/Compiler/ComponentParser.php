@@ -105,13 +105,15 @@ final readonly class ComponentParser
                 continue;
             }
 
-            if ( \str_contains( $tag, ':' ) ) {
-                [$tag, $subtype]          = \explode( ':', $tag );
-                $set["{$tag}:"][$subtype] = $this->name;
-            }
-            else {
-                $set[$tag] = $this->name;
-            }
+            // if ( \str_contains( $tag, ':' ) ) {
+            //     [$tag, $subtype]          = \explode( ':', $tag );
+            //     $set["{$tag}:"][$subtype] = $this->name;
+            // }
+            // else {
+            //     $set[$tag] = $this->name;
+            // }
+
+            $set[\strstr( $tag, ':', true ) ?: $tag] = $this->name;
         }
 
         return $set;

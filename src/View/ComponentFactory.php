@@ -62,13 +62,11 @@ final class ComponentFactory
     /**
      * Begin the Build proccess of a component.
      *
-     * @template T
+     * @param ComponentProperties|string $component
      *
-     * @param class-string<T>|string $component
-     *
-     * @return ComponentInterface|T
+     * @return ComponentInterface
      */
-    public function build( string $component ) : mixed
+    public function build( string|ComponentProperties $component ) : mixed
     {
         if ( ! $this->hasComponent( $component ) ) {
             throw new ComponentNotFoundException( $component );
@@ -215,28 +213,27 @@ final class ComponentFactory
      */
     public function getComponentName( string $value ) : ?string
     {
-        // If the provided value matches an array name, return it
+        // If the provided $value matches an array name, return it
         if ( \array_key_exists( $value, $this->components ) ) {
             return $value;
         }
 
-        // If the value is a class-string, the class exists, and is a component, return the name
+        // If the $value is a class-string, the class exists, and is a component, return the name
         if ( \str_contains( $value, '\\' ) && \class_exists( $value ) ) {
-            $component = Arr::search( $this->components, $value );
+            return Arr::search( $this->components, $value );
         }
 
-        // Check if the $value matches a tag
-        $component = $this->tags[$value] ?? null;
+        // Parsed namespaced tag $value
+        if ( \str_contains( $value, ':' ) ) {
+            if ( \str_starts_with( $value, 'ui:' ) ) {
+                $value = \substr( $value, 3 );
+            }
 
-        if ( ! $component ) {
-            return null;
+            $value = \strstr( $value, ':', true ) ?: $value;
+
         }
 
-        if ( \is_array( $component ) ) {
-            $component = \end( $component );
-        }
-
-        return $component;
+        return $this->tags[$value] ?? null;
     }
 
     public function hasComponent( string $component ) : bool
