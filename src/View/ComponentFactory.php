@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core\View;
 
 use Core\Framework\DependencyInjection\ServiceContainer;
+use Core\View\ComponentFactory\ComponentProperties;
 use Core\View\Exception\ComponentNotFoundException;
 use Core\View\Component\ComponentInterface;
 use Northrook\Logger\{Level, Log};
@@ -18,8 +19,11 @@ final class ComponentFactory
 {
     use ServiceContainer;
 
+    /** @var array<string, ComponentProperties> */
+    private array $propertiesCache = [];
+
     /**
-     * `[ className => componentName ]`.
+     * `[ className => uniqueId ]`.
      *
      * @var array<class-string|string, array<int, string>>
      */
@@ -28,15 +32,31 @@ final class ComponentFactory
     /**
      * Provide a [class-string, args[]] array.
      *
-     * @param array<class-string, array{render: 'live'|'runtime'|'static', taggedProperties: array<array-key,mixed>} > $components
-     * @param array                                                                                                    $tags
-     * @param ServiceLocator                                                                                           $componentLocator
+     * @param array<class-string, array{render: 'live'|'runtime'|'static', taggedProperties: array<array-key,array<int, mixed>>} > $components
+     * @param array                                                                                                                $tags
+     * @param ServiceLocator                                                                                                       $componentLocator
      */
     public function __construct(
         private readonly array          $components,
         private readonly array          $tags,
         private readonly ServiceLocator $componentLocator,
     ) {
+    }
+
+    public function getComponentProperties( string $get ) : ?ComponentProperties
+    {
+        $component = $this->getComponentName( $get );
+
+        if ( ! $component ) {
+            return null;
+        }
+
+        return $this->propertiesCache[$component] ??= ComponentProperties::from( $this->components[$component] );
+    }
+
+    public function hasTag( string $tag ) : bool
+    {
+        return \array_key_exists( $tag, $this->tags );
     }
 
     /**
@@ -189,18 +209,24 @@ final class ComponentFactory
     }
 
     /**
-     * @param string                         $get
-     * @param null|'live'|'runtime'|'static' $type
+     * @param string $value
      *
      * @return null|string
      */
-    public function getComponentName( string $get, ?string $type = null ) : ?string
+    public function getComponentName( string $value ) : ?string
     {
-        if ( \str_contains( $get, '\\' ) && \class_exists( $get ) ) {
-            $component = Arr::search( $this->components, $get );
+        // If the provided value matches an array name, return it
+        if ( \array_key_exists( $value, $this->components ) ) {
+            return $value;
         }
 
-        $component = $this->tags[$get] ?? null;
+        // If the value is a class-string, the class exists, and is a component, return the name
+        if ( \str_contains( $value, '\\' ) && \class_exists( $value ) ) {
+            $component = Arr::search( $this->components, $value );
+        }
+
+        // Check if the $value matches a tag
+        $component = $this->tags[$value] ?? null;
 
         if ( ! $component ) {
             return null;
@@ -210,21 +236,12 @@ final class ComponentFactory
             $component = \end( $component );
         }
 
-        if ( $type && $type !== $this->components[$component]['render'] ) {
-            return null;
-        }
-
         return $component;
     }
 
     public function hasComponent( string $component ) : bool
     {
         return \array_key_exists( $component, $this->components );
-    }
-
-    public function hasTag( string $tag ) : bool
-    {
-        return \array_key_exists( $tag, $this->tags );
     }
 
     // /**

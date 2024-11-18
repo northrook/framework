@@ -65,6 +65,8 @@ final class FrameworkExtension extends LatteExtension
                     return $node;
                 }
 
+                $this->factory->
+
                 $tag = $this->nodeTag( $node );
 
                 dump( $tag );
@@ -166,28 +168,5 @@ final class FrameworkExtension extends LatteExtension
         return [
             'component' => $this->factory,
         ];
-    }
-
-    public function traverseTemplateNodes( TemplateNode $templateNode ) : void
-    {
-        ( new NodeTraverser() )->traverse( $templateNode, [$this, 'parseTemplate'] );
-    }
-
-    /**
-     * @param Node $node
-     *
-     * @return false|int|Node
-     */
-    private function skip( Node $node ) : false|int|Node
-    {
-        if ( $node instanceof ExpressionNode ) {
-            return NodeTraverser::DontTraverseChildren;
-        }
-
-        if ( ! $node instanceof ElementNode ) {
-            return $node;
-        }
-
-        return false;
     }
 }
