@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Core\View;
 
@@ -28,26 +28,29 @@ final class ComponentFactory
     /**
      * Provide a [class-string, args[]] array.
      *
-     * @param array<class-string, array{render: 'live'|'runtime'|'static', taggedProperties: array<array-key,mixed>} >  $components
-     * @param array                                                                                                     $tags
-     * @param ServiceLocator                                                                                            $componentLocator
+     * @param array<class-string, array{render: 'live'|'runtime'|'static', taggedProperties: array<array-key,mixed>} > $components
+     * @param array                                                                                                    $tags
+     * @param ServiceLocator                                                                                           $componentLocator
      */
     public function __construct(
-            private readonly array          $components,
-            private readonly array          $tags,
-            private readonly ServiceLocator $componentLocator,
-    ) {}
+        private readonly array          $components,
+        private readonly array          $tags,
+        private readonly ServiceLocator $componentLocator,
+    ) {
+    }
 
     /**
      * Begin the Build proccess of a component.
      *
-     * @param string  $component
+     * @template Component
      *
-     * @return ComponentInterface
+     * @param class-string<Component>|string $component
+     *
+     * @return Component|ComponentInterface
      */
-    public function build( string $component ) : ComponentInterface
+    public function build( string $component ) : mixed
     {
-        if ( !$this->hasComponent( $component ) ) {
+        if ( ! $this->hasComponent( $component ) ) {
             throw new ComponentNotFoundException( $component );
         }
 
@@ -64,19 +67,20 @@ final class ComponentFactory
 
     private function parseTaggedAttributes( array &$arguments, array $promote = [] ) : void
     {
-        $exploded           = \explode( ':', $arguments[ 'tag' ] );
-        $arguments[ 'tag' ] = $exploded[ 0 ];
+        $exploded         = \explode( ':', $arguments['tag'] );
+        $arguments['tag'] = $exploded[0];
 
-        $promote = $promote[ $arguments[ 'tag' ] ] ?? null;
+        $promote = $promote[$arguments['tag']] ?? null;
 
         foreach ( $exploded as $position => $tag ) {
-            if ( $promote && $promote[ $position ] ?? false ) {
-                $arguments[ $promote[ $position ] ] = $tag;
-                unset( $arguments[ $position ] );
+            if ( $promote && $promote[$position] ?? false ) {
+                $arguments[$promote[$position]] = $tag;
+                unset( $arguments[$position] );
+
                 continue;
             }
             if ( $position ) {
-                $arguments[ $position ] = $tag;
+                $arguments[$position] = $tag;
             }
         }
     }
@@ -84,19 +88,19 @@ final class ComponentFactory
     /**
      * Renders a component at runtime.
      *
-     * @param class-string|string   $component
-     * @param array<string, mixed>  $arguments
-     * @param ?int                  $cache
+     * @param class-string|string  $component
+     * @param array<string, mixed> $arguments
+     * @param ?int                 $cache
      *
      * @return string
      */
     public function render( string $component, array $arguments = [], ?int $cache = AUTO ) : string
     {
-        $taggedProperties = $this->components[ $component ][ 'taggedProperties' ];
+        $taggedProperties = $this->components[$component]['taggedProperties'];
 
-        $tag = $arguments[ 'tag' ] ?? null;
+        $tag = $arguments['tag'] ?? null;
 
-        if ( isset( $arguments[ 'tag' ] ) ) {
+        if ( isset( $arguments['tag'] ) ) {
             $this->parseTaggedAttributes( $arguments, $taggedProperties );
         }
 
@@ -120,12 +124,12 @@ final class ComponentFactory
         dump( $component );
         return $component->render();
 
-        if ( !$render ) {
+        if ( ! $render ) {
             Log::exception( new ComponentNotFoundException( $component ), Level::CRITICAL );
             return '';
         }
 
-        \assert( \is_subclass_of( $render[ 'class' ], ComponentInterface::class ) );
+        \assert( \is_subclass_of( $render['class'], ComponentInterface::class ) );
 
         // foreach ( $render['autowire'] as $argument => $class ) {
         //     $render['autowire'][$argument] = $this->serviceLocator( $class, true );
@@ -133,28 +137,28 @@ final class ComponentFactory
 
         $uniqueId = null;
 
-        $create = $render[ 'class' ]::compile(
-                $arguments,
-                [],
-                $uniqueId,
-                $this->logger,
+        $create = $render['class']::compile(
+            $arguments,
+            [],
+            $uniqueId,
+            $this->logger,
         );
 
-        $this->instantiated[ $component ][] = $create->componentUniqueId();
+        $this->instantiated[$component][] = $create->componentUniqueId();
         return $create->render() ?? '';
     }
 
     /**
-     * @param class-string  $component
-     * @param mixed         ...$args
+     * @param class-string $component
+     * @param mixed        ...$args
      *
      * @return ComponentInterface
      */
     private function intantiate( string $component, mixed ...$args ) : ComponentInterface
     {
         if ( \class_exists( $component ) && \is_subclass_of( $component, ComponentInterface::class ) ) {
-            if ( !isset( $this->instantiated[ $component ] ) ) {
-                $this->instantiated[ $component ] = \strtolower( classBasename( $component ) );
+            if ( ! isset( $this->instantiated[$component] ) ) {
+                $this->instantiated[$component] = \strtolower( classBasename( $component ) );
             }
             return new $component( ...$args );
         }
@@ -185,8 +189,8 @@ final class ComponentFactory
     }
 
     /**
-     * @param string                          $get
-     * @param null|'live'|'runtime'|'static'  $type
+     * @param string                         $get
+     * @param null|'live'|'runtime'|'static' $type
      *
      * @return null|string
      */
@@ -196,9 +200,9 @@ final class ComponentFactory
             $component = Arr::search( $this->components, $get );
         }
 
-        $component = $this->tags[ $get ] ?? null;
+        $component = $this->tags[$get] ?? null;
 
-        if ( !$component ) {
+        if ( ! $component ) {
             return null;
         }
 
@@ -206,7 +210,7 @@ final class ComponentFactory
             $component = \end( $component );
         }
 
-        if ( $type && $type !== $this->components[ $component ][ 'render' ] ) {
+        if ( $type && $type !== $this->components[$component]['render'] ) {
             return null;
         }
 

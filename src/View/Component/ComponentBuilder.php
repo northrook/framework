@@ -21,7 +21,9 @@ abstract class ComponentBuilder implements ComponentInterface
     /** @var ?string The default tag for this component */
     protected const ?string TAG = null;
 
-    private readonly string $html;
+    private string $uniqueId;
+
+    private string $html;
 
     protected readonly Element $element;
 
@@ -29,29 +31,27 @@ abstract class ComponentBuilder implements ComponentInterface
 
     public readonly string $name;
 
-    public readonly string $uniqueId;
-
     final public function build(
-            array   $arguments,
-            ?string $uniqueId = null,
+        array   $arguments,
+        ?string $uniqueId = null,
     ) : ComponentInterface {
         dump(
-                $arguments,
+            $arguments,
         );
         $this->parseArguments( $arguments );
 
         $this->name ??= $this::componentName();
 
         $this->element ??= new Element(
-                tag        : $this::TAG     ?? $arguments['tag'] ?? 'div',
-                attributes : $arguments['attributes'] ?? [],
-                content    : $arguments['content']    ?? null,
+            tag        : $this::TAG               ?? $arguments['tag'] ?? 'div',
+            attributes : $arguments['attributes'] ?? [],
+            content    : $arguments['content']    ?? null,
         );
 
         $this->attributes ??= $this->element->attributes;
 
         $this->setComponentUniqueId(
-                $uniqueId ?? \serialize( [$arguments, $this->element] ).\spl_object_id( $this ),
+            $uniqueId ?? \serialize( [$arguments, $this->element] ).\spl_object_id( $this->element ),
         );
 
         unset( $arguments['attributes'], $arguments['content'] );
@@ -68,8 +68,8 @@ abstract class ComponentBuilder implements ComponentInterface
             }
 
             Log::error(
-                    'The {component} was provided with undefined property {property}.',
-                    ['component' => $this->name, 'property' => $property],
+                'The {component} was provided with undefined property {property}.',
+                ['component' => $this->name, 'property' => $property],
             );
         }
 
