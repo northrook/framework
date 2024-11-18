@@ -7,6 +7,7 @@ namespace Core\UI;
 use Core\View\Component\ComponentInterface;
 use Interface\Printable;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Deprecated;
 use Northrook\HTML\Element;
 use Northrook\HTML\Element\Attributes;
 use Northrook\Logger\Log;
@@ -14,6 +15,7 @@ use Psr\Log\LoggerInterface;
 use Throwable;
 use function Support\classBasename;
 
+#[Deprecated]
 abstract class Component implements ComponentInterface
 {
     protected const ?string NAME = null;

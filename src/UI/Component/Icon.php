@@ -3,14 +3,14 @@
 namespace Core\UI\Component;
 
 use Core\View\Attribute\ComponentNode;
-use Core\View\Component\{ComponentBuilder, StaticComponentInterface};
+use Core\View\Component\ComponentBuilder;
 use Core\View\IconRenderer;
 use Core\View\Template\Compiler\NodeCompiler;
 use Core\View\Template\Render;
 use Latte\Compiler\Nodes\AuxiliaryNode;
 
 #[ComponentNode( 'icon:{get}', 'static' )]
-final class Icon extends ComponentBuilder implements StaticComponentInterface
+final class Icon extends ComponentBuilder
 {
     protected const ?string TAG = 'i';
 

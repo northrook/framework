@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Core\View\Latte;
 
@@ -22,67 +22,94 @@ final class FrameworkExtension extends LatteExtension
 
     private array $registetedTags = [];
 
-    public function __construct(
-            public readonly ComponentFactory $factory,
-    )
+    public function __construct( public readonly ComponentFactory $factory )
     {
-        dump( $this->factory );
     }
 
     public function getTags() : array
     {
         return [
-                'inline' => [ InlineStringableNode::class, 'create' ],
+            'inline' => [InlineStringableNode::class, 'create'],
         ];
     }
 
     public function getFunctions() : array
     {
         return [
-                'url'  => $this->generateRouteUrl( ... ),
-                'path' => $this->generateRoutePath( ... ),
+            'url'  => $this->generateRouteUrl( ... ),
+            'path' => $this->generateRoutePath( ... ),
         ];
     }
 
     #[Override]
     public function getPasses() : array
     {
-        dump( __METHOD__ );
+        dump( $this->factory );
         return [
-            // 'static_components'         => [$this, 'earlyCompilerPass'],
-            // 'after::static_components'  => self::order( [$this, 'afterEarlyCompilerPass'], after: '*' ),
-            // 'before::static_components' => self::order( [$this, 'beforeEarlyCompilerPass'], before: '*' ),
-            self::class => [ $this, 'traverseTemplateNodes' ],
+            'static_component_pass'  => [$this, 'staticComponentCompilerPass'],
+            'runtime_component_pass' => [$this, 'runtimeComponentCompilerPass'],
         ];
     }
 
-    public function earlyCompilerPass( TemplateNode $templateNode ) : void
+    public function staticComponentCompilerPass( TemplateNode $template ) : void
     {
-        dump( __METHOD__, $templateNode, '---' );
+        dump( __METHOD__ );
+        ( new NodeTraverser() )->traverse(
+            $template,
+            function( Node $node ) : int|Node {
+                if ( $node instanceof ExpressionNode ) {
+                    return NodeTraverser::DontTraverseChildren;
+                }
+
+                if ( ! $node instanceof ElementNode ) {
+                    return $node;
+                }
+
+                $tag = $this->nodeTag( $node );
+
+                dump( $tag );
+
+                return $node;
+            },
+        );
     }
 
-    public function beforeEarlyCompilerPass( TemplateNode $templateNode ) : void
+    public function runtimeComponentCompilerPass( TemplateNode $template ) : void
     {
-        dump( __METHOD__, $templateNode, '---' );
+        dump( __METHOD__ );
+        ( new NodeTraverser() )->traverse(
+            $template,
+            function( Node $node ) : int|Node {
+                if ( $node instanceof ExpressionNode ) {
+                    return NodeTraverser::DontTraverseChildren;
+                }
+
+                if ( ! $node instanceof ElementNode ) {
+                    return $node;
+                }
+
+                $tag = $this->nodeTag( $node );
+
+                // TODO :: handle blind call to ui:{component}
+                if ( \str_starts_with( $node->name, 'ui:' ) ) {
+                    dump( $node->name.'::'.$tag );
+                }
+                else {
+                    dump( $tag );
+                }
+
+                return $node;
+            },
+        );
     }
 
-    public function afterEarlyCompilerPass( TemplateNode $templateNode ) : void
-    {
-        dump( __METHOD__, $templateNode, '---' );
-    }
-
-    public function traverseTemplateNodes( TemplateNode $templateNode ) : void
-    {
-        ( new NodeTraverser() )->traverse( $templateNode, [ $this, 'parseTemplate' ] );
-    }
-
-    public function parseTemplate( Node $node ) : int | Node
+    public function parseTemplate( Node $node ) : int|Node
     {
         if ( $node instanceof ExpressionNode ) {
             return NodeTraverser::DontTraverseChildren;
         }
 
-        if ( !$node instanceof ElementNode ) {
+        if ( ! $node instanceof ElementNode ) {
             return $node;
         }
 
@@ -91,21 +118,24 @@ final class FrameworkExtension extends LatteExtension
             dump( $node->name );
         }
 
-        [ $tag, $arg ] = $this->nodeTag( $node );
+        $tag = $this->nodeTag( $node );
 
         $component = $this->factory->getComponentName( $tag );
 
-        if ( !$component ) {
+        if ( ! $component ) {
             return $node;
         }
         $component = $this->factory->build( $component );
 
-        $html = $this->factory->render( $component::componentName(), $component::nodeArguments( new NodeCompiler( $node ) )) ;
-        return new AuxiliaryNode( static fn() => "echo '$html';");
+        $html = $this->factory->render(
+            $component::componentName(),
+            $component::nodeArguments( new NodeCompiler( $node ) ),
+        );
+        return new AuxiliaryNode( static fn() => "echo '{$html}';" );
 
-        $component->build($component->nodeArguments( new NodeCompiler( $node ) ));
+        $component->build( $component->nodeArguments( new NodeCompiler( $node ) ) );
 
-        dump($component, $component->render());
+        dump( $component, $component->render() );
 
         // dump($component->build( $component->nodeArguments( new NodeCompiler( $node ) ) )->render());
 
@@ -125,24 +155,39 @@ final class FrameworkExtension extends LatteExtension
         return $node;
     }
 
-    private function nodeTag( ElementNode $node ) : array
+    private function nodeTag( ElementNode $node ) : string
     {
-        $tag = $node->name;
-        $arg = null;
-
-        if ( \str_contains( $tag, ':' ) ) {
-            [ $tag, $arg ] = \explode( ':', $tag );
-            $tag .= ':';
-        }
-
-        return [ $tag, $arg ];
+        return \strstr( $node->name, ':', true ) ?: $node->name;
     }
 
     #[Override]
     public function getProviders() : array
     {
         return [
-                'component' => $this->factory,
+            'component' => $this->factory,
         ];
+    }
+
+    public function traverseTemplateNodes( TemplateNode $templateNode ) : void
+    {
+        ( new NodeTraverser() )->traverse( $templateNode, [$this, 'parseTemplate'] );
+    }
+
+    /**
+     * @param Node $node
+     *
+     * @return false|int|Node
+     */
+    private function skip( Node $node ) : false|int|Node
+    {
+        if ( $node instanceof ExpressionNode ) {
+            return NodeTraverser::DontTraverseChildren;
+        }
+
+        if ( ! $node instanceof ElementNode ) {
+            return $node;
+        }
+
+        return false;
     }
 }

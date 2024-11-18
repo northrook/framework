@@ -42,11 +42,11 @@ final class ComponentFactory
     /**
      * Begin the Build proccess of a component.
      *
-     * @template Component
+     * @template T
      *
-     * @param class-string<Component>|string $component
+     * @param class-string<T>|string $component
      *
-     * @return Component|ComponentInterface
+     * @return ComponentInterface|T
      */
     public function build( string $component ) : mixed
     {
