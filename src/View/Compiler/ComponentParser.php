@@ -48,6 +48,7 @@ final readonly class ComponentParser
 
         $this->tags       = $this->componentNodeTags();
         $this->properties = [
+            'class'            => $this->class,
             'render'           => $this->componentNode->render,
             'taggedProperties' => $this->taggedProperties(),
         ];
