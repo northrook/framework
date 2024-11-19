@@ -4,6 +4,7 @@ namespace Core\UI\Component;
 
 use Core\View\Attribute\ComponentNode;
 use Core\View\Component\ComponentBuilder;
+use Core\View\Render\HtmlContent;
 use Core\View\Template\Compiler\NodeCompiler;
 use Core\View\Template\Render;
 use Latte\Compiler\Nodes\AuxiliaryNode;
@@ -30,6 +31,7 @@ final class Code extends ComponentBuilder
 
     protected function compile() : string
     {
+        $this->component->content( HtmlContent::contentArray( $this->code ) );
         dump( $this );
         return (string) $this->component;
     }

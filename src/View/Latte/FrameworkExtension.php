@@ -8,7 +8,7 @@ use Core\Framework\Autowire\UrlGenerator;
 use Core\View\{ComponentFactory};
 use Core\View\Latte\Node\InlineStringableNode;
 use Core\View\Template\Compiler\NodeCompiler;
-use Latte\Compiler\{Node, Nodes\AuxiliaryNode, NodeTraverser};
+use Latte\Compiler\{Node, Nodes\TextNode, NodeTraverser};
 use Latte\Compiler\Nodes\Html\ElementNode;
 use Latte\Compiler\Nodes\Php\ExpressionNode;
 use Latte\Compiler\Nodes\TemplateNode;
@@ -89,7 +89,7 @@ final class FrameworkExtension extends LatteExtension
                         $component->class::componentName(),
                         $component->class::nodeArguments( new NodeCompiler( $node ) ),
                     );
-                    return new AuxiliaryNode( static fn() => "echo '{$html}';" );
+                    return new TextNode( $html );
                 }
 
                 if ( 'runtime' === $component->render ) {
