@@ -4,7 +4,6 @@ namespace Core\View\Component;
 
 use Core\View\Template\Compiler\NodeCompiler;
 use Latte\Compiler\Nodes\AuxiliaryNode;
-use Latte\Compiler\Nodes\Html\ElementNode;
 use Stringable;
 
 // The __constructor sort has to be a set standard
@@ -13,7 +12,6 @@ use Stringable;
 interface ComponentInterface extends Stringable
 {
     /*
-
     The Render::auxNode creates a callback, taking:
     class-string className - Factory : what Core\UI\Component to render - here we call ::build(..)
     array        arguments - the arguments to pass into ::build()
@@ -27,16 +25,13 @@ interface ComponentInterface extends Stringable
      *
      * @return ComponentInterface
      */
-    public function build(
-            array   $arguments,
-            ?string $uniqueId = null,
-    ) : ComponentInterface;
+    public function build( array $arguments, ?string $uniqueId = null ) : ComponentInterface;
 
     public static function nodeArguments( NodeCompiler $node ) : array;
 
-    public function templateNode( NodeCompiler $node ) : AuxiliaryNode;
-
     public static function componentName() : string;
+
+    public function templateNode( NodeCompiler $node ) : AuxiliaryNode;
 
     public function componentUniqueId() : string;
 

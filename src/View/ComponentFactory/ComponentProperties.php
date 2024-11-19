@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Core\View\ComponentFactory;
 
+use Stringable;
+
 /**
  * @internal
  * @author Martin Nielsen <mn@northrook.com>
  */
-final class ComponentProperties
+final class ComponentProperties implements Stringable
 {
     /**
      * @param non-empty-lowercase-string                            $name
@@ -24,6 +26,11 @@ final class ComponentProperties
         public array  $tags = [],
         public array  $tagged = [],
     ) {
+    }
+
+    public function __toString() : string
+    {
+        return $this->name;
     }
 
     public static function from( array $properties ) : ComponentProperties

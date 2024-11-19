@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\View\Latte;
 
 use Core\Framework\Autowire\UrlGenerator;
-use Core\View\{ComponentFactory, Component\ComponentInterface};
+use Core\View\{ComponentFactory};
 use Core\View\Latte\Node\InlineStringableNode;
 use Core\View\Template\Compiler\NodeCompiler;
 use Latte\Compiler\{Node, Nodes\AuxiliaryNode, NodeTraverser};
@@ -53,7 +53,7 @@ final class FrameworkExtension extends LatteExtension
 
     public function staticComponentCompilerPass( TemplateNode $template ) : void
     {
-        dump( __METHOD__ );
+        dump( $template );
         ( new NodeTraverser() )->traverse(
             $template,
             function( Node $node ) : int|Node {
@@ -71,9 +71,19 @@ final class FrameworkExtension extends LatteExtension
                     return $node;
                 }
 
-                dump( $component, (array) $component );
+                dump( $component );
 
-                return $node;
+                if ( 'static' !== $component->render ) {
+                    return $node;
+                }
+
+                $component = $this->factory->build( $component );
+
+                $html = $this->factory->render(
+                    $component::componentName(),
+                    $component::nodeArguments( new NodeCompiler( $node ) ),
+                );
+                return new AuxiliaryNode( static fn() => "echo '{$html}';" );
             },
         );
     }
@@ -106,58 +116,6 @@ final class FrameworkExtension extends LatteExtension
                 return $node;
             },
         );
-    }
-
-    public function parseTemplate( Node $node ) : int|Node
-    {
-        if ( $node instanceof ExpressionNode ) {
-            return NodeTraverser::DontTraverseChildren;
-        }
-
-        if ( ! $node instanceof ElementNode ) {
-            return $node;
-        }
-
-        // TODO :: handle blind call to ui:{component}
-        if ( \str_starts_with( $node->name, 'ui:' ) ) {
-            dump( $node->name );
-        }
-
-        $tag = $this->nodeTag( $node );
-
-        $component = $this->factory->getComponentName( $tag );
-
-        if ( ! $component ) {
-            return $node;
-        }
-        $component = $this->factory->build( $component );
-
-        $html = $this->factory->render(
-            $component::componentName(),
-            $component::nodeArguments( new NodeCompiler( $node ) ),
-        );
-        return new AuxiliaryNode( static fn() => "echo '{$html}';" );
-
-        $component->build( $component->nodeArguments( new NodeCompiler( $node ) ) );
-
-        dump( $component, $component->render() );
-
-        // dump($component->build( $component->nodeArguments( new NodeCompiler( $node ) ) )->render());
-
-        // return $component->templateNode( new NodeCompiler( $node ) );
-        // if ( $this->factory->hasTag( $node->name ) ) {
-        //     $parse = $this->factory->getByTag( $node->name );
-        //
-        //     \assert( \is_subclass_of( $parse['class'], ComponentInterface::class ) );
-        //
-        //     $compiler = new NodeCompiler( $node );
-        //
-        //     dump( $this->factory->getComponentConfig( $node->name ) );
-        //
-        //     return $parse['class']::templateNode( $compiler );
-        // }
-
-        return $node;
     }
 
     private function nodeTag( ElementNode $node ) : string

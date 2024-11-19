@@ -10,9 +10,7 @@ use Core\View\Exception\ComponentNotFoundException;
 use Core\View\Component\ComponentInterface;
 use Northrook\Logger\{Level, Log};
 use Support\Arr;
-use Symfony\Component\DependencyInjection\ServiceLocator;
-use Symfony\Polyfill\Intl\Icu\Exception\NotImplementedException;
-use function Support\{classBasename};
+use Symfony\Component\DependencyInjection\{ServiceLocator};
 use const Cache\AUTO;
 
 final class ComponentFactory
@@ -41,6 +39,12 @@ final class ComponentFactory
         private readonly array          $tags,
         private readonly ServiceLocator $componentLocator,
     ) {
+    }
+
+
+    public function hasComponent( string $component ) : bool
+    {
+        return \array_key_exists( $component, $this->components );
     }
 
     /**
@@ -128,27 +132,17 @@ final class ComponentFactory
 
         dump( $component );
 
-        $this->instantiated[$component][] = $component->componentUniqueId();
+        $this->instantiated[$properties->name][] = $component->componentUniqueId();
+
         return $component->render();
     }
 
     /**
-     * @param class-string $component
-     * @param mixed        ...$args
+     * @param array                    $arguments
+     * @param array<string, ?string[]> $promote
      *
-     * @return ComponentInterface
+     * @return void
      */
-    private function intantiate( string $component, mixed ...$args ) : ComponentInterface
-    {
-        if ( \class_exists( $component ) && \is_subclass_of( $component, ComponentInterface::class ) ) {
-            if ( ! isset( $this->instantiated[$component] ) ) {
-                $this->instantiated[$component] = \strtolower( classBasename( $component ) );
-            }
-            return new $component( ...$args );
-        }
-        throw new NotImplementedException( ComponentInterface::class );
-    }
-
     private function parseTaggedAttributes( array &$arguments, array $promote = [] ) : void
     {
         $exploded         = \explode( ':', $arguments['tag'] );
@@ -157,7 +151,7 @@ final class ComponentFactory
         $promote = $promote[$arguments['tag']] ?? null;
 
         foreach ( $exploded as $position => $tag ) {
-            if ( $promote && $promote[$position] ?? false ) {
+            if ( $promote && ( $promote[$position] ?? false ) ) {
                 $arguments[$promote[$position]] = $tag;
                 unset( $arguments[$position] );
 
@@ -220,31 +214,4 @@ final class ComponentFactory
 
         return $this->tags[$value] ?? null;
     }
-
-    public function hasComponent( string $component ) : bool
-    {
-        return \array_key_exists( $component, $this->components );
-    }
-
-    // /**
-    //  * @param class-string $class
-    //  * @param mixed        ...$args
-    //  *
-    //  * @return ComponentInterface
-    //  */
-    // public function create( string $class, mixed ...$args ) : ComponentInterface
-    // {
-    //     $component = $this->intantiate( $class, $args );
-    //
-    //     dump( $component );
-    //     // if ( $component instanceof AutowireServicesInterface ) {
-    //     //     // TODO : Look into using Reflect instead
-    //     //     foreach ( $component->getAutowireServices() as $property => $autowireService ) {
-    //     //         $component->setAutowireService( $property, $this->serviceLocator( $autowireService ) );
-    //     //     }
-    //     // }
-    //
-    //     return $component;
-    // }
-
 }
