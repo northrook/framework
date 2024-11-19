@@ -22,9 +22,9 @@ final class NodeExporter
     public function newCall( string $class, ...$arguments ) : self
     {
         return $this
-            ->append( '( new ', $class, '( ' )
-            ->handleCallArguments( $arguments )
-            ->append( ' ))' );
+                ->append( '( new ', $class, '( ' )
+                ->handleCallArguments( $arguments )
+                ->append( ' ))' );
     }
 
     /**
@@ -124,7 +124,7 @@ final class NodeExporter
         $value = \trim( $value, " \t\n\r\0\x0B'" );
 
         if ( ! Str::startsWith( $value, ['$', 'LR\Filters'] ) ) {
-            $value = "'".\addslashes( $value )."'";
+            $value = "'". \str_replace("'", "\'", $value) ."'";
         }
         return $value;
     }
@@ -137,7 +137,7 @@ final class NodeExporter
             return '[]';
         }
 
-        $string = '['.PHP_EOL;
+        $string = ' ['.PHP_EOL;
 
         foreach ( $argument as $key => $value ) {
             if ( \is_string( $key ) ) {
@@ -172,9 +172,9 @@ final class NodeExporter
     {
         static $runtimeCache;
         $runtimeCache['constants'] ??= \array_filter(
-            \get_defined_constants( true )['user'],
-            static fn( $key ) => \str_starts_with( $key, 'Cache' ),
-            ARRAY_FILTER_USE_KEY,
+                \get_defined_constants( true )['user'],
+                static fn( $key ) => \str_starts_with( $key, 'Cache' ),
+                ARRAY_FILTER_USE_KEY,
         );
 
         return (string) $runtimeCache[$cache]
