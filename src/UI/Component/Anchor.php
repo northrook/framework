@@ -2,52 +2,17 @@
 
 namespace Core\UI\Component;
 
-use Core\UI\Component;
 use Core\View\Attribute\ComponentNode;
-use Core\View\Component\ComponentInterface;
+use Core\View\Component\{ComponentBuilder};
 use Core\View\Template\Compiler\NodeCompiler;
 use Core\View\Template\Render;
 use Latte\Compiler\Nodes\AuxiliaryNode;
-use Psr\Log\LoggerInterface;
-use ValueError;
+use Northrook\Logger\Log;
 
 #[ComponentNode( ['a', 'a:primary', 'a:underline'] )]
-final class Anchor extends Component
+final class Anchor extends ComponentBuilder
 {
-    public function __construct(
-        string           $href,
-        array            $attributes = [],
-        array|string     $content = [],
-        string           $tag = 'a',
-        ?string          $uniqueId = null,
-        ?LoggerInterface $logger = null,
-    ) {
-        $attributes['href'] = $href;
-        parent::__construct( $tag, $attributes, $content, $uniqueId, $logger );
-    }
-
-    public static function compile(
-        array            $arguments,
-        array            $autowire = [],
-        ?string          $uniqueId = null,
-        ?LoggerInterface $logger = null,
-    ) : ComponentInterface {
-        $href       = $arguments['href']       ?? throw new ValueError( 'The [a href] value is required.' );
-        $attributes = $arguments['attributes'] ?? [];
-        $content    = $arguments['content']    ?? '';
-        $tag        = $arguments['tag']        ?? 'a';
-
-        unset( $arguments );
-
-        return new Anchor(
-            $href,
-            $attributes,
-            $content,
-            $tag,
-            $uniqueId,
-            $logger,
-        );
-    }
+    protected const ?string TAG = 'a';
 
     /**
      * @param ?string $set
@@ -59,7 +24,7 @@ final class Anchor extends Component
         $set ??= $this->element->attributes->pull( 'href' ) ?? '#';
 
         if ( '#' === $set ) {
-            $this->logger->notice(
+            Log::notice(
                 'The {tag} component has {attribute} set to {href}.',
                 [
                     'tag'       => $this->element->tag,
@@ -92,29 +57,26 @@ final class Anchor extends Component
         $this->element->class( 'underline' );
     }
 
-    protected function build() : string
+    protected function compile() : string
     {
         $this->setHref();
-
         return (string) $this->element;
     }
 
-    public static function templateNode( NodeCompiler $node ) : AuxiliaryNode
+    public function templateNode( NodeCompiler $node ) : AuxiliaryNode
     {
-        $attributes = $node->attributes();
-
-        $href = $node->arguments()['href'] ?? $attributes['href'] ?? null;
-
-        unset( $attributes['href'] );
-
         return Render::templateNode(
             self::componentName(),
-            [
-                'href'       => $href,
-                'attributes' => $node->attributes(),
-                'content'    => $node->parseContent(),
-                'tag'        => $node->tag,
-            ],
+            $this::nodeArguments( $node ),
         );
+    }
+
+    public static function nodeArguments( NodeCompiler $node ) : array
+    {
+        return [
+            'tag'        => $node->tag,
+            'attributes' => $node->attributes(),
+            'content'    => $node->parseContent(),
+        ];
     }
 }

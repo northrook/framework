@@ -45,12 +45,14 @@ final class FrameworkExtension extends LatteExtension
     public function getPasses() : array
     {
         return [
-            'early_component_pass' => fn( TemplateNode $template ) => $this->componentCompilerPass(
+            'static_component_pass' => fn( TemplateNode $template ) => $this->componentPass(
                 $template,
                 'static',
             ),
-            'static_component_pass'  => [$this, 'staticComponentCompilerPass'],
-            'runtime_component_pass' => [$this, 'runtimeComponentCompilerPass'],
+            'runtime_component_pass' => fn( TemplateNode $template ) => $this->componentPass(
+                $template,
+                'runtime',
+            ),
         ];
     }
 
@@ -58,20 +60,28 @@ final class FrameworkExtension extends LatteExtension
      * @param TemplateNode              $template
      * @param 'live'|'runtime'|'static' $render
      */
-    public function componentCompilerPass( TemplateNode $template, string $render ) : void
+    public function componentPass( TemplateNode $template, string $render ) : void
     {
         ( new NodeTraverser() )->traverse(
             $template,
             function( Node $node ) use ( $render ) : int|Node {
+
+                // Skip expression nodes, as a component cannot exist there
                 if ( $node instanceof ExpressionNode ) {
                     return NodeTraverser::DontTraverseChildren;
                 }
 
+                // Components are only called from ElementNodes
                 if ( ! $node instanceof ElementNode ) {
                     return $node;
                 }
 
-                dump( $render );
+                // Get ComponentProperties, if one matches the Node->tag
+                if ( ! $component = $this->factory->getComponentProperties( $node->name ) ) {
+                    return $node;
+                }
+
+                dump( $component );
 
                 return $node;
             },
@@ -84,13 +94,6 @@ final class FrameworkExtension extends LatteExtension
         ( new NodeTraverser() )->traverse(
             $template,
             function( Node $node ) : int|Node {
-                if ( $node instanceof ExpressionNode ) {
-                    return NodeTraverser::DontTraverseChildren;
-                }
-
-                if ( ! $node instanceof ElementNode ) {
-                    return $node;
-                }
 
                 $component = $this->factory->getComponentProperties( $node->name );
 
