@@ -334,11 +334,7 @@ class NodeCompiler
         $node ??= $this->node;
 
         if ( ! $node instanceof ElementNode ) {
-            E_Value::error(
-                '{method} can only parse {nodeType}.',
-                ['method' => __METHOD__, 'nodeType' => $node::class],
-                throw : true,
-            );
+            throw new ValueError( __METHOD__.' can only parse '.$node::class.'.');
         }
 
         return new ComponentArguments( $node );

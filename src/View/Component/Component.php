@@ -5,7 +5,7 @@ namespace Core\View\Component;
 use Core\View\Render\HtmlContent;
 use Latte\Runtime\Html;
 use Northrook\HTML\AbstractElement;
-use Northrook\HTML\Element\{Attribute, Attributes};
+use Northrook\HTML\Element\{Attribute, AttributeMethods, Attributes};
 use Stringable;
 
 /**
@@ -19,6 +19,8 @@ use Stringable;
  */
 final class Component extends AbstractElement
 {
+    use AttributeMethods;
+
     /**
      * @param string                                          $tag        =  [ 'div', 'body', 'html', 'li', 'dropdown', 'menu', 'modal', 'field', 'fieldset', 'legend', 'label', 'option', 'select', 'input', 'textarea', 'form', 'tooltip', 'section', 'main', 'header', 'footer', 'div', 'span', 'p', 'ul', 'a', 'img', 'button', 'i', 'strong', 'em', 'sup', 'sub', 'br', 'hr', 'h', 'h1', 'h2', 'h3', 'h4', 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr' ][$any]
      * @param array<string, mixed>                            $attributes
@@ -32,7 +34,7 @@ final class Component extends AbstractElement
         $this
             ->tag( $tag )
             ->assignAttributes( $attributes )
-            ->content( HtmlContent::contentArray( $content ) );
+            ->content( HtmlContent::contentArray( $content??[] ) );
     }
 
     /**
