@@ -4,7 +4,6 @@ namespace Core\View\Component;
 
 // / Replacement / Merge of Component and Compiler\ComponentBuilder
 
-use Northrook\HTML\Element;
 use Northrook\HTML\Element\Attributes;
 use Northrook\Logger\Log;
 use Throwable;
@@ -25,7 +24,7 @@ abstract class ComponentBuilder implements ComponentInterface
 
     private string $html;
 
-    protected readonly Element $element;
+    protected readonly Component $component;
 
     protected readonly Attributes $attributes;
 
@@ -35,23 +34,20 @@ abstract class ComponentBuilder implements ComponentInterface
         array   $arguments,
         ?string $uniqueId = null,
     ) : ComponentInterface {
-        dump(
-            $arguments,
-        );
         $this->parseArguments( $arguments );
 
         $this->name ??= $this::componentName();
 
-        $this->element ??= new Element(
+        $this->component ??= new Component(
             tag        : $this::TAG               ?? $arguments['tag'] ?? 'div',
             attributes : $arguments['attributes'] ?? [],
             content    : $arguments['content']    ?? null,
         );
 
-        $this->attributes ??= $this->element->attributes;
+        $this->attributes ??= $this->component->attributes;
 
         $this->setComponentUniqueId(
-            $uniqueId ?? \serialize( [$arguments, $this->element] ).\spl_object_id( $this->element ),
+            $uniqueId ?? \serialize( [$arguments, $this->component] ).\spl_object_id( $this->component ),
         );
 
         unset( $arguments['attributes'], $arguments['content'] );

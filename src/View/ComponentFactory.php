@@ -128,14 +128,19 @@ final class ComponentFactory
             $this->parseTaggedAttributes( $arguments, $properties->tagged );
         }
 
-        $component = $this->build( $component );
+        $component = clone $this->build( $component );
         $component->build( $arguments );
 
-        dump( $component );
+        $html = $component->render();
+
+        if ( ! $html ) {
+            Log::exception( new ComponentNotFoundException( $component ), Level::CRITICAL );
+            return '';
+        }
 
         $this->instantiated[$properties->name][] = $component->componentUniqueId();
 
-        return $component->render();
+        return $html;
     }
 
     /**

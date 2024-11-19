@@ -22,8 +22,8 @@ final class Icon extends ComponentBuilder
 
     protected function compile() : string
     {
-        $this->element->content( $this->icon->iconPack->get( $this->get ) );
-        return (string) $this->element;
+        $this->component->content( $this->icon->iconPack->get( $this->get ) );
+        return (string) $this->component;
     }
 
     public function templateNode( NodeCompiler $node ) : AuxiliaryNode

@@ -21,15 +21,15 @@ final class Anchor extends ComponentBuilder
      */
     public function setHref( ?string $set = null ) : self
     {
-        $set ??= $this->element->attributes->pull( 'href' ) ?? '#';
+        $set ??= $this->component->attributes->pull( 'href' ) ?? '#';
 
         if ( '#' === $set ) {
             Log::notice(
                 'The {tag} component has {attribute} set to {href}.',
                 [
-                    'tag'       => $this->element->tag,
-                    'attribute' => 'href',
-                    'href'      => $set,
+                        'tag'       => $this->component->tag,
+                        'attribute' => 'href',
+                        'href'      => $set,
                 ],
             );
         }
@@ -49,18 +49,18 @@ final class Anchor extends ComponentBuilder
 
     protected function primary() : void
     {
-        $this->element->class( 'primary' );
+        $this->component->class( 'primary' );
     }
 
     protected function underline() : void
     {
-        $this->element->class( 'underline' );
+        $this->component->class( 'underline' );
     }
 
     protected function compile() : string
     {
         $this->setHref();
-        return (string) $this->element;
+        return (string) $this->component;
     }
 
     public function templateNode( NodeCompiler $node ) : AuxiliaryNode

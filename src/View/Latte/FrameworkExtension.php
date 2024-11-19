@@ -65,7 +65,6 @@ final class FrameworkExtension extends LatteExtension
         ( new NodeTraverser() )->traverse(
             $template,
             function( Node $node ) use ( $render ) : int|Node {
-
                 // Skip expression nodes, as a component cannot exist there
                 if ( $node instanceof ExpressionNode ) {
                     return NodeTraverser::DontTraverseChildren;
@@ -81,76 +80,27 @@ final class FrameworkExtension extends LatteExtension
                     return $node;
                 }
 
+                if ( $render !== $component->render ) {
+                    return $node;
+                }
+
+                if ( 'static' === $component->render ) {
+                    $html = $this->factory->render(
+                        $component->class::componentName(),
+                        $component->class::nodeArguments( new NodeCompiler( $node ) ),
+                    );
+                    return new AuxiliaryNode( static fn() => "echo '{$html}';" );
+                }
+
+                if ( 'runtime' === $component->render ) {
+                    return $this->factory->build( $component )->templateNode( new NodeCompiler( $node ) );
+                }
+
                 dump( $component );
 
                 return $node;
             },
         );
-    }
-
-    public function staticComponentCompilerPass( TemplateNode $template ) : void
-    {
-        dump( $template );
-        ( new NodeTraverser() )->traverse(
-            $template,
-            function( Node $node ) : int|Node {
-
-                $component = $this->factory->getComponentProperties( $node->name );
-
-                if ( ! $component ) {
-                    return $node;
-                }
-
-                dump( $component );
-
-                if ( 'static' !== $component->render ) {
-                    return $node;
-                }
-
-                $component = $this->factory->build( $component );
-
-                $html = $this->factory->render(
-                    $component::componentName(),
-                    $component::nodeArguments( new NodeCompiler( $node ) ),
-                );
-                return new AuxiliaryNode( static fn() => "echo '{$html}';" );
-            },
-        );
-    }
-
-    public function runtimeComponentCompilerPass( TemplateNode $template ) : void
-    {
-        dump( __METHOD__ );
-        ( new NodeTraverser() )->traverse(
-            $template,
-            function( Node $node ) : int|Node {
-                if ( $node instanceof ExpressionNode ) {
-                    return NodeTraverser::DontTraverseChildren;
-                }
-
-                if ( ! $node instanceof ElementNode ) {
-                    return $node;
-                }
-                return $node;
-
-                $tag = $this->nodeTag( $node );
-
-                // TODO :: handle blind call to ui:{component}
-                if ( \str_starts_with( $node->name, 'ui:' ) ) {
-                    dump( $node->name.'::'.$tag );
-                }
-                else {
-                    dump( $tag );
-                }
-
-                return $node;
-            },
-        );
-    }
-
-    private function nodeTag( ElementNode $node ) : string
-    {
-        return \strstr( $node->name, ':', true ) ?: $node->name;
     }
 
     #[Override]
