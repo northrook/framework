@@ -11,7 +11,6 @@ use Latte\Compiler\Nodes\Html\ElementNode;
 use Northrook\HTML\Element;
 use Northrook\HTML\Element\Attributes;
 use Northrook\Logger\Log;
-use Support\Str;
 use const Support\EMPTY_STRING;
 use Exception;
 use InvalidArgumentException;
@@ -270,7 +269,7 @@ class NodeCompiler
 
         foreach ( $from->content->getIterator() as $index => $node ) {
             if ( $node instanceof TextNode ) {
-                if ( ! $value = Str::squish( NodeHelpers::toText( $node ) ) ) {
+                if ( ! $value = NodeHelpers::toText( $node ) ) {
                     continue;
                 }
                 $content[$index] = $value;
@@ -334,7 +333,7 @@ class NodeCompiler
         $node ??= $this->node;
 
         if ( ! $node instanceof ElementNode ) {
-            throw new ValueError( __METHOD__.' can only parse '.$node::class.'.');
+            throw new ValueError( __METHOD__.' can only parse '.$node::class.'.' );
         }
 
         return new ComponentArguments( $node );

@@ -46,17 +46,17 @@
                 Trivia &amp; Notes
             </h2>
             <p>
-                The <code lang="css">:not()</code> selector is chainable with more <code>:not()</code>
+                The <code:css>:not()</code:css> selector is chainable with more <code>:not()</code>
                 selectors. For example, <a href="#" target="_blank"
                                            rel="noreferrer noopener">the following</a> will match
-                all <code>article</code>s except the one with an ID <code lang="css">#featured</code>, and then
-                will filter out the articles with a class name <code lang="css">.tutorial</code>:
+                all <code>article</code>s except the one with an ID <code:css>#featured</code:css>, and then
+                will filter out the articles with a class name <code:css>.tutorial</code:css>:
             </p>
-            <code:block lang="css">
+            <code:css:block>
                 article:not(#featured):not(.tutorial) {
                 /* style the articles that match */
                 }
-            </code:block>
+            </code:css:block>
             <p>Just like other pseudo-elements and pseudo-class selectors, <code>:not()</code> can
                 be chained with other pseudo-classes and pseudo-elements. For example, the following
                 will add a “New!” word to list items that do not have a <code>.old</code> class
@@ -64,12 +64,12 @@
                 <a href="#" target="_blank" rel="noreferrer noopener"><code>::after</code></a>
                 pseudo-element:
             </p>
-            <code:block lang="css">
+            <code:css:block>
                 li:not(.old)::after {
                 content: "New!";
                 color: deepPink;
                 }
-            </code:block>
+            </code:css:block>
             <p>
                 You can see a live demo in the Live Demo section below.
             </p>
