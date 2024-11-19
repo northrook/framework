@@ -41,7 +41,6 @@ final class ComponentFactory
     ) {
     }
 
-
     public function hasComponent( string $component ) : bool
     {
         return \array_key_exists( $component, $this->components );
@@ -88,6 +87,8 @@ final class ComponentFactory
      */
     public function build( string|ComponentProperties $component ) : mixed
     {
+        $component = (string) $component;
+
         if ( ! $this->hasComponent( $component ) ) {
             throw new ComponentNotFoundException( $component );
         }
