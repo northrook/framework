@@ -51,7 +51,7 @@ final class ComponentFactory
             return null;
         }
 
-        return $this->propertiesCache[$component] ??= ComponentProperties::from( $this->components[$component] );
+        return $this->propertiesCache[$component] ??= new ComponentProperties( ...$this->components[$component] );
     }
 
     public function hasTag( string $tag ) : bool
@@ -230,7 +230,6 @@ final class ComponentFactory
             }
 
             $value = \strstr( $value, ':', true ) ?: $value;
-
         }
 
         return $this->tags[$value] ?? null;
