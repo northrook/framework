@@ -44,11 +44,38 @@ final class FrameworkExtension extends LatteExtension
     #[Override]
     public function getPasses() : array
     {
-        dump( $this->factory );
         return [
+            'early_component_pass' => fn( TemplateNode $template ) => $this->componentCompilerPass(
+                $template,
+                'static',
+            ),
             'static_component_pass'  => [$this, 'staticComponentCompilerPass'],
             'runtime_component_pass' => [$this, 'runtimeComponentCompilerPass'],
         ];
+    }
+
+    /**
+     * @param TemplateNode              $template
+     * @param 'live'|'runtime'|'static' $render
+     */
+    public function componentCompilerPass( TemplateNode $template, string $render ) : void
+    {
+        ( new NodeTraverser() )->traverse(
+            $template,
+            function( Node $node ) use ( $render ) : int|Node {
+                if ( $node instanceof ExpressionNode ) {
+                    return NodeTraverser::DontTraverseChildren;
+                }
+
+                if ( ! $node instanceof ElementNode ) {
+                    return $node;
+                }
+
+                dump( $render );
+
+                return $node;
+            },
+        );
     }
 
     public function staticComponentCompilerPass( TemplateNode $template ) : void
