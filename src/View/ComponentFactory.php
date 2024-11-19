@@ -32,9 +32,9 @@ final class ComponentFactory
     /**
      * Provide a [class-string, args[]] array.
      *
-     * @param array<class-string, array{render: 'live'|'runtime'|'static', taggedProperties: array<array-key,array<int, mixed>>} > $components
-     * @param array                                                                                                                $tags
-     * @param ServiceLocator                                                                                                       $componentLocator
+     * @param array<class-string, array{name: string, class: class-string, render: 'live'|'runtime'|'static', tags: string[], tagged: array<string, ?string[]>} > $components
+     * @param array                                                                                                                                               $tags
+     * @param ServiceLocator                                                                                                                                      $componentLocator
      */
     public function __construct(
         private readonly array          $components,
@@ -43,6 +43,27 @@ final class ComponentFactory
     ) {
     }
 
+    /**
+     * Check if the provided string matches any {@see ComponentFactory::$tags}.
+     *
+     * @param string $tag
+     *
+     * @return bool
+     */
+    public function hasTag( string $tag ) : bool
+    {
+        return \array_key_exists( $tag, $this->tags );
+    }
+
+    /**
+     * Retrieve {@see ComponentProperties} by `name`, `className`, or `tag`.
+     *
+     * Returns `null` if the resulting component does not exist.
+     *
+     * @param string $get
+     *
+     * @return ?ComponentProperties
+     */
     public function getComponentProperties( string $get ) : ?ComponentProperties
     {
         $component = $this->getComponentName( $get );
@@ -52,11 +73,6 @@ final class ComponentFactory
         }
 
         return $this->propertiesCache[$component] ??= new ComponentProperties( ...$this->components[$component] );
-    }
-
-    public function hasTag( string $tag ) : bool
-    {
-        return \array_key_exists( $tag, $this->tags );
     }
 
     /**
@@ -83,6 +99,56 @@ final class ComponentFactory
         throw new ComponentNotFoundException( $component, 'Not found in the Component Container.' );
     }
 
+    /**
+     * Renders a component at runtime.
+     *
+     * @param class-string|string  $component
+     * @param array<string, mixed> $arguments
+     * @param ?int                 $cache
+     *
+     * @return string
+     */
+    public function render( string $component, array $arguments = [], ?int $cache = AUTO ) : string
+    {
+        $properties = $this->getComponentProperties( $component );
+
+        if ( ! $properties ) {
+            Log::exception( new ComponentNotFoundException( $component ), Level::CRITICAL );
+            return '';
+        }
+
+        $tag = $arguments['tag'] ?? null;
+
+        if ( isset( $arguments['tag'] ) ) {
+            $this->parseTaggedAttributes( $arguments, $properties->tagged );
+        }
+
+        $component = $this->build( $component );
+        $component->build( $arguments );
+
+        dump( $component );
+
+        $this->instantiated[$component][] = $component->componentUniqueId();
+        return $component->render();
+    }
+
+    /**
+     * @param class-string $component
+     * @param mixed        ...$args
+     *
+     * @return ComponentInterface
+     */
+    private function intantiate( string $component, mixed ...$args ) : ComponentInterface
+    {
+        if ( \class_exists( $component ) && \is_subclass_of( $component, ComponentInterface::class ) ) {
+            if ( ! isset( $this->instantiated[$component] ) ) {
+                $this->instantiated[$component] = \strtolower( classBasename( $component ) );
+            }
+            return new $component( ...$args );
+        }
+        throw new NotImplementedException( ComponentInterface::class );
+    }
+
     private function parseTaggedAttributes( array &$arguments, array $promote = [] ) : void
     {
         $exploded         = \explode( ':', $arguments['tag'] );
@@ -101,86 +167,6 @@ final class ComponentFactory
                 $arguments[$position] = $tag;
             }
         }
-    }
-
-    /**
-     * Renders a component at runtime.
-     *
-     * @param class-string|string  $component
-     * @param array<string, mixed> $arguments
-     * @param ?int                 $cache
-     *
-     * @return string
-     */
-    public function render( string $component, array $arguments = [], ?int $cache = AUTO ) : string
-    {
-        $taggedProperties = $this->components[$component]['taggedProperties'];
-
-        $tag = $arguments['tag'] ?? null;
-
-        if ( isset( $arguments['tag'] ) ) {
-            $this->parseTaggedAttributes( $arguments, $taggedProperties );
-        }
-
-        dump( $arguments, $taggedProperties );
-
-        // if ( $properties['taggedProperties'] && isset( $arguments['tag'] ) ) {
-        //     $tags  = \explode( ':', $arguments['tag'] );
-        //     $props = $properties['taggedProperties'][$tags[0]] ?? null;
-        //
-        //     foreach ( $tags as $position => $tag ) {
-        //         if ( $props[$position] ) {
-        //             $arguments[$props[$position]] = $tag;
-        //         }
-        //     }
-        //     dump( $arguments, $properties['taggedProperties'] );
-        // }
-
-        $component = $this->build( $component );
-        $component->build( $arguments );
-
-        dump( $component );
-        return $component->render();
-
-        if ( ! $render ) {
-            Log::exception( new ComponentNotFoundException( $component ), Level::CRITICAL );
-            return '';
-        }
-
-        \assert( \is_subclass_of( $render['class'], ComponentInterface::class ) );
-
-        // foreach ( $render['autowire'] as $argument => $class ) {
-        //     $render['autowire'][$argument] = $this->serviceLocator( $class, true );
-        // }
-
-        $uniqueId = null;
-
-        $create = $render['class']::compile(
-            $arguments,
-            [],
-            $uniqueId,
-            $this->logger,
-        );
-
-        $this->instantiated[$component][] = $create->componentUniqueId();
-        return $create->render() ?? '';
-    }
-
-    /**
-     * @param class-string $component
-     * @param mixed        ...$args
-     *
-     * @return ComponentInterface
-     */
-    private function intantiate( string $component, mixed ...$args ) : ComponentInterface
-    {
-        if ( \class_exists( $component ) && \is_subclass_of( $component, ComponentInterface::class ) ) {
-            if ( ! isset( $this->instantiated[$component] ) ) {
-                $this->instantiated[$component] = \strtolower( classBasename( $component ) );
-            }
-            return new $component( ...$args );
-        }
-        throw new NotImplementedException( ComponentInterface::class );
     }
 
     /**
