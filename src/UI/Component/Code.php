@@ -12,9 +12,8 @@ use Northrook\Logger\Log;
 use Support\Str;
 use Tempest\Highlight\Highlighter;
 use const Support\{EMPTY_STRING, WHITESPACE};
-use Exception;
 
-#[ComponentNode( [ 'pre', 'code:{language}:block' ], 'static' )]
+#[ComponentNode( ['pre', 'code:{language}:block'], 'static' )]
 final class Code extends ComponentBuilder
 {
     protected const ?string TAG = 'code';
@@ -29,14 +28,15 @@ final class Code extends ComponentBuilder
 
     protected function parseArguments( array &$arguments ) : void
     {
-        if ( $arguments[ 'tag' ] === 'pre' ) {
-            // $arguments[ 'block' ] = true;
+        if ( 'pre' === $arguments['tag'] ) {
+            $arguments[] = 'block';
         }
-        $content = $arguments[ 'content' ] ?? [];
+        $content = $arguments['content'] ?? [];
 
-        if ( !\array_is_list( $content ) ) {
+        if ( ! \array_is_list( $content ) ) {
             $content = HtmlContent::contentArray( $content );
         }
+
         foreach ( $content as $index => $value ) {
             if ( \is_array( $value ) ) {
                 // $value = HtmlContent::contentString( [$value]);
@@ -44,19 +44,19 @@ final class Code extends ComponentBuilder
                 continue;
             }
 
-            if ( !\is_string( $value ) ) {
-                dump( __METHOD__ . ' encountered invalid content value.', $this, '---' );
+            if ( ! \is_string( $value ) ) {
+                dump( __METHOD__.' encountered invalid content value.', $this, '---' );
 
                 continue;
             }
 
-            if ( !\trim( $value ) ) {
-                unset( $content[ $index ] );
+            if ( ! \trim( $value ) ) {
+                unset( $content[$index] );
             }
         }
         $this->code = \implode( '', $content );
 
-        unset( $arguments[ 'content' ] );
+        unset( $arguments['content'] );
     }
 
     private function inlineCode() : void
@@ -72,7 +72,7 @@ final class Code extends ComponentBuilder
         foreach ( $lines as $line ) {
             $line = \str_replace( "\t", '    ', $line );
             if ( \preg_match( '#^(\s+)#m', $line, $matches ) ) {
-                $leftPadding[] = \strlen( $matches[ 0 ] );
+                $leftPadding[] = \strlen( $matches[0] );
             }
         }
 
@@ -84,27 +84,27 @@ final class Code extends ComponentBuilder
             }
 
             \preg_match( '#^(\s*)#m', $string, $matches );
-            $leftPad        = \strlen( $matches[ 0 ] ?? 0 );
-            $string         = \str_repeat( ' ', $leftPad ) . \trim( $string );
-            $lines[ $line ] = \str_replace( '    ', "\t", $string );
+            $leftPad      = \strlen( $matches[0] ?? 0 );
+            $string       = \str_repeat( ' ', $leftPad ).\trim( $string );
+            $lines[$line] = \str_replace( '    ', "\t", $string );
         }
 
         $this->code = \implode( "\n", $lines );
         $this->component->tag( 'pre' )
-                        ->class( 'block', prepend : true );
+            ->class( 'block', prepend : true );
         $this->block = true;
     }
 
     protected function compile() : string
     {
-        if ( !$this->block ) {
+        if ( ! $this->block ) {
             $this->inlineCode();
         }
 
         if ( $this->tidy ) {
             $this->code = Str::replaceEach(
-                    [ ' ), );' => ' ) );' ],
-                    $this->code,
+                [' ), );' => ' ) );'],
+                $this->code,
             );
         }
 
@@ -129,11 +129,11 @@ final class Code extends ComponentBuilder
 
     final protected function highlight( string $code, ?int $gutter = null ) : string
     {
-        if ( !$this->language || !$code ) {
+        if ( ! $this->language || ! $code ) {
             return EMPTY_STRING;
         }
 
-        if ( !$this->block && $gutter ) {
+        if ( ! $this->block && $gutter ) {
             Log::warning( 'Inline code snippets cannot have a gutter' );
             $gutter = null;
         }
@@ -148,17 +148,17 @@ final class Code extends ComponentBuilder
     public function templateNode( NodeCompiler $node ) : AuxiliaryNode
     {
         return Render::templateNode(
-                self::componentName(),
-                $this::nodeArguments( $node ),
+            self::componentName(),
+            $this::nodeArguments( $node ),
         );
     }
 
     public static function nodeArguments( NodeCompiler $node ) : array
     {
         return [
-                'tag'        => $node->tag,
-                'attributes' => $node->attributes(),
-                'content'    => $node->parseContent(),
+            'tag'        => $node->tag,
+            'attributes' => $node->attributes(),
+            'content'    => $node->parseContent(),
         ];
     }
 }
