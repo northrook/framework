@@ -10,7 +10,6 @@ use Core\View\Component\ComponentInterface;
 use Core\View\ComponentFactory\ComponentProperties;
 use Exception\NotImplementedException;
 use Support\{ClassInfo, Reflect};
-use JetBrains\PhpStorm\ExpectedValues;
 
 /**
  * @internal
@@ -31,10 +30,9 @@ final readonly class ComponentParser
     /** @var array<int, string> */
     public array $tags;
 
-    public ComponentProperties $properties;
+    public int $priority;
 
-    #[ExpectedValues( values : ['live', 'static', 'runtime'] )]
-    public string $render;
+    public array $properties;
 
     public function __construct( string|ClassInfo $component )
     {
@@ -48,7 +46,9 @@ final readonly class ComponentParser
 
         $this->tags = $this->componentNodeTags();
 
-        $this->properties = new ComponentProperties(
+        $this->priority = $this->componentNode->priority;
+
+        $this->properties = (array) new ComponentProperties(
             $this->name,
             $this->class,
             $this->componentNode->render,

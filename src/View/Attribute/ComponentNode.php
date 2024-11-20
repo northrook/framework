@@ -47,17 +47,17 @@ final readonly class ComponentNode
      * - `static`
      * - `runtime` - default
      *
-     * ### Allow children
-     * Whether to allow innerHTML for this Component.
+     * ### Priority
+     * The higher the number, the earlier the Component is parsed.
      *
-     * @param non-empty-lowercase-string[]  $tag
-     * @param non-empty-lowercase-string    $render
-     * @param bool                          $allowChildren
+     * @param non-empty-lowercase-string[] $tag
+     * @param non-empty-lowercase-string   $render
+     * @param int                          $priority
      */
     public function __construct(
-        string|array                                                              $tag = [],
+        string|array  $tag = [],
         #[ExpectedValues( values : ['live', 'static', 'runtime'] )] public string $render = 'runtime',
-        public bool                                                               $allowChildren = true,
+        public int    $priority = 0,
     ) {
         if ( \is_string( $tag ) ) {
             $tag = [$tag];

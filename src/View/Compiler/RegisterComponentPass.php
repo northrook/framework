@@ -21,6 +21,8 @@ abstract class RegisterComponentPass extends CompilerPass
 
         $components = [];
 
+        $priority = [];
+
         foreach ( $this->register() as $component ) {
             $register = new ComponentParser( $component );
 
@@ -29,10 +31,15 @@ abstract class RegisterComponentPass extends CompilerPass
             $definition = $container->register( "component.{$register->name}", $register->class );
             $definition->setAutowired( true );
 
-            $this->components[$register->name] = (array) $register->properties;
+            $this->components[$register->name] = $register->properties;
 
-            $components[$register->name] = $definition;
+            $components[$register->name]                    = $definition;
+            $priority[$register->priority][$register->name] = $register->properties;
         }
+
+        $this->console->listing( $priority );
+        dump( $priority );
+        // components[render] - order by priority
 
         $componentLocator->setArguments( [$components] );
 
