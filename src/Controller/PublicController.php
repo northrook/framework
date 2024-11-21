@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Core\Controller;
 
 use Core\Framework\Attribute\OnDocument;
+use Core\Framework\Autowire\Pathfinder;
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
 use Core\Framework\Response\{Document, Parameters};
+use Latte\Engine;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[
@@ -15,6 +17,8 @@ use Symfony\Component\Routing\Attribute\Route;
 ]
 final class PublicController extends Controller
 {
+    use Pathfinder;
+
     #[OnDocument]
     public function onDocumentResponse( Document $document ) : void
     {
@@ -53,6 +57,14 @@ final class PublicController extends Controller
         $parameters->set( 'content', 'Hello there!' );
 
         return 'demo.latte';
+    }
+
+    #[Route( 'toast', 'notification' )]
+    public function notification() : void
+    {
+        $latte = new Engine();
+
+        dump( $latte->createTemplate( $this->pathfinder( 'dir.core.templates/component/toast.latte' ) ) );
     }
 
     #[Route( 'hello', 'boilerplate' )]
