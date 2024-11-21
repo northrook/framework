@@ -2,14 +2,14 @@
 
 namespace Core\UI\Component;
 
-use Core\View\Attribute\ComponentNode;
+use Core\UI\Attribute\TemplateNode;
 use Core\View\Component\ComponentBuilder;
 use Core\View\IconRenderer;
 use Core\View\Template\Compiler\NodeCompiler;
 use Core\View\Template\Render;
 use Latte\Compiler\Nodes\AuxiliaryNode;
 
-#[ComponentNode( 'icon:{get}', 'static', 128 )]
+#[TemplateNode( 'icon:{get}', 'static', 128 )]
 final class Icon extends ComponentBuilder
 {
     protected const ?string TAG = 'i';

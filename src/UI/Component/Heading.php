@@ -2,7 +2,7 @@
 
 namespace Core\UI\Component;
 
-use Core\View\Attribute\ComponentNode;
+use Core\UI\Attribute\TemplateNode;
 use Core\View\Component\ComponentBuilder;
 use Core\View\Render\HtmlContent;
 use Core\View\Template\Compiler\NodeCompiler;
@@ -16,7 +16,7 @@ use function String\stripTags;
 use function Support\toString;
 use const Support\WHITESPACE;
 
-#[ComponentNode( Tag::HEADING, 'static' )]
+#[TemplateNode( Tag::HEADING, 'static' )]
 final class Heading extends ComponentBuilder
 {
     private string $heading;

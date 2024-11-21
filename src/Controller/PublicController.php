@@ -62,9 +62,10 @@ final class PublicController extends Controller
     #[Route( 'toast', 'notification' )]
     public function notification() : void
     {
-        $latte = new Engine();
+        $latte    = new Engine();
+        $template = $latte->createTemplate( $this->pathfinder( 'dir.core.templates/component/toast.latte' ) );
 
-        dump( $latte->createTemplate( $this->pathfinder( 'dir.core.templates/component/toast.latte' ) ) );
+        dump( $template );
     }
 
     #[Route( 'hello', 'boilerplate' )]

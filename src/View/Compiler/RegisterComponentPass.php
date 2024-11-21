@@ -37,7 +37,8 @@ abstract class RegisterComponentPass extends CompilerPass
             $priority[$register->priority][$register->name] = $register->properties;
         }
 
-        $this->console->listing( $priority );
+        // divide indo
+
         dump( $priority );
         // components[render] - order by priority
 

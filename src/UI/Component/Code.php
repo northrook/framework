@@ -2,7 +2,7 @@
 
 namespace Core\UI\Component;
 
-use Core\View\Attribute\ComponentNode;
+use Core\UI\Attribute\TemplateNode;
 use Core\View\Component\ComponentBuilder;
 use Core\View\Render\HtmlContent;
 use Core\View\Template\Compiler\NodeCompiler;
@@ -13,7 +13,7 @@ use Support\Str;
 use Tempest\Highlight\Highlighter;
 use const Support\{EMPTY_STRING, WHITESPACE};
 
-#[ComponentNode( ['pre', 'code:{language}:block'], 'static', -256 )]
+#[TemplateNode( [ 'pre', 'code:{language}:block'], 'static', -256 )]
 final class Code extends ComponentBuilder
 {
     protected const ?string TAG = 'code';

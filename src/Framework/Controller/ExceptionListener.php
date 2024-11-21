@@ -8,6 +8,6 @@ final class ExceptionListener
 {
     public function __invoke( ExceptionEvent $event ) : void
     {
-        dd( $event );
+        // dd( $event );
     }
 }

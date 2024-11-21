@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\View\Attribute;
+namespace Core\UI\Attribute;
 
 use Attribute;
 use JetBrains\PhpStorm\ExpectedValues;
@@ -19,7 +19,7 @@ use Northrook\Logger\Log;
  * @author  Martin Nielsen
  */
 #[Attribute( Attribute::TARGET_CLASS )]
-final readonly class ComponentNode
+final readonly class TemplateNode
 {
     /** Rendered and updated from the front-end */
     public const string LIVE = 'live';

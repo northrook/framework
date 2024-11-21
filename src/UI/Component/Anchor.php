@@ -2,14 +2,14 @@
 
 namespace Core\UI\Component;
 
-use Core\View\Attribute\ComponentNode;
+use Core\UI\Attribute\TemplateNode;
 use Core\View\Component\{ComponentBuilder};
 use Core\View\Template\Compiler\NodeCompiler;
 use Core\View\Template\Render;
 use Latte\Compiler\Nodes\AuxiliaryNode;
 use Northrook\Logger\Log;
 
-#[ComponentNode( ['a', 'a:primary', 'a:underline'] )]
+#[TemplateNode( [ 'a', 'a:primary', 'a:underline'] )]
 final class Anchor extends ComponentBuilder
 {
     protected const ?string TAG = 'a';
