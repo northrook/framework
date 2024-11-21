@@ -23,16 +23,16 @@ final class Anchor extends ComponentBuilder
     {
         $set ??= $this->component->attributes->pull( 'href' ) ?? '#';
 
-        if ( '#' === $set ) {
-            Log::notice(
-                'The {tag} component has {attribute} set to {href}.',
-                [
-                        'tag'       => $this->component->tag,
-                        'attribute' => 'href',
-                        'href'      => $set,
-                ],
-            );
-        }
+        // if ( '#' === $set ) {
+        //     // Log::notice(
+        //     //     'The {tag} component has {attribute} set to {href}.',
+        //     //     [
+        //     //             'tag'       => $this->component->tag,
+        //     //             'attribute' => 'href',
+        //     //             'href'      => $set,
+        //     //     ],
+        //     // );
+        // }
 
         // TODO : Validate schema://example.com
         // TODO : parse mailto:, tel:, sms:, etc

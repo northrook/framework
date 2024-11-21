@@ -50,7 +50,7 @@ abstract class ComponentBuilder implements ComponentInterface
             $uniqueId ?? \serialize( [$arguments, $this->component] ).\spl_object_id( $this->component ),
         );
 
-        unset( $arguments['attributes'], $arguments['content'] );
+        unset( $arguments['tag'], $arguments['attributes'], $arguments['content'] );
 
         foreach ( $arguments as $property => $value ) {
             if ( \property_exists( $this, $property ) && ! isset( $this->{$property} ) ) {

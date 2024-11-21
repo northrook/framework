@@ -8,12 +8,17 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\Framework\Controller\ResponseListener;
+use Core\Framework\Controller\{ExceptionListener, ResponseListener};
 use Core\Framework\Response\{Document, Headers, Parameters};
 
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
-        // Response EventSubscriber;
+
+            // ErrorListener
+        ->set( ExceptionListener::class )
+        ->tag( 'kernel.event_listener' )
+
+            // Response EventSubscriber;
         ->set( ResponseListener::class )
         ->tag( 'kernel.event_listener', ['event' => 'kernel.controller'] )
         ->tag( 'kernel.event_listener', ['event' => 'kernel.view'] )
@@ -24,12 +29,12 @@ return static function( ContainerConfigurator $container ) : void {
         ->tag( 'controller.service_arguments' )
         ->autowire()
 
-        // ResponseHeaderBag Service
+            // ResponseHeaderBag Service
         ->set( Headers::class )
 
-        // Document Properties
+            // Document Properties
         ->set( Document::class )
 
-        // Template Parameters
+            // Template Parameters
         ->set( Parameters::class );
 };
