@@ -6,8 +6,8 @@ namespace Core\View\Compiler;
 
 use Core\Symfony\Console\Output;
 use Core\View\Attribute\ViewComponent;
-use Core\View\Component\ComponentInterface;
 use Core\View\ComponentFactory\ComponentProperties;
+use Core\View\ComponentInterface;
 use Exception\NotImplementedException;
 use Support\{ClassInfo, Reflect};
 

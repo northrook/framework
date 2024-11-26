@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\View\Latte;
 
 use Core\Framework\Autowire\UrlGenerator;
-use Core\View\{OldComponentFactory};
+use Core\View\ComponentFactory;
 use Core\View\Latte\Node\InlineStringableNode;
 use Core\View\Template\Compiler\NodeCompiler;
 use Latte\Compiler\{Node, Nodes\TextNode, NodeTraverser};
@@ -22,7 +22,7 @@ final class FrameworkExtension extends LatteExtension
 
     private array $registetedTags = [];
 
-    public function __construct( public readonly OldComponentFactory $factory )
+    public function __construct( public readonly ComponentFactory $factory )
     {
     }
 
@@ -80,21 +80,21 @@ final class FrameworkExtension extends LatteExtension
                     return $node;
                 }
 
-                if ( $render !== $component->render ) {
-                    return $node;
-                }
-
-                if ( 'static' === $component->render ) {
-                    $html = $this->factory->render(
-                        $component->class::componentName(),
-                        $component->class::nodeArguments( new NodeCompiler( $node ) ),
-                    );
-                    return new TextNode( $html );
-                }
-
-                if ( 'runtime' === $component->render ) {
-                    return $this->factory->get( $component )->templateNode( new NodeCompiler( $node ) );
-                }
+                // if ( $render !== $component->render ) {
+                //     return $node;
+                // }
+                //
+                // if ( 'static' === $component->render ) {
+                //     $html = $this->factory->render(
+                //         $component->class::componentName(),
+                //         $component->class::nodeArguments( new NodeCompiler( $node ) ),
+                //     );
+                //     return new TextNode( $html );
+                // }
+                //
+                // if ( 'runtime' === $component->render ) {
+                //     return $this->factory->get( $component )->templateNode( new NodeCompiler( $node ) );
+                // }
 
                 dump( $component );
 

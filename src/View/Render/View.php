@@ -5,7 +5,7 @@ namespace Core\View\Render;
 use Core\Framework\Autowire\Settings;
 use Core\Symfony\DependencyInjection\ServiceContainer;
 use Core\Framework\Response\Document;
-use Core\View\OldComponentFactory;
+use Core\View\ComponentFactory;
 use Northrook\HTML\Element\Attributes;
 use Northrook\Logger\Log;
 use Support\Str;
@@ -174,7 +174,7 @@ abstract class View implements Stringable
     private function enqueueInvokedAssets() : void
     {
         // TODO ::
-        $this->document->assets( ...$this->serviceLocator( OldComponentFactory::class )->getInstantiatedComponents() );
+        $this->document->assets( ...$this->serviceLocator( ComponentFactory::class )->getInstantiatedComponents() );
     }
 
     private function resolveNotifications() : void
