@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Core\View\Latte;
 
 use Core\Framework\Autowire\UrlGenerator;
+use Core\View\Component\ComponentNode;
 use Core\View\ComponentFactory;
 use Core\View\Latte\Node\InlineStringableNode;
 use Core\View\Template\Compiler\NodeCompiler;
+use Core\View\Template\TemplateCompiler;
 use Latte\Compiler\{Node, Nodes\TextNode, NodeTraverser};
 use Latte\Compiler\Nodes\Html\ElementNode;
 use Latte\Compiler\Nodes\Php\ExpressionNode;
@@ -20,7 +22,9 @@ final class FrameworkExtension extends LatteExtension
     // use NodeCompilerMethods, UrlGenerator;
     use UrlGenerator;
 
-    private array $registetedTags = [];
+    private array $staticComponents;
+
+    private array $nodeComponents;
 
     public function __construct( public readonly ComponentFactory $factory )
     {
@@ -44,6 +48,53 @@ final class FrameworkExtension extends LatteExtension
     #[Override]
     public function getPasses() : array
     {
+        $static     = [];
+        $components = [];
+
+        foreach ( $this->factory->getRegisteredComponents() as $component ) {
+            $component = new ComponentFactory\ComponentProperties( ...$component );
+
+            if ( $component->static ) {
+                $index = $component->priority ?: \count( $static );
+                if ( \array_key_exists( $component->priority, $static ) ) {
+                    $index++;
+                }
+                $static[$index] = $component;
+            }
+            else {
+                $index = $component->priority ?: \count( $components );
+                if ( \array_key_exists( $component->priority, $components ) ) {
+                    $index++;
+                }
+                $components[$index] = $component;
+            }
+        }
+        \ksort( $static );
+        \ksort( $components );
+
+        foreach ( \array_reverse( $static ) as $component ) {
+            $this->staticComponents[$component->name] = $component;
+        }
+
+        foreach ( \array_reverse( $components ) as $component ) {
+            $this->nodeComponents[$component->name] = $component;
+        }
+
+        dump( $this );
+
+        $componentPasses = [];
+
+        foreach ( $this->staticComponents as $name => $component ) {
+            $componentPasses["static-{$component->name}-pass"] = fn( TemplateNode $template ) => $this->componentPass(
+                $template,
+                $component,
+            );
+        }
+
+        dump( $componentPasses );
+
+        return $componentPasses;
+
         return [
             'static_component_pass' => fn( TemplateNode $template ) => $this->componentPass(
                 $template,
@@ -57,14 +108,14 @@ final class FrameworkExtension extends LatteExtension
     }
 
     /**
-     * @param TemplateNode              $template
-     * @param 'live'|'runtime'|'static' $render
+     * @param TemplateNode                         $template
+     * @param ComponentFactory\ComponentProperties $component
      */
-    public function componentPass( TemplateNode $template, string $render ) : void
+    public function componentPass( TemplateNode $template, ComponentFactory\ComponentProperties $component ) : void
     {
         ( new NodeTraverser() )->traverse(
             $template,
-            function( Node $node ) use ( $render ) : int|Node {
+            function( Node $node ) use ( $component ) : int|Node {
                 // Skip expression nodes, as a component cannot exist there
                 if ( $node instanceof ExpressionNode ) {
                     return NodeTraverser::DontTraverseChildren;
@@ -75,10 +126,26 @@ final class FrameworkExtension extends LatteExtension
                     return $node;
                 }
 
-                // Get ComponentProperties, if one matches the Node->tag
-                if ( ! $component = $this->factory->getComponentProperties( $node->name ) ) {
+                if ( ! $component->targetTag( $node->name ) ) {
                     return $node;
                 }
+
+                $build = clone $this->factory->getComponent( $component->name );
+
+                if ( $component->static ) {
+                    $build->create( ComponentNode::nodeArguments( new NodeCompiler( $node ) ) );
+                    $html = $build->render( $this->serviceLocator( TemplateCompiler::class ) );
+
+                    dump( $html );
+                    // return new TextNode(  );
+                }
+
+                dump( $build );
+
+                // Get ComponentProperties, if one matches the Node->tag
+                // if ( !$component = $this->factory->getComponentProperties( $node->name ) ) {
+                //     return $node;
+                // }
 
                 // if ( $render !== $component->render ) {
                 //     return $node;
@@ -95,8 +162,6 @@ final class FrameworkExtension extends LatteExtension
                 // if ( 'runtime' === $component->render ) {
                 //     return $this->factory->get( $component )->templateNode( new NodeCompiler( $node ) );
                 // }
-
-                dump( $component );
 
                 return $node;
             },

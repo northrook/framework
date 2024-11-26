@@ -33,14 +33,10 @@ abstract class RegisterComponentPass extends CompilerPass
 
             $this->components[$register->name] = $register->properties;
 
-            $components[$register->name]                    = $definition;
-            $priority[$register->priority][$register->name] = $register->properties;
+            $components[$register->name] = $definition;
         }
 
-        // divide indo
-
-        dump( $priority );
-        // components[render] - order by priority
+        dump( $components );
 
         $componentLocator->setArguments( [$components] );
 
