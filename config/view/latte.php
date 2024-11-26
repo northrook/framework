@@ -36,7 +36,7 @@ return static function( ContainerConfigurator $container ) : void {
             //
         ->set( FormatterExtension::class )
             //
-        ->set( OptimizerExtension::class )
+            // ->set( OptimizerExtension::class )
             // Cache integration
         ->set( CacheExtension::class )
         ->args(

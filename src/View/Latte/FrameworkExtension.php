@@ -9,6 +9,7 @@ use Core\View\Component\ComponentNode;
 use Core\View\ComponentFactory;
 use Core\View\Latte\Node\InlineStringableNode;
 use Core\View\Template\Compiler\NodeCompiler;
+use Core\View\Template\Node\StaticNode;
 use Core\View\Template\TemplateCompiler;
 use Latte\Compiler\{Node, Nodes\TextNode, NodeTraverser};
 use Latte\Compiler\Nodes\Html\ElementNode;
@@ -126,10 +127,12 @@ final class FrameworkExtension extends LatteExtension
                         ComponentNode::nodeArguments( new NodeCompiler( $node ) ),
                         $component->tagged,
                     );
-                    $html = $build->render( $this->serviceLocator( TemplateCompiler::class ) );
+
+                    // TODO : Create a ComponentCompiler that does not include the FrameworkExtension
+                    $html = $build->render( new TemplateCompiler() );
 
                     dump( $html );
-                    return $html ? new TextNode( $html ) : $node;
+                    return $html ? new StaticNode( $html, $node->position ) : $node;
                 }
 
                 dump( $build );
