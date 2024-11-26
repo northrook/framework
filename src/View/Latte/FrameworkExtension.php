@@ -80,7 +80,7 @@ final class FrameworkExtension extends LatteExtension
             $this->nodeComponents[$component->name] = $component;
         }
 
-        dump( $this );
+        // dump( $this );
 
         $componentPasses = [];
 
@@ -94,17 +94,6 @@ final class FrameworkExtension extends LatteExtension
         dump( $componentPasses );
 
         return $componentPasses;
-
-        return [
-            'static_component_pass' => fn( TemplateNode $template ) => $this->componentPass(
-                $template,
-                'static',
-            ),
-            'runtime_component_pass' => fn( TemplateNode $template ) => $this->componentPass(
-                $template,
-                'runtime',
-            ),
-        ];
     }
 
     /**
@@ -134,13 +123,13 @@ final class FrameworkExtension extends LatteExtension
 
                 if ( $component->static ) {
                     $build->create(
-                            ComponentNode::nodeArguments( new NodeCompiler( $node ) ),
-                            $component->tagged,
+                        ComponentNode::nodeArguments( new NodeCompiler( $node ) ),
+                        $component->tagged,
                     );
                     $html = $build->render( $this->serviceLocator( TemplateCompiler::class ) );
 
                     dump( $html );
-                    // return new TextNode(  );
+                    return $html ? new TextNode( $html ) : $node;
                 }
 
                 dump( $build );
