@@ -174,7 +174,9 @@ abstract class View implements Stringable
     private function enqueueInvokedAssets() : void
     {
         // TODO ::
-        $this->document->assets( ...$this->serviceLocator( ComponentFactory::class )->getInstantiatedComponents() );
+        $assets = $this->serviceLocator( ComponentFactory::class )->getInstantiated();
+        dump( $assets );
+        $this->document->assets();
     }
 
     private function resolveNotifications() : void
