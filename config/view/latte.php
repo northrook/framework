@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\View\{ComponentFactory, Latte};
+use Core\View\{OldComponentFactory, Latte};
 use Core\View\Latte\Extension\{CacheExtension, FormatterExtension, OptimizerExtension};
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
@@ -31,7 +31,7 @@ return static function( ContainerConfigurator $container ) : void {
 
             //
         ->set( Latte\FrameworkExtension::class )
-        ->args( [service( ComponentFactory::class )] )
+        ->args( [service( OldComponentFactory::class )] )
 
             //
         ->set( FormatterExtension::class )

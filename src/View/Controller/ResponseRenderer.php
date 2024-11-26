@@ -3,11 +3,11 @@
 namespace Core\View\Controller;
 
 use Core\Framework\Controller;
-use Core\Framework\DependencyInjection\ServiceContainer;
+use Core\Symfony\DependencyInjection\ServiceContainer;
+use Core\View\Template\TemplateCompiler;
 use Core\Framework\Response\{Document, Headers, Parameters};
 use Core\Symfony\EventListener\ResponseEventListener;
 use Core\View\Render\ViewDocument;
-use Core\View\TemplateEngine;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Logger\Log;
@@ -131,9 +131,9 @@ final class ResponseRenderer extends ResponseEventListener
         return $this->serviceLocator( Headers::class );
     }
 
-    private function template() : TemplateEngine
+    private function template() : TemplateCompiler
     {
-        return $this->serviceLocator( TemplateEngine::class );
+        return $this->serviceLocator( TemplateCompiler::class );
     }
 
     private function parameters() : object|array

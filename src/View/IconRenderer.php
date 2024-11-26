@@ -4,6 +4,8 @@ namespace Core\View;
 
 use Core\View\Render\IconPack;
 
+// :: Not part of [core-view]
+
 final readonly class IconRenderer
 {
     public IconPack $iconPack;

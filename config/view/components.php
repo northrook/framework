@@ -26,6 +26,7 @@ return static function( ContainerConfigurator $container ) : void {
                 [], // $components
                 [], // $tags
                 service( 'core.component_locator' ),
+                // TODO : Cache
             ],
         )
         ->tag( 'core.service_locator' )

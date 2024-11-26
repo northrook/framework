@@ -2,16 +2,18 @@
 
 namespace Core\UI\Component;
 
-use Core\UI\Attribute\TemplateNode;
-use Core\View\Component\{ComponentBuilder};
+use Core\View\Attribute\ViewComponent;
+use Core\View\Component;
 use Core\View\Template\Compiler\NodeCompiler;
-use Core\View\Template\Render;
-use Latte\Compiler\Nodes\AuxiliaryNode;
+use Core\View\Template\Node\ComponentNode;
+use Core\View\Template\TemplateCompiler;
 use Northrook\Logger\Log;
 
-#[TemplateNode( [ 'a', 'a:primary', 'a:underline'] )]
-final class Anchor extends ComponentBuilder
+#[ViewComponent( ['a', 'a:primary', 'a:underline'] )]
+final class Anchor extends Component implements Component\NodeInterface
 {
+    use Component\InnerContent;
+
     protected const ?string TAG = 'a';
 
     /**
@@ -21,7 +23,7 @@ final class Anchor extends ComponentBuilder
      */
     public function setHref( ?string $set = null ) : self
     {
-        $set ??= $this->component->attributes->pull( 'href' ) ?? '#';
+        // $set ??= $this->attributes->pull( 'href' ) ?? '#';
 
         // if ( '#' === $set ) {
         //     // Log::notice(
@@ -43,40 +45,28 @@ final class Anchor extends ComponentBuilder
         // TODO : sniff type
         // TODO : sniff name|id
 
-        $this->attributes->set( 'href', $set );
+        // $this->attributes->set( 'href', $set );
         return $this;
     }
 
     protected function primary() : void
     {
-        $this->component->class( 'primary' );
+        // $this->attributes->class( 'primary' );
     }
 
     protected function underline() : void
     {
-        $this->component->class( 'underline' );
+        // $this->attributes->class( 'underline' );
     }
 
-    protected function compile() : string
+    protected function compile( TemplateCompiler $compiler ) : string
     {
-        $this->setHref();
-        return (string) $this->component;
+        // $this->setHref();
+        return $compiler->render( __DIR__.'/anchor.latte', $this, cache : false );
     }
 
-    public function templateNode( NodeCompiler $node ) : AuxiliaryNode
+    public function node( NodeCompiler $node ) : ComponentNode
     {
-        return Render::templateNode(
-            self::componentName(),
-            $this::nodeArguments( $node ),
-        );
-    }
-
-    public static function nodeArguments( NodeCompiler $node ) : array
-    {
-        return [
-            'tag'        => $node->tag,
-            'attributes' => $node->attributes(),
-            'content'    => $node->parseContent(),
-        ];
+        return new ComponentNode( $this->name, $node );
     }
 }

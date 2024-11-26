@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\Framework\Controller;
 
 use Core\Framework\Autowire\CurrentRequest;
-use Core\Framework\DependencyInjection\ServiceContainer;
+use Core\Symfony\DependencyInjection\ServiceContainer;
 use Exception;
 use Northrook\Filesystem\URL;
 use Symfony\Component\Finder\SplFileInfo;

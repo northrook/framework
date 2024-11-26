@@ -2,44 +2,28 @@
 
 namespace Core\UI\Component;
 
-use Core\UI\Attribute\TemplateNode;
-use Core\View\Component\ComponentBuilder;
-use Core\View\IconRenderer;
-use Core\View\Template\Compiler\NodeCompiler;
-use Core\View\Template\Render;
-use Latte\Compiler\Nodes\AuxiliaryNode;
+use Core\View\Attribute\ViewComponent;
+use Core\View\{Component, IconRenderer, Template\TemplateCompiler};
+use Symfony\Contracts\Service\Attribute\Required;
 
-#[TemplateNode( 'icon:{get}', 'static', 128 )]
-final class Icon extends ComponentBuilder
+/**
+ * @method void build()
+ */
+#[ViewComponent( 'icon:{get}', true, 128 )]
+final class Icon extends Component
 {
     protected const ?string TAG = 'i';
 
     protected string $get;
 
-    public function __construct( private readonly IconRenderer $icon )
-    {
-    }
+    #[Required]
+    public IconRenderer $iconRenderer;
 
-    protected function compile() : string
-    {
-        $this->component->content( $this->icon->iconPack->get( $this->get ) );
-        return (string) $this->component;
-    }
+    public readonly string $icon;
 
-    public function templateNode( NodeCompiler $node ) : AuxiliaryNode
+    protected function compile( TemplateCompiler $compiler ) : string
     {
-        return Render::templateNode(
-            self::componentName(),
-            $this::nodeArguments( $node ),
-        );
-    }
-
-    public static function nodeArguments( NodeCompiler $node ) : array
-    {
-        return [
-            'tag'        => $node->tag,
-            'attributes' => $node->attributes(),
-            'content'    => $node->parseContent(),
-        ];
+        $this->icon = $this->iconRenderer->iconPack->get( $this->get );
+        return $compiler->render( __DIR__.'/icon.latte', $this, cache : false );
     }
 }

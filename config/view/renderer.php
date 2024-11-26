@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\View\{Controller\ResponseRenderer, IconRenderer, Latte, TemplateEngine};
+use Core\View\{Controller\ResponseRenderer, IconRenderer, Latte, Template\TemplateCompiler};
 
 return static function( ContainerConfigurator $container ) : void {
     //
@@ -24,15 +24,11 @@ return static function( ContainerConfigurator $container ) : void {
         ->autowire()
 
             //
-        ->set( TemplateEngine::class )
+        ->set( TemplateCompiler::class )
         ->tag( 'core.service_locator' )
         ->args(
             [
-                '%dir.root%', // $projectDirectory
-                [
-                    '%dir.templates%',
-                    '%dir.core.templates%',
-                ], // $templateDirectories
+                ['%dir.templates%', '%dir.core.templates%'], // $viewDirectories
                 '%dir.cache.latte%', // $cacheDirectory
                 '%kernel.default_locale%', // $locale
                 '%kernel.debug%', // $autoRefresh

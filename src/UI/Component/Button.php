@@ -2,19 +2,17 @@
 
 namespace Core\UI\Component;
 
-use Core\UI\Attribute\TemplateNode;
-use Core\View\Component\ComponentBuilder;
-use Core\View\IconRenderer;
-use Core\View\Template\Compiler\NodeCompiler;
-use Core\View\Template\Render;
-use Latte\Compiler\Nodes\AuxiliaryNode;
+use Core\View\Attribute\ViewComponent;
+use Core\View\{Component, IconRenderer, Template\TemplateCompiler};
 
-#[TemplateNode( [ 'button', 'button:submit'], 'static' )]
-final class Button extends ComponentBuilder
+#[ViewComponent( ['button', 'button:submit'], true )]
+final class Button extends Component
 {
+    use Component\InnerContent;
+
     protected const ?string TAG = 'button';
 
-    protected ?string $icon = null;
+    public ?string $icon = null;
 
     public function __construct( private readonly IconRenderer $iconRenderer )
     {
@@ -26,34 +24,17 @@ final class Button extends ComponentBuilder
         unset( $arguments['icon'] );
     }
 
-    protected function compile() : string
+    protected function compile( TemplateCompiler $compiler ) : string
     {
-        if ( $this->icon && $this->icon = $this->iconRenderer->iconPack->get( $this->icon ) ) {
-            $this->component->content( $this->icon, true );
+        if ( $this->icon ) {
+            $this->icon = $this->iconRenderer->iconPack->get( $this->icon );
         }
 
-        return (string) $this->component;
+        return $compiler->render( __DIR__.'/button.latte', $this, cache : false );
     }
 
     protected function submit() : void
     {
-        $this->component->attributes->set( 'type', 'submit' );
-    }
-
-    public function templateNode( NodeCompiler $node ) : AuxiliaryNode
-    {
-        return Render::templateNode(
-            self::componentName(),
-            $this::nodeArguments( $node ),
-        );
-    }
-
-    public static function nodeArguments( NodeCompiler $node ) : array
-    {
-        return [
-            'tag'        => $node->tag,
-            'attributes' => $node->attributes(),
-            'content'    => $node->parseContent(),
-        ];
+        // $this->attributes->set( 'type', 'submit' );
     }
 }

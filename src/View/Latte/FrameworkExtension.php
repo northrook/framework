@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\View\Latte;
 
 use Core\Framework\Autowire\UrlGenerator;
-use Core\View\{ComponentFactory};
+use Core\View\{OldComponentFactory};
 use Core\View\Latte\Node\InlineStringableNode;
 use Core\View\Template\Compiler\NodeCompiler;
 use Latte\Compiler\{Node, Nodes\TextNode, NodeTraverser};
@@ -22,7 +22,7 @@ final class FrameworkExtension extends LatteExtension
 
     private array $registetedTags = [];
 
-    public function __construct( public readonly ComponentFactory $factory )
+    public function __construct( public readonly OldComponentFactory $factory )
     {
     }
 
@@ -93,7 +93,7 @@ final class FrameworkExtension extends LatteExtension
                 }
 
                 if ( 'runtime' === $component->render ) {
-                    return $this->factory->build( $component )->templateNode( new NodeCompiler( $node ) );
+                    return $this->factory->get( $component )->templateNode( new NodeCompiler( $node ) );
                 }
 
                 dump( $component );

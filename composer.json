@@ -39,7 +39,8 @@
     "latte/latte": "^3.0",
     "northrook/core-symfony": "dev-main",
     "northrook/html": "dev-main",
-    "tempest/highlight": "^2.11"
+    "tempest/highlight": "^2.11",
+    "northrook/core-view": "dev-main"
   },
   "conflict": {
     "northrook/core": "*"

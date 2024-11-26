@@ -3,7 +3,7 @@
 namespace Core\Framework\Controller;
 
 use Core\Framework\Controller;
-use Core\Framework\DependencyInjection\ServiceContainer;
+use Core\Symfony\DependencyInjection\ServiceContainer;
 use Core\Framework\Response\Document;
 use Core\Symfony\EventListener\ResponseEventListener;
 use Northrook\Clerk;

@@ -7,7 +7,7 @@ namespace Core\Framework;
 use Core\Symfony\DependencyInjection\ServiceContainerInterface;
 use Core\Framework\Attribute\{OnContent, OnDocument};
 use Core\Framework\Controller\ResponseMethods;
-use Core\Framework\DependencyInjection\ServiceContainer;
+use Core\Symfony\DependencyInjection\ServiceContainer;
 use Core\Framework\Response\{Parameters, Document, Headers};
 use Northrook\Logger\Log;
 use ReflectionClass;

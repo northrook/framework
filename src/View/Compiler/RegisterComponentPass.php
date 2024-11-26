@@ -2,9 +2,9 @@
 
 namespace Core\View\Compiler;
 
+use Core\View\ComponentFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Core\Symfony\DependencyInjection\CompilerPass;
-use Core\View\ComponentFactory;
 
 abstract class RegisterComponentPass extends CompilerPass
 {

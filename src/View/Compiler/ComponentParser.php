@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\View\Compiler;
 
 use Core\Symfony\Console\Output;
-use Core\UI\Attribute\TemplateNode;
+use Core\View\Attribute\ViewComponent;
 use Core\View\Component\ComponentInterface;
 use Core\View\ComponentFactory\ComponentProperties;
 use Exception\NotImplementedException;
@@ -19,12 +19,12 @@ final readonly class ComponentParser
 {
     private ClassInfo $component;
 
-    private TemplateNode $componentNode;
+    private ViewComponent $componentNode;
 
     /** @var non-empty-lowercase-string */
     public string $name;
 
-    /** @var class-string<\Core\View\Component\ComponentInterface> */
+    /** @var class-string<ComponentInterface> */
     public string $class;
 
     /** @var array<int, string> */
@@ -51,7 +51,7 @@ final readonly class ComponentParser
         $this->properties = (array) new ComponentProperties(
             $this->name,
             $this->class,
-            $this->componentNode->render,
+            $this->componentNode->static,
             $this->tags,
             $this->taggedProperties(),
         );
@@ -138,7 +138,7 @@ final readonly class ComponentParser
     private function nodeAttribute() : void
     {
         $this->componentNode
-                = Reflect::getAttribute( $this->component->reflect(), TemplateNode::class )
-                  ?? new TemplateNode();
+                = Reflect::getAttribute( $this->component->reflect(), ViewComponent::class )
+                  ?? new ViewComponent();
     }
 }

@@ -2,20 +2,20 @@
 
 namespace Core\UI\Component;
 
-use Core\UI\Attribute\TemplateNode;
-use Core\View\Component\ComponentBuilder;
+use Core\View\Attribute\ViewComponent;
+use Core\View\Component;
 use Core\View\Render\HtmlContent;
-use Core\View\Template\Compiler\NodeCompiler;
-use Core\View\Template\Render;
-use Latte\Compiler\Nodes\AuxiliaryNode;
+use Core\View\Template\TemplateCompiler;
 use Northrook\Logger\Log;
 use Support\Str;
 use Tempest\Highlight\Highlighter;
 use const Support\{EMPTY_STRING, WHITESPACE};
 
-#[TemplateNode( [ 'pre', 'code:{language}:block'], 'static', -256 )]
-final class Code extends ComponentBuilder
+#[ViewComponent( ['pre', 'code:{language}:block'], true, -256 )]
+final class Code extends Component
 {
+    use Component\InnerContent;
+
     protected const ?string TAG = 'code';
 
     protected bool $tidy = false;
@@ -90,12 +90,12 @@ final class Code extends ComponentBuilder
         }
 
         $this->code = \implode( "\n", $lines );
-        $this->component->tag( 'pre' )
-            ->class( 'block', prepend : true );
+        $this->tag->set( 'pre' );
+        // $this->attributes->class( 'block', prepend : true );
         $this->block = true;
     }
 
-    protected function compile() : string
+    protected function compile( TemplateCompiler $compiler ) : string
     {
         if ( ! $this->block ) {
             $this->inlineCode();
@@ -111,20 +111,20 @@ final class Code extends ComponentBuilder
         if ( $this->language ) {
             $content = "{$this->highlight( $this->code )}";
             $lines   = \substr_count( $content, PHP_EOL );
-            $this->component->attributes( 'language', $this->language );
+            // $this->attributes( 'language', $this->language );
 
-            if ( $lines ) {
-                $this->component->attributes( 'line-count', (string) $lines );
-            }
+            // if ( $lines ) {
+            //     $this->attributes( 'line-count', (string) $lines );
+            // }
         }
         else {
             $content = $this->code;
         }
 
         // dump( $content );
-        $this->component->content( $content );
+        $this->content->append( $content );
         // dump( $this );
-        return (string) $this->component;
+        return $compiler->render( __DIR__.'/code.latte', $this, cache : false );
     }
 
     final protected function highlight( string $code, ?int $gutter = null ) : string
@@ -143,22 +143,5 @@ final class Code extends ComponentBuilder
             return $highlighter->withGutter( $gutter )->parse( $code, $this->language );
         }
         return $highlighter->parse( $code, $this->language );
-    }
-
-    public function templateNode( NodeCompiler $node ) : AuxiliaryNode
-    {
-        return Render::templateNode(
-            self::componentName(),
-            $this::nodeArguments( $node ),
-        );
-    }
-
-    public static function nodeArguments( NodeCompiler $node ) : array
-    {
-        return [
-            'tag'        => $node->tag,
-            'attributes' => $node->attributes(),
-            'content'    => $node->parseContent(),
-        ];
     }
 }

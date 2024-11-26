@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\Framework\Compiler;
 
 use Core\Symfony\DependencyInjection\CompilerPass;
-use Core\Framework\DependencyInjection\ServiceContainer;
+use Core\Symfony\DependencyInjection\ServiceContainer;
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Reference};
 use function Support\uses_trait;
 

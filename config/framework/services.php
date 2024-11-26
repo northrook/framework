@@ -40,7 +40,7 @@ return static function( ContainerConfigurator $container ) : void {
             ],
         );
 
-    /** @used-by \Core\Framework\DependencyInjection\ServiceContainer */
+    /** @used-by \Core\Symfony\DependencyInjection\ServiceContainer */
     $container->services()
         ->set( 'core.service_locator' )
         ->tag( 'container.service_locator' )

@@ -2,13 +2,10 @@
 
 namespace Core\UI\Component;
 
-use Core\UI\Attribute\TemplateNode;
-use Core\View\Component\ComponentBuilder;
+use Core\View\Attribute\ViewComponent;
+use Core\View\Component;
 use Core\View\Render\HtmlContent;
-use Core\View\Template\Compiler\NodeCompiler;
-use Core\View\Template\Render;
-use Latte\Compiler\Nodes\AuxiliaryNode;
-use Latte\Compiler\Nodes\Html\ElementNode;
+use Core\View\Template\TemplateCompiler;
 use Northrook\HTML\Element\Tag;
 use Northrook\HTML\HtmlNode;
 use Support\Str;
@@ -16,9 +13,11 @@ use function String\stripTags;
 use function Support\toString;
 use const Support\WHITESPACE;
 
-#[TemplateNode( Tag::HEADING, 'static' )]
-final class Heading extends ComponentBuilder
+#[ViewComponent( Tag::HEADING, true )]
+final class Heading extends Component
 {
+    use Component\InnerContent;
+
     private string $heading;
 
     private string $level;
@@ -81,55 +80,26 @@ final class Heading extends ComponentBuilder
         $this->heading = $heading;
     }
 
-    protected function compile() : string
+    protected function compile( TemplateCompiler $compiler ) : string
     {
         if ( $this->hGroup ) {
-            $this->component->tag( 'hgroup' );
+            $this->tag->set( 'hgroup' );
         }
 
-        $this->attributes->add( 'id', $this->getHeadingText() );
+        // $this->attributes->add( 'id', $this->getHeadingText() );
 
         $this->heading
                 = $this->hGroup ? "<{$this->level}>{$this->heading}</{$this->level}>" : "<span>{$this->heading}</span>";
 
-        $this->component
-            ->content( $this->heading )
-            ->content( $this->subheading, $this->subheadingBefore );
+        $this->content->append( $this->heading );
 
-        return (string) $this->component;
-    }
-
-    public function templateNode( NodeCompiler $node ) : AuxiliaryNode
-    {
-        return Render::templateNode(
-            self::componentName(),
-            $this::nodeArguments( $node ),
-        );
-    }
-
-    public static function nodeArguments( NodeCompiler $node ) : array
-    {
-        foreach ( $node->iterateChildNodes() as $key => $childNode ) {
-            if ( $childNode instanceof ElementNode && \in_array( $childNode->name, ['small', 'p'] ) ) {
-                $classes = $childNode->getAttribute( 'class' );
-
-                $childNode->attributes->append(
-                    $node::attributeNode(
-                        'class',
-                        [
-                            'subheading',
-                            $classes,
-                        ],
-                    ),
-                );
-
-                continue;
-            }
+        if ( $this->subheadingBefore ) {
+            $this->content->prepend( $this->subheading );
         }
-        return [
-            'tag'        => $node->tag,
-            'attributes' => $node->attributes(),
-            'content'    => $node->parseContent(),
-        ];
+        else {
+            $this->content->append( $this->subheading );
+        }
+
+        return $compiler->render( __DIR__.'/heading.latte', $this, cache : false );
     }
 }

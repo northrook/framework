@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\Framework\Autowire;
 
 use Core\Framework\Controller;
-use Core\Framework\DependencyInjection\ServiceContainer;
+use Core\Symfony\DependencyInjection\ServiceContainer;
 use Symfony\Component\HttpFoundation\Request;
 use function Support\get_class_name;
 
