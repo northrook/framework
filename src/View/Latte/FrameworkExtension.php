@@ -133,7 +133,10 @@ final class FrameworkExtension extends LatteExtension
                 $build = clone $this->factory->getComponent( $component->name );
 
                 if ( $component->static ) {
-                    $build->create( ComponentNode::nodeArguments( new NodeCompiler( $node ) ) );
+                    $build->create(
+                            ComponentNode::nodeArguments( new NodeCompiler( $node ) ),
+                            $component->tagged,
+                    );
                     $html = $build->render( $this->serviceLocator( TemplateCompiler::class ) );
 
                     dump( $html );
