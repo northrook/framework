@@ -63,7 +63,7 @@ final class Heading extends Component
         unset( $arguments['content'] );
 
         if ( \is_array( $heading ) ) {
-            $heading = HtmlContent::contentArray( $heading );
+            $heading = HtmlContent::toArray( $heading );
 
             foreach ( $heading as $key => $value ) {
                 if ( Str::startsWith( $key, ['small', 'p'] ) ) {

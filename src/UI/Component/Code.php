@@ -34,7 +34,7 @@ final class Code extends Component
         $content = $arguments['content'] ?? [];
 
         if ( ! \array_is_list( $content ) ) {
-            $content = HtmlContent::contentArray( $content );
+            $content = HtmlContent::toArray( $content );
         }
 
         foreach ( $content as $index => $value ) {
