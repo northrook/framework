@@ -34,8 +34,6 @@ return static function( ContainerConfigurator $container ) : void {
                 '%kernel.debug%', // $autoRefresh
                 [
                     service( Latte\FrameworkExtension::class ),
-                    service( Latte\Extension\FormatterExtension::class ),
-                    service( Latte\Extension\OptimizerExtension::class ),
                     service( Latte\Extension\CacheExtension::class ),
                 ], // $extensions
                 [

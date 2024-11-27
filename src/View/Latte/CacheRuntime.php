@@ -4,6 +4,7 @@ namespace Core\View\Latte;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Throwable;
 
 /**
  * @internal
@@ -13,10 +14,11 @@ final readonly class CacheRuntime
     public function __construct(
         private ?CacheInterface  $cache = null,
         private ?LoggerInterface $logger = null,
-    ) {}
+    ) {
+    }
 
-    public function get( string $assetId, bool $useCache, callable $callback = null ) : string {
-
+    public function get( string $assetId, bool $useCache, callable $callback = null ) : string
+    {
         if ( false === $useCache ) {
             return $callback( null );
         }
@@ -24,9 +26,9 @@ final readonly class CacheRuntime
         try {
             return $this->cache?->get( $assetId, $callback );
         }
-        catch ( \Throwable $exception ) {
+        catch ( Throwable $exception ) {
             $this->logger?->error(
-                "Exception thrown when using {runtime}: {message}.",
+                'Exception thrown when using {runtime}: {message}.',
                 [
                     'runtime'   => $this::class,
                     'message'   => $exception->getMessage(),

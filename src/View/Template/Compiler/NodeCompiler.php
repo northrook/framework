@@ -3,6 +3,7 @@
 namespace Core\View\Template\Compiler;
 
 use Core\View\Template\Compiler\NodeCompiler\{ChildNode, ComponentArguments, PrintedNode};
+use JetBrains\PhpStorm\Deprecated;
 use Latte\ContentType;
 use Latte\Essential\Nodes\PrintNode;
 use Latte\Compiler\{Node, NodeHelpers, PrintContext};
@@ -21,6 +22,7 @@ use ValueError;
  * @property-read string   $name
  * @property-read AreaNode $content
  */
+#[Deprecated]
 class NodeCompiler
 {
     use NodeCompilerMethods;
@@ -28,15 +30,20 @@ class NodeCompiler
     public const string HTML_NS = 'UI';
 
     protected const array PROPERTY_ALIAS = [
-            'tag' => 'name',
+        'tag' => 'name',
     ];
 
     public bool $hasExpression = false;
 
     public function __construct(
-            public readonly Node           $node,
-            private readonly ?NodeCompiler $parent = null,
+        public readonly Node           $node,
+        private readonly ?NodeCompiler $parent = null,
     ) {
+        trigger_deprecation(
+            __NAMESPACE__,
+            __FILE__,
+            'Use core-view',
+        );
     }
 
     final public function node() : Node
@@ -118,11 +125,11 @@ class NodeCompiler
 
         if ( ! $from instanceof ElementNode ) {
             Log::error(
-                    '{method} can only parse {nodeType}.',
-                    [
-                            'method'   => __METHOD__,
-                            'nodeType' => $from::class,
-                    ],
+                '{method} can only parse {nodeType}.',
+                [
+                    'method'   => __METHOD__,
+                    'nodeType' => $from::class,
+                ],
             );
             return [];
         }
@@ -270,7 +277,7 @@ class NodeCompiler
         foreach ( $from->content->getIterator() as $index => $node ) {
             if ( $node instanceof TextNode ) {
                 $value = NodeHelpers::toText( $node );
-                if ( ! trim($value) ) {
+                if ( ! \trim( $value ) ) {
                     continue;
                 }
                 $content[$index] = $value;
@@ -285,8 +292,8 @@ class NodeCompiler
 
             if ( $node instanceof ElementNode ) {
                 $content["{$node->name}:{$index}"] = [
-                        'attributes' => $this->attributes( $node ),
-                        'content'    => $this->getContent( $node, $level ),
+                    'attributes' => $this->attributes( $node ),
+                    'content'    => $this->getContent( $node, $level ),
                 ];
 
                 continue;
@@ -344,15 +351,15 @@ class NodeCompiler
     // :: New Node
 
     public static function elementNode(
-            string          $tag,
-            ?Node           $parent,
-            null|array|Node $children = null,
-            string          $contentType = ContentType::Html,
+        string          $tag,
+        ?Node           $parent,
+        null|array|Node $children = null,
+        string          $contentType = ContentType::Html,
     ) : ElementNode {
         $element = new ElementNode(
-                name        : $tag,
-                parent      : $parent,
-                contentType : $contentType,
+            name        : $tag,
+            parent      : $parent,
+            contentType : $contentType,
         );
 
         if ( $children ) {
@@ -369,9 +376,9 @@ class NodeCompiler
     }
 
     public static function attributeNode(
-            string            $name,
-            null|string|array $value = null,
-            string            $quote = '"',
+        string            $name,
+        null|string|array $value = null,
+        string            $quote = '"',
     ) : AttributeNode {
         $value = match ( true ) {
             'class' === $name    => Element::classes( $value ),
@@ -418,13 +425,13 @@ class NodeCompiler
     {
         if ( ! \property_exists( $this->node, 'content' ) ) {
             Log::error(
-                    'The NodeCompiler could not parse the requested {method}, as the {nodeType} does not have a {property} property. Returned {result}.',
-                    [
-                            'method'   => 'htmlContent',
-                            'nodeType' => $this->node::class,
-                            'property' => 'content',
-                            'result'   => 'empty string',
-                    ],
+                'The NodeCompiler could not parse the requested {method}, as the {nodeType} does not have a {property} property. Returned {result}.',
+                [
+                    'method'   => 'htmlContent',
+                    'nodeType' => $this->node::class,
+                    'property' => 'content',
+                    'result'   => 'empty string',
+                ],
             );
             return EMPTY_STRING;
         }

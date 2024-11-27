@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\View\{ComponentFactory, Latte};
-use Core\View\Latte\Extension\{CacheExtension, FormatterExtension, OptimizerExtension};
+use Core\View\Latte\Extension\CacheExtension;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 return static function( ContainerConfigurator $container ) : void {
@@ -32,11 +32,6 @@ return static function( ContainerConfigurator $container ) : void {
             //
         ->set( Latte\FrameworkExtension::class )
         ->args( [service( ComponentFactory::class )] )
-
-            //
-        ->set( FormatterExtension::class )
-            //
-            // ->set( OptimizerExtension::class )
             // Cache integration
         ->set( CacheExtension::class )
         ->args(

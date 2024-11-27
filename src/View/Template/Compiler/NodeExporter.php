@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Core\View\Template\Compiler;
 
+use JetBrains\PhpStorm\Deprecated;
 use Support\Str;
 use const Support\EMPTY_STRING;
 use LogicException;
 use Stringable;
 
+#[Deprecated]
 final class NodeExporter
 {
     private string $value = EMPTY_STRING;
@@ -22,9 +24,9 @@ final class NodeExporter
     public function newCall( string $class, ...$arguments ) : self
     {
         return $this
-                ->append( '( new ', $class, '( ' )
-                ->handleCallArguments( $arguments )
-                ->append( ' ))' );
+            ->append( '( new ', $class, '( ' )
+            ->handleCallArguments( $arguments )
+            ->append( ' ))' );
     }
 
     /**
@@ -88,6 +90,7 @@ final class NodeExporter
                 $value = \trim( $value, " \t\n\r\0\x0B'" );
                 $string .= "'{$key}' => '{$value}', ";
             }
+
             return $string .= ']';
         }
 
@@ -98,8 +101,6 @@ final class NodeExporter
     {
         $export = [];
 
-        // dump( $arguments );
-
         foreach ( $arguments as $name => $value ) {
             $argument = \is_string( $name ) ? "'{$name}' =>" : '';
             $argument .= match ( \gettype( $value ) ) {
@@ -107,14 +108,12 @@ final class NodeExporter
                 'array'   => self::array( $value ),
                 'NULL'    => 'null',
                 'boolean' => self::boolean( $value ),
-                default   => throw new LogicException( 'TODO : Handle unknown argument type '.\gettype( $value ).' for '.NodeExporter::class),
+                default   => throw new LogicException( 'TODO : Handle unknown argument type '.\gettype( $value ).' for '.NodeExporter::class ),
             };
             $export[] = $argument;
         }
 
         $string = PHP_EOL.\implode( ', '.PHP_EOL, $export ).PHP_EOL;
-
-        // dump( $export );
 
         return "[ {$string} ]";
     }
@@ -124,7 +123,7 @@ final class NodeExporter
         $value = \trim( $value, " \t\n\r\0\x0B'" );
 
         if ( ! Str::startsWith( $value, ['$', 'LR\Filters'] ) ) {
-            $value = "'". \str_replace("'", "\'", $value) ."'";
+            $value = "'".\str_replace( "'", "\'", $value )."'";
         }
         return $value;
     }
@@ -172,9 +171,9 @@ final class NodeExporter
     {
         static $runtimeCache;
         $runtimeCache['constants'] ??= \array_filter(
-                \get_defined_constants( true )['user'],
-                static fn( $key ) => \str_starts_with( $key, 'Cache' ),
-                ARRAY_FILTER_USE_KEY,
+            \get_defined_constants( true )['user'],
+            static fn( $key ) => \str_starts_with( $key, 'Cache' ),
+            ARRAY_FILTER_USE_KEY,
         );
 
         return (string) $runtimeCache[$cache]
