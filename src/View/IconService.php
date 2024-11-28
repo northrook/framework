@@ -6,7 +6,7 @@ use Core\View\Render\IconPack;
 
 // :: Not part of [core-view]
 
-final readonly class IconRenderer
+final readonly class IconService
 {
     public IconPack $iconPack;
 

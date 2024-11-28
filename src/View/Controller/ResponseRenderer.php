@@ -7,7 +7,7 @@ use Core\Symfony\DependencyInjection\ServiceContainer;
 use Core\View\Template\TemplateCompiler;
 use Core\Framework\Response\{Document, Headers, Parameters};
 use Core\Symfony\EventListener\ResponseEventListener;
-use Core\View\Render\ViewDocument;
+use Core\View\Render\HtmlViewDocument;
 use InvalidArgumentException;
 use JetBrains\PhpStorm\ExpectedValues;
 use Northrook\Logger\Log;
@@ -45,7 +45,7 @@ final class ResponseRenderer extends ResponseEventListener
         }
 
         if ( $this->type === $this::DOCUMENT ) {
-            $view = new ViewDocument(
+            $view = new HtmlViewDocument(
                 $this->document(),
                 $this->content,
                 $this->serviceLocator,
@@ -91,7 +91,7 @@ final class ResponseRenderer extends ResponseEventListener
         $template = $isTemplate ? $content : $this->resolveTemplate( $event->getRequest() );
 
         if ( ! $template ) {
-            throw new InvalidArgumentException( 'Unable to resolve template.' );
+            throw new InvalidArgumentException( 'Unable to resolve template. '.$template );
         }
 
         $this->template()->clearTemplateCache();

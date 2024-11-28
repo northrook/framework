@@ -3,7 +3,7 @@
 namespace Core\UI\Component;
 
 use Core\View\Attribute\ViewComponent;
-use Core\View\{Component, IconRenderer, Template\TemplateCompiler};
+use Core\View\{Component, IconService, Template\TemplateCompiler};
 
 #[ViewComponent( ['button', 'button:submit'], true )]
 final class Button extends Component
@@ -14,7 +14,7 @@ final class Button extends Component
 
     public ?string $icon = null;
 
-    public function __construct( private readonly IconRenderer $iconRenderer )
+    public function __construct( private readonly IconService $iconRenderer )
     {
     }
 

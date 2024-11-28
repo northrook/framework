@@ -3,7 +3,7 @@
 namespace Core\UI\Component;
 
 use Core\View\Attribute\ViewComponent;
-use Core\View\{Component, IconRenderer, Template\TemplateCompiler};
+use Core\View\{Component, IconService, Template\TemplateCompiler};
 use Latte\Runtime\Html;
 
 #[ViewComponent( 'icon:{get}', true, 128 )]
@@ -15,7 +15,7 @@ final class Icon extends Component
 
     public readonly Html $icon;
 
-    public function __construct( public IconRenderer $iconRenderer )
+    public function __construct( public IconService $iconRenderer )
     {
     }
 

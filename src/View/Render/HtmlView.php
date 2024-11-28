@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 use Stringable;
 use function Support\toString;
 
-abstract class View implements Stringable
+abstract class HtmlView implements Stringable
 {
     use ServiceContainer, Settings;
 

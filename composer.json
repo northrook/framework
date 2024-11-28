@@ -11,7 +11,8 @@
   ],
   "autoload": {
     "psr-4": {
-      "Core\\": "src/"
+      "Core\\": "src/",
+      "Core\\View\\Component\\": "components/"
     }
   },
   "minimum-stability": "dev",

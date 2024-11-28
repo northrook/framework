@@ -2,7 +2,7 @@
 
 namespace Core\View\Render;
 
-final class ViewContent extends View
+final class HtmlViewContent extends HtmlView
 {
     protected function build() : string
     {
