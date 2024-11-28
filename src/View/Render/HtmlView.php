@@ -143,18 +143,34 @@ abstract class HtmlView implements Stringable
 
     /**
      * @param null|'link'|'script'|'style' $type
+     * @param ?string                      $id
      *
      * @return $this
      */
-    final protected function assets( ?string $type = null ) : self
+    final protected function assets( ?string $type = null, ?string $id = null ) : self
     {
-        $type = $type ? [$type] : ['script', 'style', 'link'];
+        $parse = $type ? [$type] : ['script', 'style', 'link'];
 
-        // foreach ( $type as $asset ) {
-        //     // dump( $asset );
-        //     //
-        //     // dump( $this->document->pull( $asset ) );
-        // }
+        foreach ( $parse as $type ) {
+            $asset  = $this->document->pull( $type );
+            $id     = $asset['id'] ? ' id="'.$asset['id'].'"' : '';
+            $assign = match ( $type ) {
+                'script' => ( function() use ( $asset, $id ) {
+                    return "<script{$id} src=\"{$asset['path']}\"></script>";
+                } )(),
+                'style' => ( function() use ( $asset, $id ) {
+                    return "<link{$id} rel=\"stylesheet\" href=\"{$asset['path']}\"></link>";
+                } )(),
+                'link' => ( function() use ( $asset, $id ) {
+                    return "<link{$id} href=\"{$asset['path']}\"></link>";
+                } )(),
+                default => null,
+            };
+
+            if ( $assign ) {
+                $this->head[] = $assign;
+            }
+        }
 
         return $this;
     }

@@ -31,6 +31,8 @@ final class PublicController extends Controller
             ],
         )
             ->add( 'meta.viewport', 'width=device-width,initial-scale=1' );
+
+        $document->script( 'https://cdn.tailwindcss.com', 'tailwindcss' );
     }
 
     #[
@@ -43,6 +45,19 @@ final class PublicController extends Controller
     ) : void {
         $document( 'Index Demo Template' );
         $parameters->set( 'content', 'Hello there!' );
+    }
+
+    #[
+        Route( ['/tailwind'], 'tailwind' ),
+        Template( 'demo.latte' ) // content template
+    ]
+    public function tailwind(
+        Document   $document,
+        Parameters $parameters,
+    ) : string {
+        $document( 'Tailwind Demo Template' );
+
+        return 'tailwind.latte';
     }
 
     #[

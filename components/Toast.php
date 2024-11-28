@@ -54,6 +54,6 @@ final class Toast extends Component
 
         $this->timestamp = new Html( Time::now() );
 
-        return $compiler->render( __DIR__.'/toast.latte', $this, cache : false );
+        return $compiler->render( __DIR__.'/toast.latte', $this );
     }
 }
