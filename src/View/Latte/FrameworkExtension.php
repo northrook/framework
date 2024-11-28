@@ -127,7 +127,8 @@ final class FrameworkExtension extends LatteExtension
                     );
 
                     // TODO : Create a ComponentCompiler that does not include the FrameworkExtension
-                    $html = $build->render( new TemplateCompiler() );
+                    // $html = $build->render( new TemplateCompiler() );
+                    $html = $build->render( $this->serviceLocator( TemplateCompiler::class ) );
 
                     dump( $html );
                     return $html ? new StaticNode( $html, $node->position ) : $node;

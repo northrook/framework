@@ -11,7 +11,7 @@ use Core\View\Template\TemplateCompiler;
 #[ViewComponent( 'icon:{get}', true, 128 )]
 final class Icon extends Component
 {
-    public readonly string $get;
+    public string $get;
 
     protected function compile( TemplateCompiler $compiler ) : string
     {
