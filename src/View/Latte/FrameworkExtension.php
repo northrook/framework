@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Core\View\Latte;
 
 use Core\Framework\Autowire\UrlGenerator;
-use Core\View\Component\ComponentNode;
 use Core\View\ComponentFactory;
 use Core\View\Latte\Node\InlineStringableNode;
-use Core\View\Template\Compiler\NodeCompiler;
-use Core\View\Template\Node\StaticNode;
-use Core\View\Template\TemplateCompiler;
+use Core\View\Template\{NodeParser, TemplateCompiler};
+use Core\View\Template\Node\{ComponentNode, StaticNode};
 use Latte\Compiler\{Node, Nodes\TextNode, NodeTraverser};
 use Latte\Compiler\Nodes\Html\ElementNode;
 use Latte\Compiler\Nodes\Php\ExpressionNode;
@@ -124,7 +122,7 @@ final class FrameworkExtension extends LatteExtension
 
                 if ( $component->static ) {
                     $build->create(
-                        ComponentNode::nodeArguments( new NodeCompiler( $node ) ),
+                        ComponentNode::nodeArguments( new NodeParser( $node ) ),
                         $component->tagged,
                     );
 
