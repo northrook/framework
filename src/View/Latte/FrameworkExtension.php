@@ -19,7 +19,6 @@ use Override;
 
 final class FrameworkExtension extends LatteExtension implements ServiceContainerInterface
 {
-    // use NodeCompilerMethods, UrlGenerator;
     use UrlGenerator;
 
     private array $staticComponents;
@@ -69,6 +68,7 @@ final class FrameworkExtension extends LatteExtension implements ServiceContaine
                 $components[$index] = $component;
             }
         }
+
         \ksort( $static );
         \ksort( $components );
 
@@ -80,12 +80,17 @@ final class FrameworkExtension extends LatteExtension implements ServiceContaine
             $this->nodeComponents[$component->name] = $component;
         }
 
-        dump( $this );
-
         $componentPasses = [];
 
         foreach ( $this->staticComponents as $component ) {
             $componentPasses["static-{$component->name}-pass"] = fn( TemplateNode $template ) => $this->componentPass(
+                $template,
+                $component,
+            );
+        }
+
+        foreach ( $this->nodeComponents as $component ) {
+            $componentPasses["node-{$component->name}-pass"] = fn( TemplateNode $template ) => $this->componentPass(
                 $template,
                 $component,
             );
@@ -104,6 +109,7 @@ final class FrameworkExtension extends LatteExtension implements ServiceContaine
     {
         ( new NodeTraverser() )->traverse(
             $template,
+            // null,
             function( Node $node ) use ( $component ) : int|Node {
                 // Skip expression nodes, as a component cannot exist there
                 if ( $node instanceof ExpressionNode ) {
@@ -116,16 +122,15 @@ final class FrameworkExtension extends LatteExtension implements ServiceContaine
                 }
 
                 if ( ! $component->targetTag( $node->name ) ) {
-                    // dump( $component->name );
                     return $node;
                 }
 
-                $build = clone $this->factory->getComponent( $component->name );
-                dump( $node->name, $build );
+                $parser = new NodeParser( $node );
 
                 if ( $component->static ) {
+                    $build = clone $this->factory->getComponent( $component->name );
                     $build->create(
-                        ComponentNode::nodeArguments( new NodeParser( $node ) ),
+                        ComponentNode::nodeArguments( $parser ),
                         $component->tagged,
                     );
 
@@ -133,34 +138,10 @@ final class FrameworkExtension extends LatteExtension implements ServiceContaine
                     // $html = $build->render( new TemplateCompiler() );
                     $html = $build->render( $this->serviceLocator( TemplateCompiler::class ) );
 
-                    // dump( $html );
                     return $html ? new StaticNode( $html, $node->position ) : $node;
                 }
 
-                // dump( $build );
-
-                // Get ComponentProperties, if one matches the Node->tag
-                // if ( !$component = $this->factory->getComponentProperties( $node->name ) ) {
-                //     return $node;
-                // }
-
-                // if ( $render !== $component->render ) {
-                //     return $node;
-                // }
-                //
-                // if ( 'static' === $component->render ) {
-                //     $html = $this->factory->render(
-                //         $component->class::componentName(),
-                //         $component->class::nodeArguments( new NodeCompiler( $node ) ),
-                //     );
-                //     return new TextNode( $html );
-                // }
-                //
-                // if ( 'runtime' === $component->render ) {
-                //     return $this->factory->get( $component )->templateNode( new NodeCompiler( $node ) );
-                // }
-
-                return $node;
+                return new ComponentNode( $component->name, $parser );
             },
         );
     }

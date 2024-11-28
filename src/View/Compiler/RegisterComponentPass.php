@@ -37,7 +37,7 @@ abstract class RegisterComponentPass extends CompilerPass
             $components[$register->name] = $definition;
         }
 
-        dump( $components );
+        // dump( $components );
 
         $componentLocator->setArguments( [$components] );
 
