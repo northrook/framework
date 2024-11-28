@@ -2,14 +2,14 @@
 
 namespace Core\View\Render;
 
+use Core\View\Interface\IconPackInterface;
 use Northrook\Filesystem\Path;
 use Northrook\HTML\Element;
 use Northrook\Logger\Log;
 use Support\{Str};
-use const Support\EMPTY_STRING;
 use ValueError;
 
-final class IconPack
+final class IconPack implements IconPackInterface
 {
     private const array DEFAULT = [
         'chevron' => [
@@ -189,12 +189,12 @@ final class IconPack
     }
 
     /**
-     * @param string       $icon
-     * @param array        $attributes
-     * @param null|string  $fallback
-     * @param bool         $asElement
+     * @param string      $icon
+     * @param array       $attributes
+     * @param null|string $fallback
+     * @param bool        $asElement
      *
-     * @return null|string|\Northrook\HTML\Element
+     * @return null|Element|string
      */
     public function get(
         string  $icon,

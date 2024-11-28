@@ -8,7 +8,11 @@ class RegisterCoreComponentsPass extends RegisterComponentPass
 {
     public function register() : array
     {
-        $coreComponent = \glob( \dirname( __DIR__, 2 ).'/UI/Component/*.php' );
+        // TODO : Register assets as well
+        //        Should allow for stand-alone (like the heavy math for input:password),
+        //        or as integrated into core js|css
+
+        $coreComponent = \glob( \dirname( __DIR__, 3 ).'/components/*.php' );
 
         if ( ! $coreComponent ) {
             $this->console->warning( 'No Core Components found.' );

@@ -88,7 +88,7 @@ final readonly class ComponentParser
             $properties[$tag] = $tags;
         }
 
-        dump( $properties );
+        dump( \array_keys( $properties ) );
 
         return $properties;
     }

@@ -8,7 +8,12 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\View\{Controller\ResponseRenderer, IconService, Latte, Template\TemplateCompiler};
+use Core\View\{Controller\ResponseRenderer,
+    IconService,
+    Latte,
+    Template\Extension\IconPackExtension,
+    Template\TemplateCompiler
+};
 
 return static function( ContainerConfigurator $container ) : void {
     //
@@ -35,6 +40,7 @@ return static function( ContainerConfigurator $container ) : void {
                 [
                     service( Latte\FrameworkExtension::class ),
                     service( Latte\Extension\CacheExtension::class ),
+                    service( IconPackExtension::class ),
                 ], // $extensions
                 [
                     'get' => service( Latte\GlobalVariables::class ),

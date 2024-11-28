@@ -2,11 +2,13 @@
 
 namespace Core\View;
 
-use Core\View\Render\IconPack;
+use Exception\NotImplementedException;
+use Core\View\Render\{Icon, IconPack};
+use Core\View\Interface\{IconInterface, IconPackInterface, IconServiceInterface};
 
 // :: Not part of [core-view]
 
-final readonly class IconService
+final readonly class IconService implements IconServiceInterface
 {
     public IconPack $iconPack;
 
@@ -15,11 +17,27 @@ final readonly class IconService
         $this->iconPack = new IconPack();
     }
 
-    final protected function getIcon(
-        string  $icon,
+    final public function getIcon(
+        string  $name,
         array   $attributes = [],
         ?string $fallback = null,
-    ) : ?string {
-        return $this->iconPack->get( $icon, $attributes, $fallback );
+    ) : ?IconInterface {
+        $icon = $this->iconPack->get( $name, $attributes, $fallback );
+        return $icon ? new Icon( $icon ) : null;
+    }
+
+    public function getIconPack( ?string $name = null ) : IconPackInterface
+    {
+        return $this->iconPack;
+    }
+
+    public function hasIcon( string $name, ?string $pack = null ) : bool
+    {
+        return $this->iconPack->has( $name );
+    }
+
+    public function hasIconPack( string $name ) : bool
+    {
+        throw new NotImplementedException( 'This method is not implemented yet.', IconServiceInterface::class );
     }
 }
