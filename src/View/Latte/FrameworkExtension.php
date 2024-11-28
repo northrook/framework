@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Core\View\Latte;
 
 use Core\Framework\Autowire\UrlGenerator;
+use Core\Symfony\DependencyInjection\ServiceContainerInterface;
 use Core\View\ComponentFactory;
 use Core\View\Latte\Node\InlineStringableNode;
 use Core\View\Template\{NodeParser, TemplateCompiler};
 use Core\View\Template\Node\{ComponentNode, StaticNode};
-use Latte\Compiler\{Node, Nodes\TextNode, NodeTraverser};
+use Latte\Compiler\{Node, NodeTraverser};
 use Latte\Compiler\Nodes\Html\ElementNode;
 use Latte\Compiler\Nodes\Php\ExpressionNode;
 use Latte\Compiler\Nodes\TemplateNode;
 use Latte\Extension as LatteExtension;
 use Override;
 
-final class FrameworkExtension extends LatteExtension
+final class FrameworkExtension extends LatteExtension implements ServiceContainerInterface
 {
     // use NodeCompilerMethods, UrlGenerator;
     use UrlGenerator;
@@ -79,11 +80,11 @@ final class FrameworkExtension extends LatteExtension
             $this->nodeComponents[$component->name] = $component;
         }
 
-        // dump( $this );
+        dump( $this );
 
         $componentPasses = [];
 
-        foreach ( $this->staticComponents as $name => $component ) {
+        foreach ( $this->staticComponents as $component ) {
             $componentPasses["static-{$component->name}-pass"] = fn( TemplateNode $template ) => $this->componentPass(
                 $template,
                 $component,
@@ -115,10 +116,12 @@ final class FrameworkExtension extends LatteExtension
                 }
 
                 if ( ! $component->targetTag( $node->name ) ) {
+                    // dump( $component->name );
                     return $node;
                 }
 
                 $build = clone $this->factory->getComponent( $component->name );
+                dump( $node->name, $build );
 
                 if ( $component->static ) {
                     $build->create(
@@ -130,11 +133,11 @@ final class FrameworkExtension extends LatteExtension
                     // $html = $build->render( new TemplateCompiler() );
                     $html = $build->render( $this->serviceLocator( TemplateCompiler::class ) );
 
-                    dump( $html );
+                    // dump( $html );
                     return $html ? new StaticNode( $html, $node->position ) : $node;
                 }
 
-                dump( $build );
+                // dump( $build );
 
                 // Get ComponentProperties, if one matches the Node->tag
                 // if ( !$component = $this->factory->getComponentProperties( $node->name ) ) {

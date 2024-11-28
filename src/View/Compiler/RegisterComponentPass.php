@@ -3,6 +3,7 @@
 namespace Core\View\Compiler;
 
 use Core\View\ComponentFactory;
+use Core\View\ComponentFactory\ComponentParser;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Core\Symfony\DependencyInjection\CompilerPass;
 
