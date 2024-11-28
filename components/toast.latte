@@ -1,0 +1,19 @@
+{templateType Core\View\Component\Toast}
+<toast>
+    <button class="close" aria-label="Close" type="button"></button>
+    <output role="status">
+        <i class="status">
+            {icon($status)}
+            <span class="status-type">{$status}</span>
+            <time datetime="{$timestamp}">
+                {* TODO : Loop over each $instance, set first as 'current' - hide test with CSS *}
+                {$timestamp}
+            </time>
+        </i>
+        <span class="message">message</span>
+    </output>
+    <details n:if="$description">
+        <summary>Description</summary>
+        <p>Details</p>
+    </details>
+</toast>
