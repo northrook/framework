@@ -15,12 +15,15 @@ final class AssetBundler implements ServiceContainerInterface
     private ArrayStore $assets;
 
     /**
-     * @param array $assetMap
+     * @param string $assetManifestPath
+     * @param array  $assetMap
      */
-    public function __construct( array $assetMap )
-    {
+    public function __construct(
+        string $assetManifestPath,
+        array  $assetMap,
+    ) {
         $this->assets = new ArrayStore(
-            $this->pathfinder( 'dir.cache/asset.manifest.php' ),
+            $assetManifestPath,
             $this::class,
         );
 

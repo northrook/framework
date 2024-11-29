@@ -14,7 +14,7 @@ use Core\Symfony\DependencyInjection\CompilerPass;
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
         ->set( AssetBundler::class )
-        ->args( CompilerPass::PLACEHOLDER_ARGS )
-        ->autowire( true )
-        ->tag( 'controller.service_arguments' );
+        ->args( ['%kernel.cache_dir%/asset.manifest.php', CompilerPass::PLACEHOLDER_ARG] )
+        ->tag( 'controller.service_arguments' )
+        ->autowire();
 };

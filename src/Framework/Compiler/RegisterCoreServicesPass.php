@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Core\Framework\Compiler;
 
-use Core\Symfony\DependencyInjection\{CompilerPass, ServiceLocator};
+use Core\Symfony\DependencyInjection\{CompilerPass, ServiceContainerInterface};
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Reference};
-use function Support\uses_trait;
+use function Support\{implements_interface};
 
 final class RegisterCoreServicesPass extends CompilerPass
 {
@@ -47,7 +47,7 @@ final class RegisterCoreServicesPass extends CompilerPass
 
         foreach ( $this->getDeclaredClasses( $container->getServiceIds() ) as $class ) {
             if (
-                uses_trait( $class, ServiceLocator::class, true )
+                implements_interface( $class, ServiceContainerInterface::class )
                 && $container->hasDefinition( $class )
             ) {
                 $this->console->success( "{$class}::setServiceLocator.\n" );
