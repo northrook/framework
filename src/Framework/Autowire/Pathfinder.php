@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Core\Framework\Autowire;
 
-use Core\Symfony\DependencyInjection\ServiceContainer;
 use Core\Symfony\DependencyInjection\ServiceContainerInterface;
 
 /**
- * @implements <ServiceContainerInterface>
- *
+ * @phpstan-require-implements ServiceContainerInterface
  */
 trait Pathfinder
 {
-
     /**
      * @param ?string $get
      *

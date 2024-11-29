@@ -152,8 +152,13 @@ abstract class HtmlView implements Stringable
         $parse = $type ? [$type] : ['script', 'style', 'link'];
 
         foreach ( $parse as $type ) {
-            $asset  = $this->document->pull( $type );
-            $id     = $asset['id'] ? ' id="'.$asset['id'].'"' : '';
+            $asset = $this->document->pull( $type );
+
+            if ( ! $asset ) {
+                continue;
+            }
+
+            $id     = $asset['id'] ?? null ? ' id="'.$asset['id'].'"' : '';
             $assign = match ( $type ) {
                 'script' => ( function() use ( $asset, $id ) {
                     return "<script{$id} src=\"{$asset['path']}\"></script>";

@@ -8,6 +8,7 @@ use Core\Framework\Attribute\OnDocument;
 use Core\Framework\Autowire\Pathfinder;
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
+use Core\Service\AssetBundler;
 use Core\Framework\Response\{Document, Parameters};
 use Latte\Engine;
 use Symfony\Component\Routing\Attribute\Route;
@@ -31,8 +32,6 @@ final class PublicController extends Controller
             ],
         )
             ->add( 'meta.viewport', 'width=device-width,initial-scale=1' );
-
-        $document->script( 'https://cdn.tailwindcss.com', 'tailwindcss' );
     }
 
     #[
@@ -56,6 +55,7 @@ final class PublicController extends Controller
         Parameters $parameters,
     ) : string {
         $document( 'Tailwind Demo Template' );
+        $document->script( 'https://cdn.tailwindcss.com', 'tailwindcss' );
 
         return 'tailwind.latte';
     }
@@ -65,11 +65,12 @@ final class PublicController extends Controller
         Template( 'demo.latte' ) // content template
     ]
     public function demo(
-        Document   $document,
-        Parameters $parameters,
+        Document     $document,
+        Parameters   $parameters,
+        AssetBundler $assetBundler,
     ) : string {
         $document( 'Index Demo Template' );
-        $parameters->set( 'content', 'Hello there!' );
+        $parameters->set( 'assetBundler', $assetBundler );
 
         return 'demo.latte';
     }

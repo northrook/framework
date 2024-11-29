@@ -13,8 +13,6 @@ trait CurrentRequest
 {
     use ServiceContainer;
 
-
-
     final protected function getRequest() : Request
     {
         return $this->serviceLocator( Request::class );
