@@ -37,5 +37,11 @@ return static function( ContainerConfigurator $container ) : void {
             //
         ->set( ParameterBagCollector::class )
         ->args( [service( 'parameter_bag' )] )
-        ->tag( 'data_collector' );
+        ->tag(
+            'data_collector',
+            [
+                'template' => '@Core/profiler/parameter_bag.html.twig',
+                'priority' => 240,
+            ],
+        );
 };
