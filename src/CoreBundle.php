@@ -50,7 +50,7 @@ final class CoreBundle extends AbstractBundle
         '../config/framework/response.php',
         '../config/framework/services.php',
         '../config/framework/settings.php',
-        '../config/framework/telemetry.php',
+        '../config/framework/profiler.php',
         '../config/framework/controllers/public.php',
         '../config/view/components.php',
         '../config/view/latte.php',

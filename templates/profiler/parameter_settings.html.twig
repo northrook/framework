@@ -1,5 +1,30 @@
 {% extends '@WebProfiler/Profiler/layout.html.twig' %}
 
+{% block head %}
+    {{ parent() }}
+
+    <style>
+      table.parameter-table td {
+        display        : flex;
+        flex-direction : column;
+        align-items    : flex-start;
+        gap            : .5rem;
+      }
+
+      td > b {
+        font-family      : var(--font-family-monospace, monospace);
+        background-color : var(--badge-background);
+        border-radius    : 4px;
+        box-shadow       : var(--badge-shadow);
+        color            : #FAFAFA;
+        font-size        : 12px;
+        font-weight      : bold;
+        padding          : 3px 7px;
+        white-space      : nowrap;
+      }
+    </style>
+{% endblock %}
+
 {% block toolbar %}
     {% if collector.parameterCount %}
         {% set icon %}
@@ -40,7 +65,7 @@
     <h2>Parameters and Settings</h2>
 
     {% if collector.settingCount %}
-        <table id="setting-table">
+        <table id="setting-table" class="parameter-table">
             <thead>
             <tr>
                 <th scope="col">Settings</th>
@@ -49,8 +74,8 @@
             <tbody>
             {% for setting in collector.settings %}
                 <tr>
-                    <td class="font-normal">
-                        <b class="font-normal">{{ setting.label }}</b>
+                    <td>
+                        <b>{{ setting.label }}</b>
                         {{ setting.value|raw }}
                     </td>
                 </tr>
@@ -58,13 +83,13 @@
             </tbody>
         </table>
     {% else %}
-        <div class="empty empty-panel">
+        <div class="empty">
             <p>No settings defined.</p>
         </div>
     {% endif %}
 
     {% if collector.parameterCount %}
-        <table id="parameter-bag-table">
+        <table id="parameter-bag-table" class="parameter-table">
             <thead>
             <tr>
                 <th scope="col">Parameter Bag</th>
@@ -73,8 +98,8 @@
             <tbody>
             {% for parameter in collector.parameters %}
                 <tr>
-                    <td class="font-normal">
-                        <b class="font-normal">{{ parameter.label }}</b>
+                    <td>
+                        <b>{{ parameter.label }}</b>
                         {{ parameter.value|raw }}
                     </td>
                 </tr>
@@ -82,7 +107,7 @@
             </tbody>
         </table>
     {% else %}
-        <div class="empty empty-panel">
+        <div class="empty">
             <p>Paramter Bag is empty.</p>
         </div>
     {% endif %}

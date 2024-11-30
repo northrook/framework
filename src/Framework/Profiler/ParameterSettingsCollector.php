@@ -24,14 +24,15 @@ final class ParameterSettingsCollector extends AbstractDataCollector
     public function collect( Request $request, Response $response, ?Throwable $exception = null ) : void
     {
         foreach ( $this->parameterBag->all() as $key => $value ) {
-            $this->data['parameter'] = [
-                'label' => $key,
-                'value' => $this->value( $value ),
-            ];
+            $this->data['parameter'][]
+                    = [
+                        'label' => $key,
+                        'value' => $this->value( $value ),
+                    ];
         }
 
         foreach ( $this->settings->all() as $key => $value ) {
-            $this->data['setting'] = [
+            $this->data['setting'][] = [
                 'label' => $key,
                 'value' => $this->value( $value ),
             ];
