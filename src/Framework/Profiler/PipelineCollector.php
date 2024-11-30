@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Framework\Telemetry;
+namespace Core\Framework\Profiler;
 
 use Override;
 use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;

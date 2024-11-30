@@ -1,16 +1,16 @@
 <?php
 
 // -------------------------------------------------------------------
-// config\framework\telemetry
+// config\framework\profiler
 // -------------------------------------------------------------------
 
 declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\Symfony\Profiler\ParameterBagCollector;
+use Core\Framework\Settings;
 use Northrook\Clerk;
-use Core\Framework\Telemetry\{ClerkProfiler, PipelineCollector};
+use Core\Framework\Profiler\{ClerkProfiler, ParameterSettingsCollector, PipelineCollector};
 use Symfony\Component\Stopwatch\Stopwatch;
 
 return static function( ContainerConfigurator $container ) : void {
@@ -35,12 +35,12 @@ return static function( ContainerConfigurator $container ) : void {
         ->set( PipelineCollector::class )
         ->tag( 'data_collector' )
             //
-        ->set( ParameterBagCollector::class )
-        ->args( [service( 'parameter_bag' )] )
+        ->set( ParameterSettingsCollector::class )
+        ->args( [service( 'parameter_bag' ), service( Settings::class )] )
         ->tag(
             'data_collector',
             [
-                'template' => '@Core/profiler/parameter_bag.html.twig',
+                'template' => '@Core/profiler/parameter_settings.html.twig',
                 'priority' => 240,
             ],
         );

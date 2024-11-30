@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\Framework\Telemetry;
+namespace Core\Framework\Profiler;
 
 use Northrook\Clerk;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
