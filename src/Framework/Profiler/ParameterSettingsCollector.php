@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types = 1 );
 
 namespace Core\Framework\Profiler;
 
@@ -8,45 +8,65 @@ use Core\Symfony\SettingsInterface;
 use Override;
 use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\VarDumper\Caster\ReflectionCaster;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
+use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 use Throwable;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use function Support\toString;
 
 final class ParameterSettingsCollector extends AbstractDataCollector
 {
+    private VarCloner $cloner;
+
+    private HtmlDumper $dumper;
+
     public function __construct(
-        private readonly ParameterBagInterface $parameterBag,
-        private readonly SettingsInterface     $settings,
-    ) {
-    }
+            private readonly ParameterBagInterface $parameterBag,
+            private readonly SettingsInterface     $settings,
+    ) {}
 
     #[Override]
     public function collect( Request $request, Response $response, ?Throwable $exception = null ) : void
     {
+        $this->dumper ??= new HtmlDumper();
+        $this->cloner ??= new VarCloner();
+        $this->cloner->addCasters( ReflectionCaster::UNSET_CLOSURE_FILE_INFO );
+
         foreach ( $this->parameterBag->all() as $key => $value ) {
-            $this->data['parameter'][]
-                    = [
-                        'label' => $key,
-                        'value' => $this->value( $value ),
-                    ];
+            $this->data[ 'parameter' ][] = $this->setItem( $key, $value );
         }
 
-        foreach ( $this->settings->all() as $key => $value ) {
-            $this->data['setting'][] = [
-                'label' => $key,
-                'value' => $this->value( $value ),
-            ];
+        $settings = $this->settings->all();
+
+        $settings = [
+                'demo'            => 'value',
+                'demo.key'        => 'some value',
+                'example.boolean' => true,
+                'example.integer' => hrtime( true ),
+        ];
+
+        foreach ( as $key => $value ) {
+            $this->data[ 'setting' ][ $key ] = $this->setItem( $key, $value );
         }
+    }
+
+    protected function setItem( string $key, mixed $value ) : array
+    {
+        return [
+                'label' => $key,
+                'value' => $this->dumper->dump( $this->cloner->cloneVar( $value ), true ),
+        ];
     }
 
     public function getParameterCount() : int
     {
-        return \count( $this->data['parameter'] ?? [] );
+        return \count( $this->data[ 'parameter' ] ?? [] );
     }
 
     public function getSettingCount() : int
     {
-        return \count( $this->data['setting'] ?? [] );
+        return \count( $this->data[ 'setting' ] ?? [] );
     }
 
     /**
@@ -54,7 +74,7 @@ final class ParameterSettingsCollector extends AbstractDataCollector
      */
     public function getParameters() : array
     {
-        return $this->data['parameter'] ?? [];
+        return $this->data[ 'parameter' ] ?? [];
     }
 
     /**
@@ -62,30 +82,6 @@ final class ParameterSettingsCollector extends AbstractDataCollector
      */
     public function getSettings() : array
     {
-        return $this->data['setting'] ?? [];
-    }
-
-    private function value( mixed $value ) : string
-    {
-        if ( \is_null( $value ) ) {
-            return 'null';
-        }
-
-        if ( \is_string( $value ) || \is_int( $value ) || \is_float( $value ) ) {
-            return (string) $value;
-        }
-
-        $paramter = [];
-
-        if ( \is_iterable( $value ) ) {
-            foreach ( $value as $valueItem ) {
-                $paramter[] = $this->value( $valueItem );
-            }
-        }
-        else {
-            return toString( $value );
-        }
-
-        return \implode( ', ', $paramter );
+        return $this->data[ 'setting' ] ?? [];
     }
 }

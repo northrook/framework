@@ -29,24 +29,23 @@
     {% if collector.parameterCount %}
         {% set icon %}
             {{ source('@Core/profiler/parameters_icon.svg') }}
+
         {% endset %}
 
         {% set text %}
-            <div class="sf-toolbar-info">
-                <div class="sf-toolbar-info-piece">
-                    <b>ParameterBag</b>
-                    <span>{{ collector.parameterCount }}</span>
-                </div>
+            <div class="sf-toolbar-info-piece">
+                <b>ParameterBag</b>
+                <span class="sf-toolbar-status">{{ collector.parameterCount }}</span>
+            </div>
 
-                <div class="sf-toolbar-info-piece">
-                    <b>Settings</b>
-                    <span>{{ collector.settingsCount }}</span>
-                </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Settings</b>
+                <span class="sf-toolbar-status">{{ collector.settingCount }}</span>
+            </div>
 
-                <div class="sf-toolbar-info-piece">
-                    <b>User Settings</b>
-                    <span>0</span>
-                </div>
+            <div class="sf-toolbar-info-piece">
+                <b>User Settings</b>
+                <span class="sf-toolbar-status">0</span>
             </div>
         {% endset %}
 
@@ -65,23 +64,25 @@
     <h2>Parameters and Settings</h2>
 
     {% if collector.settingCount %}
-        <table id="setting-table" class="parameter-table">
-            <thead>
-            <tr>
-                <th scope="col">Settings</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for setting in collector.settings %}
+        <div class="table-with-search-field">
+            <table id="setting-table" class="{{ class|default('parameter-table') }}">
+                <thead>
                 <tr>
-                    <td>
-                        <b>{{ setting.label }}</b>
-                        {{ setting.value|raw }}
-                    </td>
+                    <th scope="col">Settings</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for setting in collector.settings %}
+                    <tr>
+                        <td>
+                            <b>{{ setting.label }}</b>
+                            {{ setting.value|raw }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
         <div class="empty">
             <p>No settings defined.</p>
@@ -89,23 +90,25 @@
     {% endif %}
 
     {% if collector.parameterCount %}
-        <table id="parameter-bag-table" class="parameter-table">
-            <thead>
-            <tr>
-                <th scope="col">Parameter Bag</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for parameter in collector.parameters %}
+        <div class="table-with-search-field">
+            <table id="parameter-bag-table" class="{{ class|default('parameter-table') }}">
+                <thead>
                 <tr>
-                    <td>
-                        <b>{{ parameter.label }}</b>
-                        {{ parameter.value|raw }}
-                    </td>
+                    <th scope="col">Parameter Bag</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for parameter in collector.parameters %}
+                    <tr>
+                        <td>
+                            <b>{{ parameter.label }}</b>
+                            {{ parameter.value|raw }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
         <div class="empty">
             <p>Paramter Bag is empty.</p>
