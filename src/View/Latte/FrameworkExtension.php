@@ -96,7 +96,7 @@ final class FrameworkExtension extends LatteExtension implements ServiceContaine
             );
         }
 
-        dump( $componentPasses );
+        // dump( $componentPasses );
 
         return $componentPasses;
     }

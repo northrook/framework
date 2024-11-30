@@ -13,7 +13,7 @@ final class RegisterCoreServicesPass extends CompilerPass
     public function compile( ContainerBuilder $container ) : void
     {
         if ( ! $container->hasDefinition( 'core.service_locator' ) ) {
-            // TODO : Console message
+            $this->console->error( $this::class." cannot find required 'core.service_locator' definition." );
             return;
         }
 

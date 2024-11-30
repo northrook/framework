@@ -8,13 +8,14 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Core\Symfony\Profiler\ParameterBagCollector;
 use Northrook\Clerk;
 use Core\Framework\Telemetry\{ClerkProfiler, PipelineCollector};
 use Symfony\Component\Stopwatch\Stopwatch;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
-        // Stopwatch
+            // Stopwatch
         ->set( Clerk::class )
         ->args(
             [
@@ -25,12 +26,16 @@ return static function( ContainerConfigurator $container ) : void {
             ],
         )
 
-        // TelemetryEventSubscriber
+            // TelemetryEventSubscriber
         ->set( ClerkProfiler::class )
         ->tag( 'kernel.event_subscriber' )
         ->args( [service( Clerk::class )] )
 
-        // Profiler
+            // Profiler
         ->set( PipelineCollector::class )
+        ->tag( 'data_collector' )
+            //
+        ->set( ParameterBagCollector::class )
+        ->args( [service( 'parameter_bag' )] )
         ->tag( 'data_collector' );
 };
