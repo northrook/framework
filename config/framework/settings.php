@@ -9,9 +9,11 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\CoreBundle;
+use Northrook\ArrayStore;
 use Core\Framework\{Pathfinder, Settings};
 
 return static function( ContainerConfigurator $container ) : void {
+    //
     foreach ( CoreBundle::PARAMETERS as $name => $value ) {
         if ( \is_array( $value ) ) {
             \assert(
@@ -25,6 +27,9 @@ return static function( ContainerConfigurator $container ) : void {
     }
 
     $container->services()
+        ->set( 'core.settings_store', ArrayStore::class )
+        ->args( ['path.settings_store', Settings::class] )
+
             // Settings handler
         ->set( Settings::class )
         ->args( [param( 'path.settings_store' )] )

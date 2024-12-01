@@ -26,5 +26,27 @@ final class AssetBunderDiscoverPass extends CompilerPass
     #[Override]
     public function compile( ContainerBuilder $container ) : void
     {
+        /**
+         * Initiate after {@see SettingsCompilerPass}, grabbing:
+         * - `dir.assets`, `core.assets`, and any other `KEY.assets.*` that resolves to a valid diredctory.
+         * - Scan each dir, ensure it has .css and/or .js somewhere.
+         * - Scans nested directories.
+         *
+         * Create an {@see \Core\Service\AssetBundler\AssetMap} and pass it to the {@see \Core\Service\AssetBundler}.
+         */
+    }
+
+    /**
+     * - `.core/assets/styles/*.css` baseline styles
+     * - `.core/assets/styles/admin/*.css`
+     * - `.core/assets/styles/public/*.css`
+     * - `.core/assets/styles/component/*.css`
+     *
+     * Why?
+     *
+     * @return void
+     */
+    private function discoverStylesheets() : void
+    {
     }
 }

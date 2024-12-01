@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Framework;
 
+use Core\Symfony\PathfinderInterface;
 use Northrook\ArrayStore;
 use Northrook\Logger\Log;
 use Northrook\Filesystem\Path;
@@ -17,7 +18,7 @@ use LengthException;
  * @template TKey of array-key
  * @template-covariant TValue of ?string
  */
-final readonly class Pathfinder
+final readonly class Pathfinder implements PathfinderInterface
 {
     /** @var ArrayStore<TKey,TValue> */
     private ArrayStore $pathfinderCache;
@@ -25,7 +26,8 @@ final readonly class Pathfinder
     public function __construct(
         private ParameterBagInterface $parameterBag,
         private string                $pathfinderCachePath,
-    ) {}
+    ) {
+    }
 
     public function get( string $path ) : ?string
     {

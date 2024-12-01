@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core;
 
-use Core\Framework\Compiler\{ApplicationConfigPass, RegisterCoreServicesPass};
+use Core\Framework\Compiler\{ApplicationConfigPass, RegisterCoreServicesPass, SettingsCompilerPass};
 use Core\View\Compiler\RegisterCoreComponentsPass;
 use Override;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -79,6 +79,7 @@ final class CoreBundle extends AbstractBundle
         $container
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
+            ->addCompilerPass( new SettingsCompilerPass() )
             ->addCompilerPass( new RegisterCoreComponentsPass() );
     }
 
