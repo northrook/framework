@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Core;
 
-use Core\Framework\Compiler\{ApplicationConfigPass, RegisterCoreServicesPass, SettingsCompilerPass};
+use Core\Framework\Compiler\{ApplicationConfigPass,
+    AssetBunderDiscoverPass,
+    RegisterCoreServicesPass,
+    SettingsCompilerPass
+};
 use Core\View\Compiler\RegisterCoreComponentsPass;
 use Override;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -41,7 +45,8 @@ final class CoreBundle extends AbstractBundle
         'path.theme.core' => '%dir.core%/config/themes/core.php',
 
         // Settings DataStore
-        'path.settings_store' => '%dir.var%/settings.array.php',
+        'path.settings_store'   => '%dir.var%/settings/data_store.php',
+        'path.settings_history' => '%dir.var%/settings/history_store.php',
     ];
 
     /** @var string[] */
@@ -76,11 +81,14 @@ final class CoreBundle extends AbstractBundle
     {
         parent::build( $container );
 
+        dump( $this->container );
+
         $container
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
             ->addCompilerPass( new SettingsCompilerPass() )
-            ->addCompilerPass( new RegisterCoreComponentsPass() );
+            ->addCompilerPass( new RegisterCoreComponentsPass() )
+            ->addCompilerPass( new AssetBunderDiscoverPass() );
     }
 
     /**

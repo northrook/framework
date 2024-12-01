@@ -28,7 +28,7 @@ return static function( ContainerConfigurator $container ) : void {
 
     $container->services()
         ->set( 'core.settings_store', ArrayStore::class )
-        ->args( ['path.settings_store', Settings::class] )
+        ->args( [param( 'path.settings_store' ), Settings::class] )
 
             // Settings handler
         ->set( Settings::class )
