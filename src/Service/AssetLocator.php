@@ -2,12 +2,12 @@
 
 namespace Core\Service;
 
-use Core\Service\AssetBundler\AssetMap;
+use Core\Service\AssetBundler\AssetManifest;
 
 final readonly class AssetLocator
 {
     public function __construct(
-        public AssetMap $assetMap,
+        public AssetManifest $assetMap,
     ) {
     }
 }

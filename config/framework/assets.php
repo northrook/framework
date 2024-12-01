@@ -14,12 +14,12 @@ use Core\Symfony\DependencyInjection\CompilerPass;
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
 
-            // AssetMap
-        ->set( AssetBundler\AssetMap::class )
-        ->args( ['%kernel.cache_dir%/asset.manifest.php'] )
+            // AssetManifest
+        ->set( AssetBundler\AssetManifest::class )
+        ->args( ['%kernel.cache_dir%/asset.manifest.php', 'AssetManifest'] )
             //
         ->set( AssetBundler::class )
-        ->args( [service( AssetBundler\AssetMap::class ), CompilerPass::PLACEHOLDER_ARG] )
+        ->args( [service( AssetBundler\AssetManifest::class ), CompilerPass::PLACEHOLDER_ARG] )
         ->tag( 'controller.service_arguments' )
         ->autowire();
 };

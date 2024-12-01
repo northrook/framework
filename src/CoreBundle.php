@@ -79,10 +79,6 @@ final class CoreBundle extends AbstractBundle
     #[Override]
     public function build( ContainerBuilder $container ) : void
     {
-        parent::build( $container );
-
-        dump( $this->container );
-
         $container
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )

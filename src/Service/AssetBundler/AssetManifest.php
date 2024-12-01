@@ -6,6 +6,6 @@ namespace Core\Service\AssetBundler;
 
 use Northrook\ArrayStore;
 
-final class AssetMap extends ArrayStore
+final class AssetManifest extends ArrayStore
 {
 }
