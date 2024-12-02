@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Core\Service\AssetBundler;
 
-class AssetBundle
+enum BundleType : string
 {
+    case STYLE  = 'css';
+    case SCRIPT = 'js';
 }

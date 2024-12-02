@@ -11,6 +11,7 @@ use Core\Framework\Compiler\{ApplicationConfigPass,
 };
 use Core\View\Compiler\RegisterCoreComponentsPass;
 use Override;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -84,7 +85,7 @@ final class CoreBundle extends AbstractBundle
             ->addCompilerPass( new ApplicationConfigPass() )
             ->addCompilerPass( new SettingsCompilerPass() )
             ->addCompilerPass( new RegisterCoreComponentsPass() )
-            ->addCompilerPass( new AssetBunderDiscoverPass() );
+            ->addCompilerPass( new AssetBunderDiscoverPass(), PassConfig::TYPE_OPTIMIZE );
     }
 
     /**

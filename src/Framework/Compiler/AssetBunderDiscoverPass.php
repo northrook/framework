@@ -104,7 +104,7 @@ final class AssetBunderDiscoverPass extends CompilerPass
             $component = new ComponentFactory\ComponentProperties( ...$component );
 
             foreach ( $component->assets as $asset ) {
-                $this->parseAsset( $asset, 'component' );
+                $this->parseAsset( $asset, $component->name );
             }
         }
     }

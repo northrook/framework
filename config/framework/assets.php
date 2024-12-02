@@ -12,6 +12,9 @@ use Core\Service\AssetBundler;
 use Core\Symfony\DependencyInjection\CompilerPass;
 
 return static function( ContainerConfigurator $container ) : void {
+    $container->parameters()
+        ->set( ...AssetBundler\Config::stylesheet( 'core' ) );
+
     $container->services()
 
             // AssetManifest
@@ -19,7 +22,12 @@ return static function( ContainerConfigurator $container ) : void {
         ->args( ['%kernel.cache_dir%/asset.manifest.php', 'AssetManifest'] )
             //
         ->set( AssetBundler::class )
-        ->args( [service( AssetBundler\AssetManifest::class ), CompilerPass::PLACEHOLDER_ARG] )
+        ->args(
+            [
+                service( AssetBundler\AssetManifest::class ),
+                CompilerPass::PLACEHOLDER_ARG,
+            ],
+        )
         ->tag( 'controller.service_arguments' )
         ->autowire();
 };
