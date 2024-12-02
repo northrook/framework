@@ -3,6 +3,7 @@
 namespace Core\View\Render;
 
 use Core\Framework\Autowire\Settings;
+use Core\Service\AssetLocator;
 use Core\Symfony\DependencyInjection\ServiceContainer;
 use Core\Framework\Response\Document;
 use Core\View\ComponentFactory;
@@ -149,10 +150,13 @@ abstract class HtmlView implements Stringable
      */
     final protected function assets( ?string $type = null, ?string $id = null ) : self
     {
+        $locator = $this->serviceLocator( AssetLocator::class );
         $parse = $type ? [$type] : ['script', 'style', 'link'];
 
         foreach ( $parse as $type ) {
             $asset = $this->document->pull( $type );
+
+            dump( $asset );
 
             if ( ! $asset ) {
                 continue;

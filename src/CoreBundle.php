@@ -32,7 +32,7 @@ final class CoreBundle extends AbstractBundle
         'dir.core.assets'    => '%dir.core%/assets',
         'dir.assets.themes'  => '%dir.core%/assets',
         //
-        'path.asset_manifest' => '%dir.root%/var/assets/manifest.array.php',
+        'path.asset_manifest' => '%dir.root%/var/assets/manifest.php',
 
         // Templates
         'dir.templates'      => '%dir.root%/templates',

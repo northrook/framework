@@ -45,9 +45,11 @@ final class AssetBundler implements ServiceContainerInterface
 
         foreach ( $this->map( $bundle ) as $bundleName => $assetType ) {
             if ( $assetType['css'] ?? false ) {
+                $bundleName .= '.css';
                 $compiled = $this->compileStylesheet( $bundleName, $assetType['css'] );
             }
             elseif ( $assetType['js'] ?? false ) {
+                $bundleName .= '.js';
                 $compiled = $this->compileScript( $bundleName, $assetType['js'] );
             }
             else {
