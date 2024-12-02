@@ -70,7 +70,8 @@ final class PublicController extends Controller
         AssetBundler $assetBundler,
     ) : string {
         $document( 'Index Demo Template' );
-        $parameters->set( 'assetBundler', $assetBundler );
+
+        dump( $assetBundler->compile() );
 
         return 'demo.latte';
     }

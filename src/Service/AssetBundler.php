@@ -6,14 +6,19 @@ namespace Core\Service;
 
 use Core\Framework\Autowire\Pathfinder;
 use Core\Service\AssetBundler\{AssetManifest, AssetMap};
-use Northrook\StylesheetMinifier;
+use Northrook\{JavaScriptMinifier, StylesheetMinifier};
 use Core\Symfony\DependencyInjection\{ServiceContainerInterface, ServiceLocator};
+use Support\Str;
+use Symfony\Component\Filesystem\Filesystem;
+use Exception;
 
 final class AssetBundler implements ServiceContainerInterface
 {
     use ServiceLocator, Pathfinder;
 
     private readonly AssetMap $map;
+
+    private readonly Filesystem $filesystem;
 
     /**
      * @param AssetManifest $assets
@@ -22,53 +27,57 @@ final class AssetBundler implements ServiceContainerInterface
      */
     public function __construct(
         private readonly AssetManifest $assets,
-        array                          $assetMap = [],
+        array                          $assetMap,
         private readonly string        $buildDirectory,
     ) {
-        dump(
-            $this::class.' build directories:',
-            [
-                'buildDirectory'     => $this->buildDirectory,
-                'dir.assets.storage' => $this->pathfinder( 'dir.assets.storage' ),
-                'dir.public.assets'  => $this->pathfinder( 'dir.public.assets' ),
-            ],
-        );
         $this->map = new AssetMap( $assetMap, true );
     }
 
     /**
-     * Returns `true` if `$bundle` successfully compiled a bundle.
-     * Returns array of [bundleName => status] when compiling all.
-     * Returns `false` on failure.
-     *
      * @param null|string     $bundle
      * @param null|'css'|'js' $type
      *
-     * @return array<string, bool>|bool
+     * @return array<string, Exception|string>
      */
-    public function compile( ?string $bundle = null, ?string $type = null ) : bool|array
+    public function compile( ?string $bundle = null, ?string $type = null ) : array
     {
-        $assetBundle = [];
+        $bundled = [];
 
         foreach ( $this->map( $bundle ) as $bundleName => $assetType ) {
             if ( $assetType['css'] ?? false ) {
-                $assetBundle[$bundleName]['css'] = $this->compileStylesheet( $assetType['css'] );
+                try {
+                    $report = $this->compileStylesheet( $bundleName, $assetType['css'] );
+                }
+                catch ( Exception $report ) {
+                }
+                $bundled[$bundleName] = $report;
+            }
+            elseif ( $assetType['js'] ?? false ) {
+                $bundled[$bundleName] = $this->compileScript( $bundleName, $assetType['js'] );
             }
         }
 
-        dump( $assetBundle );
-        return false;
+        return $bundled;
     }
 
-    protected function compileStylesheet( array $paths ) : ?string
+    protected function compileStylesheet( string $name, array $paths ) : string
     {
         $compiler = new StylesheetMinifier( $paths );
 
-        return $compiler->toString();
+        $stylesheet = $compiler->minify();
+
+        $savePath = $this->pathfinder( 'dir.assets.storage/build/'.Str::end( $name, '.css' ) );
+
+        $this->filesystem()->dumpFile( $savePath, $stylesheet );
+
+        return $compiler->report();
     }
 
-    protected function assetTypeCompiler( $assetType )
+    protected function compileScript( string $name, array $paths ) : Exception|string
     {
+        $compiler = new JavaScriptMinifier( $paths );
+
+        return __METHOD__;
     }
 
     /**
@@ -79,5 +88,10 @@ final class AssetBundler implements ServiceContainerInterface
     private function map( ?string $get = null ) : array
     {
         return $get ? [$get => $this->map->get( $get )] : $this->map->all();
+    }
+
+    private function filesystem() : Filesystem
+    {
+        return $this->filesystem ??= new Filesystem();
     }
 }
