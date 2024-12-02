@@ -151,7 +151,7 @@ abstract class HtmlView implements Stringable
     final protected function assets( ?string $type = null, ?string $id = null ) : self
     {
         $locator = $this->serviceLocator( AssetLocator::class );
-        $parse = $type ? [$type] : ['script', 'style', 'link'];
+        $parse   = $type ? [$type] : ['script', 'style', 'link'];
 
         foreach ( $parse as $type ) {
             $asset = $this->document->pull( $type );
@@ -162,17 +162,20 @@ abstract class HtmlView implements Stringable
                 continue;
             }
 
-            $id     = $asset['id'] ?? null ? ' id="'.$asset['id'].'"' : '';
+            $id     = $asset['id']     ?? null ? ' id="'.$asset['id'].'"' : '';
+            $inline = $asset['inline'] ?? false;
+            $path   = $locator->get( $asset['path'].'css' );
+            dump($path);
             $assign = match ( $type ) {
-                'script' => ( function() use ( $asset, $id ) {
-                    return "<script{$id} src=\"{$asset['path']}\"></script>";
-                } )(),
-                'style' => ( function() use ( $asset, $id ) {
-                    return "<link{$id} rel=\"stylesheet\" href=\"{$asset['path']}\"></link>";
-                } )(),
-                'link' => ( function() use ( $asset, $id ) {
-                    return "<link{$id} href=\"{$asset['path']}\"></link>";
-                } )(),
+                // 'script' => ( function() use ( $asset, $id ) {
+                //     return "<script{$id} src=\"{$asset['path']}\"></script>";
+                // } )(),
+                // 'style' => ( function() use ( $asset, $id ) {
+                //     return "<link{$id} rel=\"stylesheet\" href=\"{$asset['path']}\"></link>";
+                // } )(),
+                // 'link' => ( function() use ( $asset, $id ) {
+                //     return "<link{$id} href=\"{$asset['path']}\"></link>";
+                // } )(),
                 default => null,
             };
 

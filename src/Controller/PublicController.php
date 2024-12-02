@@ -31,7 +31,9 @@ final class PublicController extends Controller
                 'html.status' => 'init',
             ],
         )
-            ->add( 'meta.viewport', 'width=device-width,initial-scale=1' );
+            ->add( 'meta.viewport', 'width=device-width,initial-scale=1' )
+            ->style( 'core', inline : true )
+            ->script( 'core', inline : true );
     }
 
     #[

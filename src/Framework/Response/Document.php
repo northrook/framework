@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Core\Framework\Response;
 
@@ -8,6 +8,7 @@ use Northrook\{ArrayAccessor, Filesystem\Path, Logger\Log};
 use Stringable;
 use Support\Normalize;
 use function Support\toString;
+use InvalidArgumentException;
 
 /**
  * Handles all Document related properties.
@@ -17,9 +18,9 @@ use function Support\toString;
 final class Document extends ArrayAccessor
 {
     private const array META_GROUPS = [
-            'html'     => [ 'id', 'status' ],
-            'document' => [ 'title', 'description', 'author', 'keywords' ],
-            'theme'    => [ 'color', 'scheme', 'name' ],
+        'html'     => ['id', 'status'],
+        'document' => ['title', 'description', 'author', 'keywords'],
+        'theme'    => ['color', 'scheme', 'name'],
     ];
 
     protected bool $locked = false;
@@ -29,19 +30,19 @@ final class Document extends ArrayAccessor
 
     private function isLocked() : bool
     {
-        if ( !$this->locked ) {
+        if ( ! $this->locked ) {
             return false;
         }
 
         Log::warning(
-                'The {class} is locked. No further changes can be made at this time.',
-                [ 'class' => $this::class, 'document' => $this, 'reason' => 'Locked by the RequestResponseHandler.' ],
+            'The {class} is locked. No further changes can be made at this time.',
+            ['class' => $this::class, 'document' => $this, 'reason' => 'Locked by the RequestResponseHandler.'],
         );
 
         return true;
     }
 
-    public function set( array | int | string $keys, mixed $value = null ) : Document
+    public function set( array|int|string $keys, mixed $value = null ) : Document
     {
         if ( $this->isLocked() ) {
             return $this;
@@ -49,7 +50,7 @@ final class Document extends ArrayAccessor
         return parent::set( $keys, $value );
     }
 
-    public function add( array | int | string $keys, mixed $value = null ) : Document
+    public function add( array|int|string $keys, mixed $value = null ) : Document
     {
         if ( $this->isLocked() ) {
             return $this;
@@ -58,14 +59,13 @@ final class Document extends ArrayAccessor
     }
 
     public function __invoke(
-            ?string               $title = null,
-            ?string               $description = null,
-            null | string | array $keywords = null,
-            ?string               $author = null,
-            ?string               $id = null,
-            ?string               $status = null,
-    ) : Document
-    {
+        ?string           $title = null,
+        ?string           $description = null,
+        null|string|array $keywords = null,
+        ?string           $author = null,
+        ?string           $id = null,
+        ?string           $status = null,
+    ) : Document {
         $set = \array_filter( \get_defined_vars() );
 
         foreach ( $set as $name => $value ) {
@@ -81,37 +81,37 @@ final class Document extends ArrayAccessor
      * - This method does not validate the name or content.
      * - The name is automatically prefixed with the group if relevant.
      *
-     * @param string             $name  = ['title', 'description', 'author', 'keywords'][$any]
-     * @param null|array|string  $content
+     * @param string            $name    = ['title', 'description', 'author', 'keywords'][$any]
+     * @param null|array|string $content
      *
      * @return $this
      */
-    public function meta( string $name, null | string | array $content ) : Document
+    public function meta( string $name, null|string|array $content ) : Document
     {
         $this->set( $this->metaGroup( $name ), toString( $content, ', ' ) );
 
         return $this;
     }
 
-    public function head( string $key, string | Stringable $html ) : Document
+    public function head( string $key, string|Stringable $html ) : Document
     {
         $value = $html instanceof Stringable ? $html->__toString() : $html;
 
         // TODO : Cache
         // TODO : Linting / validation step
 
-        $this->set( 'head.' . Normalize::key( $key ), $value );
+        $this->set( 'head.'.Normalize::key( $key ), $value );
 
         return $this;
     }
 
     /**
-     * @param string  $bot      = [ 'googlebot', 'bingbot', 'yandexbot'][$any]
-     * @param string  ...$rule  = [
-     *                          'index', 'noindex', 'follow', 'nofollow',
-     *                          'index, follow', 'noindex, nofollow',
-     *                          'noarchive', 'nosnippet', 'nositelinkssearchbox'
-     *                          ][$any]
+     * @param string $bot     = [ 'googlebot', 'bingbot', 'yandexbot'][$any]
+     * @param string ...$rule = [
+     *                        'index', 'noindex', 'follow', 'nofollow',
+     *                        'index, follow', 'noindex, nofollow',
+     *                        'noarchive', 'nosnippet', 'nositelinkssearchbox'
+     *                        ][$any]
      *
      * @return Document
      *
@@ -122,11 +122,11 @@ final class Document extends ArrayAccessor
         $rules = [];
 
         foreach ( $rule as $content ) {
-            if ( !\is_string( $content ) ) {
+            if ( ! \is_string( $content ) ) {
                 Log::exception(
-                        exception : new \InvalidArgumentException( $this::class ),
-                        message   : 'Invalid robots rule for {bot}, a string is required, but {type} was provided.',
-                        context   : [ 'bot' => $bot, 'type' => \gettype( $content ) ],
+                    exception : new InvalidArgumentException( $this::class ),
+                    message   : 'Invalid robots rule for {bot}, a string is required, but {type} was provided.',
+                    context   : ['bot' => $bot, 'type' => \gettype( $content )],
                 );
 
                 continue;
@@ -152,7 +152,7 @@ final class Document extends ArrayAccessor
      *
      * The {@see ResponseHandler} will ensure the requested assets are provided if needed.
      *
-     * @param string  ...$enqueue
+     * @param string ...$enqueue
      *
      * @return $this
      */
@@ -166,52 +166,52 @@ final class Document extends ArrayAccessor
     }
 
     /**
-     * @param Path|string  $path
-     * @param ?string      $id
-     * @param bool         $inline
+     * @param Path|string $path
+     * @param ?string     $id
+     * @param bool        $inline
      *
      * @return $this
      */
     public function style(
-            string | Path $path, // 'core.{name}' | path
-            ?string       $id = null,
-            bool          $inline = false,
-    ) : Document
-    {
+        string|Path $path, // 'core.{name}' | path
+        ?string     $id = null,
+        bool        $inline = false,
+    ) : Document {
         return $this->add(
-                'style', [
+            'style',
+            [
                 'path'   => $path,
                 'id'     => $id,
                 'inline' => $inline,
-        ],
+            ],
         );
     }
 
     /**
-     * @param Path|string  $path
-     * @param ?string      $id
-     * @param bool         $inline
+     * @param Path|string $path
+     * @param ?string     $id
+     * @param bool        $inline
      *
      * @return $this
      */
     public function script(
-            string | Path $path, // 'core.{name}' | path
-            ?string       $id = null,
-            bool          $inline = false,
-    ) : Document
-    {
+        string|Path $path, // 'core.{name}' | path
+        ?string     $id = null,
+        bool        $inline = false,
+    ) : Document {
         return $this->add(
-                'script', [
+            'script',
+            [
                 'path'   => $path,
                 'id'     => $id,
                 'inline' => $inline,
-        ],
+            ],
         );
     }
 
     /**
-     * @param string  $href
-     * @param         $attributes
+     * @param string $href
+     * @param        $attributes
      *
      * @return Document
      *
@@ -219,22 +219,21 @@ final class Document extends ArrayAccessor
      */
     public function link( string $href, ...$attributes ) : Document
     {
-        return $this->add( 'link', [ 'href' => $href ] + $attributes );
+        return $this->add( 'link', ['href' => $href] + $attributes );
     }
 
     public function theme(
-            string  $color,
-            string  $scheme = 'dark light',
-            ?string $name = 'system',
-    ) : Document
-    {
+        string  $color,
+        string  $scheme = 'dark light',
+        ?string $name = 'system',
+    ) : Document {
         // Needs to generate theme.scheme.color,
         // this is to allow for different colors based on light/dark
 
         foreach ( [
-                'color'  => $color,
-                'scheme' => $scheme,
-                'name'   => $name,
+            'color'  => $color,
+            'scheme' => $scheme,
+            'name'   => $name,
         ] as $metaName => $content ) {
             $this->meta( "theme.{$metaName}", $content );
         }
@@ -252,10 +251,10 @@ final class Document extends ArrayAccessor
 
             $value = match ( $name ) {
                 'class', 'style' => \is_array( $value ) ? $value : \explode( $separator, $value ),
-                default          => $value,
+                default => $value,
             };
 
-            $this->set( 'body.' . Normalize::key( $name ), $value );
+            $this->set( 'body.'.Normalize::key( $name ), $value );
         }
         return $this;
     }
