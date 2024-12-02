@@ -26,6 +26,7 @@ return static function( ContainerConfigurator $container ) : void {
             [
                 service( AssetBundler\AssetManifest::class ),
                 CompilerPass::PLACEHOLDER_ARG,
+                param( 'kernel.build_dir' ),
             ],
         )
         ->tag( 'controller.service_arguments' )

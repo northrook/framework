@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Core\Framework\Compiler;
 
-use Core\Symfony\DependencyInjection\{CompilerPass, ServiceContainerInterface};
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Reference};
-use function Support\{implements_interface};
+use Core\Symfony\DependencyInjection\{CompilerPass, ServiceContainerInterface};
+use Core\Symfony\Console\Output;
+use function Support\implements_interface;
 
 final class RegisterCoreServicesPass extends CompilerPass
 {
@@ -44,13 +45,14 @@ final class RegisterCoreServicesPass extends CompilerPass
     private function injectServiceLocator( ContainerBuilder $container ) : void
     {
         $coreServiceLocator = $container->getDefinition( 'core.service_locator' );
+        $registeredServices = [];
 
         foreach ( $this->getDeclaredClasses( $container->getServiceIds() ) as $class ) {
             if (
                 implements_interface( $class, ServiceContainerInterface::class )
                 && $container->hasDefinition( $class )
             ) {
-                $this->console->success( "{$class}::setServiceLocator.\n" );
+                $registeredServices[] = [Output::format( '[OK]', 'info' ).$class];
                 $container->getDefinition( $class )
                     ->addMethodCall(
                         'setServiceLocator',
@@ -58,6 +60,8 @@ final class RegisterCoreServicesPass extends CompilerPass
                     );
             }
         }
+
+        $this->console->table( [__METHOD__], $registeredServices );
     }
 
     /**

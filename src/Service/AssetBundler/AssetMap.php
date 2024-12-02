@@ -6,6 +6,9 @@ namespace Core\Service\AssetBundler;
 
 use Northrook\ArrayAccessor;
 
+/**
+ * @internal
+ */
 final class AssetMap extends ArrayAccessor
 {
     use ArrayAccessor\ArrayConstructor;
