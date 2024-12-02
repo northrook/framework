@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Core\Service;
 
 use Core\Framework\Autowire\Pathfinder;
-use Core\Service\AssetBundler\{AssetManifest, AssetMap};
-use Northrook\{JavaScriptMinifier, StylesheetMinifier};
+use Core\Service\AssetBundler\{AssetManifest, AssetMap, CompiledAsset};
+use Northrook\{JavaScriptMinifier, Logger\Log, StylesheetMinifier};
 use Core\Symfony\DependencyInjection\{ServiceContainerInterface, ServiceLocator};
 use Support\Str;
 use Symfony\Component\Filesystem\Filesystem;
@@ -45,39 +45,78 @@ final class AssetBundler implements ServiceContainerInterface
 
         foreach ( $this->map( $bundle ) as $bundleName => $assetType ) {
             if ( $assetType['css'] ?? false ) {
-                try {
-                    $report = $this->compileStylesheet( $bundleName, $assetType['css'] );
-                }
-                catch ( Exception $report ) {
-                }
-                $bundled[$bundleName] = $report;
+                $compiled = $this->compileStylesheet( $bundleName, $assetType['css'] );
             }
             elseif ( $assetType['js'] ?? false ) {
-                $bundled[$bundleName] = $this->compileScript( $bundleName, $assetType['js'] );
+                $compiled = $this->compileScript( $bundleName, $assetType['js'] );
             }
+            else {
+                Log::warning(
+                    'Unable to compile unknown asset type: {assetType}.',
+                    ['assetType' => \implode( ', ', \array_keys( $assetType ) )],
+                );
+
+                continue;
+            }
+            $bundled[$compiled->name] = $compiled->report;
+            $this->assets->set(
+                $compiled->name,
+                [
+                    'path'      => $compiled->path,
+                    'bundle'    => $bundleName,
+                    'timestamp' => \time(),
+                ],
+            );
         }
 
         return $bundled;
     }
 
-    protected function compileStylesheet( string $name, array $paths ) : string
+    protected function compileStylesheet( string $name, array $paths ) : CompiledAsset
     {
-        $compiler = new StylesheetMinifier( $paths );
-
-        $stylesheet = $compiler->minify();
-
         $savePath = $this->pathfinder( 'dir.assets.storage/build/'.Str::end( $name, '.css' ) );
 
-        $this->filesystem()->dumpFile( $savePath, $stylesheet );
+        try {
+            $compiler   = new StylesheetMinifier( $paths );
+            $stylesheet = $compiler->minify();
 
-        return $compiler->report();
+            if ( $stylesheet ) {
+                $report = $compiler->report();
+                $this->filesystem()->dumpFile( $savePath, $stylesheet );
+            }
+            else {
+                $report   = 'Resulting stylesheet is empty, and was not saved.';
+                $savePath = '';
+            }
+        }
+        catch ( Exception $exception ) {
+            $report = $exception->getMessage();
+        }
+
+        return new CompiledAsset( $name, $savePath, $report );
     }
 
-    protected function compileScript( string $name, array $paths ) : Exception|string
+    protected function compileScript( string $name, array $paths ) : CompiledAsset
     {
-        $compiler = new JavaScriptMinifier( $paths );
+        $savePath = $this->pathfinder( 'dir.assets.storage/build/'.Str::end( $name, '.js' ) );
 
-        return __METHOD__;
+        try {
+            $compiler = new JavaScriptMinifier( $paths );
+            $script   = $compiler->minify();
+
+            if ( $script ) {
+                $report = 'Minified script.';
+                $this->filesystem()->dumpFile( $savePath, $script );
+            }
+            else {
+                $report = 'Resulting stylesheet is empty, and was not saved.';
+            }
+        }
+        catch ( Exception $exception ) {
+            $report = $exception->getMessage();
+        }
+
+        return new CompiledAsset( $name, $savePath, $report );
     }
 
     /**
