@@ -6,6 +6,7 @@ namespace Core\Service;
 
 use Core\Framework\Autowire\Pathfinder;
 use Core\Service\AssetBundler\{AssetManifest, AssetMap, CompiledAsset};
+use Core\Service\DesignSystem\StyleFramework;
 use Northrook\{JavaScriptMinifier, Logger\Log, StylesheetMinifier};
 use Core\Symfony\DependencyInjection\{ServiceContainerInterface, ServiceLocator};
 use Support\Str;
@@ -79,7 +80,8 @@ final class AssetBundler implements ServiceContainerInterface
         $savePath = $this->pathfinder( 'dir.assets.storage/build/'.Str::end( $name, '.css' ) );
 
         try {
-            $compiler   = new StylesheetMinifier( $paths );
+            $baseline   = new StyleFramework();
+            $compiler   = new StylesheetMinifier( [$baseline->style(), ...$paths] );
             $stylesheet = $compiler->minify();
 
             if ( $stylesheet ) {

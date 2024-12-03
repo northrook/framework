@@ -1,0 +1,33 @@
+:root {
+  --heading-line-height : 1.5em; /* 1.5 min, 5em max */
+  --heading-group-gap   : 1.5em;
+}
+/* Single headings */
+.heading {
+  margin-block : calc(calc(var(--heading-line-height, 2em) - 1em) * -.5);
+  line-height  : var(--heading-line-height, 2em);
+}
+
+/* Evenly distribute line length */
+.heading > span {
+  text-wrap : balance;
+  display   : inline-block;
+}
+.heading > span span {
+  text-wrap : pretty;
+
+}
+
+.heading .subheading {
+  display      : block;
+  margin-block : calc(calc(var(--line-height, 2em) - 1em) * -.5);
+  font-size    : var(--text-h4);
+  line-height  : var(--line-height, 2em);
+}
+
+/* Headings with sub-headings */
+hgroup {
+  display        : flex;
+  flex-direction : column;
+  gap            : var(--heading-group-gap);
+}

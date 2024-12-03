@@ -23,9 +23,9 @@ abstract class HtmlView implements Stringable
     private array $head = [];
 
     public function __construct(
-        private readonly Document         $document,
-        private string                    $content,
-        protected readonly ServiceLocator $serviceLocator,
+            private readonly Document         $document,
+            private string                    $content,
+            protected readonly ServiceLocator $serviceLocator,
     ) {
     }
 
@@ -164,20 +164,24 @@ abstract class HtmlView implements Stringable
 
             $id     = $asset['id']     ?? null ? ' id="'.$asset['id'].'"' : '';
             $inline = $asset['inline'] ?? false;
-            $path   = $locator->get( $asset['path'].'css' );
+            $path   = $locator->get( $asset['path'] . '.css' );
             dump($path);
-            $assign = match ( $type ) {
-                // 'script' => ( function() use ( $asset, $id ) {
-                //     return "<script{$id} src=\"{$asset['path']}\"></script>";
-                // } )(),
-                // 'style' => ( function() use ( $asset, $id ) {
-                //     return "<link{$id} rel=\"stylesheet\" href=\"{$asset['path']}\"></link>";
-                // } )(),
-                // 'link' => ( function() use ( $asset, $id ) {
-                //     return "<link{$id} href=\"{$asset['path']}\"></link>";
-                // } )(),
-                default => null,
-            };
+            $contents = file_get_contents( $path['path'] );
+            dump( $contents );
+
+            $assign = '<style'.$id.'>'.$contents.'</style>';
+            // $assign = match ( $type ) {
+            //     // 'script' => ( function() use ( $asset, $id ) {
+            //     //     return "<script{$id} src=\"{$asset['path']}\"></script>";
+            //     // } )(),
+            //     // 'style' => ( function() use ( $asset, $id ) {
+            //     //     return "<link{$id} rel=\"stylesheet\" href=\"{$asset['path']}\"></link>";
+            //     // } )(),
+            //     // 'link' => ( function() use ( $asset, $id ) {
+            //     //     return "<link{$id} href=\"{$asset['path']}\"></link>";
+            //     // } )(),
+            //     default => null,
+            // };
 
             if ( $assign ) {
                 $this->head[] = $assign;
