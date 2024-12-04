@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Controller;
 
-use Core\Framework\Attribute\OnDocument;
+use Core\Framework\Controller\Attribute\OnDocument;
 use Core\Framework\Autowire\Pathfinder;
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;

@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Core\Service\IconService;
 use Core\View\{
-    IconService,
-    Latte,
+        Latte,
     Template\Extension\IconPackExtension,
     Template\TemplateCompiler
 };

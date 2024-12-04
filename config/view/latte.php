@@ -8,7 +8,8 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\View\{ComponentFactory, IconService, Latte, Template\Extension\IconPackExtension};
+use Core\View\{ComponentFactory, Latte, Template\Extension\IconPackExtension};
+use Core\Service\IconService;
 use Core\View\Latte\Extension\CacheExtension;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 

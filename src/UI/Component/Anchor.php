@@ -4,8 +4,8 @@ namespace Core\UI\Component;
 
 use Core\View\Attribute\ViewComponent;
 use Core\View\Component;
-use Core\View\Template\Compiler\NodeCompiler;
 use Core\View\Template\Node\ComponentNode;
+use Core\View\Template\NodeParser;
 use Core\View\Template\TemplateCompiler;
 use Northrook\Logger\Log;
 
@@ -65,7 +65,7 @@ final class Anchor extends Component implements Component\NodeInterface
         return $compiler->render( __DIR__.'/anchor.latte', $this, cache : false );
     }
 
-    public function node( NodeCompiler $node ) : ComponentNode
+    public function node( NodeParser $node ) : ComponentNode
     {
         return new ComponentNode( $this->name, $node );
     }

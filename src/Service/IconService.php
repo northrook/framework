@@ -1,9 +1,10 @@
 <?php
 
-namespace Core\View;
+namespace Core\Service;
 
+use Core\Service\IconService\IconPack;
 use Exception\NotImplementedException;
-use Core\View\Render\{Icon, IconPack};
+use Core\View\Render\{Icon};
 use Core\View\Interface\{IconInterface, IconPackInterface, IconServiceInterface};
 
 // :: Not part of [core-view]

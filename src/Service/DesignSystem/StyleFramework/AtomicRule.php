@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Core\Service\DesignSystem\StyleFramework;
 
-use function String\escape;
+use Support\Str;
 
 function escapeProperty( string $property ) : string
 {
-    return \trim( escape( $property, ':' ) );
+    return \trim( Str::escape( $property, ':' ) );
 }
 
 abstract class AtomicRule
@@ -54,11 +54,11 @@ abstract class AtomicRule
 
     final protected function selectorVariable( string $variable ) : string
     {
-        return '--'.\trim( escape( $variable, ':' ), " \n\r\t\v\0:-" );
+        return '--'.\trim( Str::escape( $variable, ':' ), " \n\r\t\v\0:-" );
     }
 
     final protected function selectorClass( string $selector ) : string
     {
-        return '.'.\trim( escape( $selector, ':' ), '.' );
+        return '.'.\trim( Str::escape( $selector, ':' ), '.' );
     }
 }

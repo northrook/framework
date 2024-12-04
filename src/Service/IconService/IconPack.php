@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\View\Render;
+namespace Core\Service\IconService;
 
 use Core\View\Interface\IconPackInterface;
 use Northrook\Filesystem\Path;

@@ -18,9 +18,9 @@ trait CurrentRequest
         return $this->serviceLocator( Request::class );
     }
 
-    final protected function isXhrRequest() : bool
+    final protected function isHtmxRequest() : bool
     {
-        return $this->getRequest()->attributes->get( 'xhr', false );
+        return $this->getRequest()->attributes->get( 'htmx', false );
     }
 
     final protected function isManagedRequest() : bool

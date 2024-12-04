@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\Framework\Attribute;
+namespace Core\Framework\Controller\Attribute;
 
 use Core\Framework\Controller;
 use Attribute;

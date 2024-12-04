@@ -2,8 +2,9 @@
 
 namespace Core\UI\Component;
 
+use Core\Service\IconService;
 use Core\View\Attribute\ViewComponent;
-use Core\View\{Component, IconService, Template\TemplateCompiler};
+use Core\View\{Component, Template\TemplateCompiler};
 
 #[ViewComponent( ['button', 'button:submit'], true )]
 final class Button extends Component

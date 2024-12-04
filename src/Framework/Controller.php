@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Core\Framework;
 
-use Core\Framework\Attribute\{OnContent, OnDocument};
+use Core\Framework\Controller\Attribute\OnContent;
+use Core\Framework\Controller\Attribute\{OnDocument};
 use Core\Framework\Controller\ResponseMethods;
 use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
 use Core\Framework\Response\{Parameters, Document, Headers};
@@ -29,7 +30,7 @@ abstract class Controller implements ServiceContainerInterface
     final protected function controllerResponseMethods() : void
     {
         // Add invoked methods to the Request attributes
-        $responseType = $this->isXhrRequest()
+        $responseType = $this->isHtmxRequest()
                 ? OnContent::class
                 : OnDocument::class;
 

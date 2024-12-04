@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Core\HTTP;
 
-use Core\Framework\Attribute\{OnContent, OnDocument};
+use Core\Framework\Controller\Attribute\OnContent;
+use Core\Framework\Controller\Attribute\{OnDocument};
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
 use Core\Symfony\EventListener\HttpEventListener;
@@ -58,11 +59,11 @@ final class RequestListener extends HttpEventListener
 
         $this->clerk::event( __METHOD__, 'http' );
 
-        $xhr = $event->getRequest()->headers->has( 'hx-request' );
+        $htmx = $event->getRequest()->headers->has( 'hx-request' );
 
-        $event->getRequest()->attributes->set( 'htmx', $xhr );
-        $event->getRequest()->attributes->set( 'type', $xhr ? 'XMLHttpRequest' : 'HttpRequest' );
-        $event->getRequest()->attributes->set( 'use_template', $xhr ? Template::CONTENT : Template::DOCUMENT );
+        $event->getRequest()->attributes->set( 'htmx', $htmx );
+        $event->getRequest()->attributes->set( 'type', $htmx ? 'XMLHttpRequest' : 'HttpRequest' );
+        $event->getRequest()->attributes->set( 'use_template', $htmx ? Template::CONTENT : Template::DOCUMENT );
 
         $this->clerk::stop( __METHOD__ );
     }
@@ -77,7 +78,7 @@ final class RequestListener extends HttpEventListener
         $controller = $event->controllerArgumentsEvent->getController();
 
         /**
-         * Call methods annotated with {@see OnContent::class} or {@see OnDocument::class}.
+         * Call methods annotated with {@see OnContent::class} or {@see \Core\Framework\Controller\Attribute\OnDocument::class}.
          */
         if ( \is_array( $controller ) && $controller[0] instanceof Controller ) {
             $controller = $controller[0];

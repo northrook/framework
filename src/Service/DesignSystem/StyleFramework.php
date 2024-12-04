@@ -6,7 +6,7 @@ namespace Core\Service\DesignSystem;
 
 use Core\Service\DesignSystem\StyleFramework\{AtomicRule, Color, Display, Variables};
 use Northrook\Filesystem\File;
-use function String\escape;
+use Support\Str;
 
 final class StyleFramework
 {
@@ -108,7 +108,7 @@ final class StyleFramework
 
     private function selector( string $selector ) : string
     {
-        return \trim( escape( $selector, ':' ), " \n\r\t\v\0:" );
+        return \trim( Str::escape( $selector, ':' ), " \n\r\t\v\0:" );
     }
 
     private function rule( string $selector, array $declarations ) : string
