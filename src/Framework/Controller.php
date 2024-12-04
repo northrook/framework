@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Core\Framework;
 
-use Core\Symfony\DependencyInjection\ServiceContainerInterface;
 use Core\Framework\Attribute\{OnContent, OnDocument};
 use Core\Framework\Controller\ResponseMethods;
-use Core\Symfony\DependencyInjection\ServiceContainer;
+use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
 use Core\Framework\Response\{Parameters, Document, Headers};
 use Northrook\Logger\Log;
 use ReflectionClass;
@@ -30,7 +29,9 @@ abstract class Controller implements ServiceContainerInterface
     final protected function controllerResponseMethods() : void
     {
         // Add invoked methods to the Request attributes
-        $responseType = $this->getRequest()->headers->has( 'HX-Request' ) ? OnContent::class : OnDocument::class;
+        $responseType = $this->isXhrRequest()
+                ? OnContent::class
+                : OnDocument::class;
 
         $autowire = [
             Headers::class,

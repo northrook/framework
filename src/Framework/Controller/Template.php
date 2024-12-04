@@ -1,6 +1,6 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Core\Framework\Controller;
 
@@ -15,5 +15,11 @@ use Attribute;
 #[Attribute( Attribute::TARGET_CLASS | Attribute::TARGET_METHOD )]
 final class Template
 {
-    public function __construct( public string $name ) {}
+    public const string
+        DOCUMENT = '_document_template',
+        CONTENT  = '_content_template';
+
+    public function __construct( public string $name )
+    {
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\HTTP;
 
+use Core\Framework\Attribute\{OnContent, OnDocument};
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
 use Core\Symfony\EventListener\HttpEventListener;
@@ -13,7 +14,6 @@ use Symfony\Component\HttpKernel\Event\{
     ResponseEvent,
     ViewEvent
 };
-use Northrook\Clerk;
 use Northrook\Logger\Log;
 use Support\Reflect;
 use ReflectionException;
@@ -25,14 +25,10 @@ use function Support\explode_class_callable;
 
 final class RequestListener extends HttpEventListener
 {
-    protected const string
-        DOCUMENT = '_document_template',
-        CONTENT  = '_content_template';
-
     /**
      * For debugging - will be cached later.
      *
-     * @var array<string, array<string, array{templates: array{_document_template: ?string, _content_template: ?string}}>
+     * @var array<string, array<string, array{templates: array{_document_template: ?string, _content_template: ?string}}>>
      */
     private array $responseTemplateCache = [];
 
@@ -60,13 +56,15 @@ final class RequestListener extends HttpEventListener
             return;
         }
 
-        Clerk::event( __METHOD__, $this::class );
+        $this->clerk::event( __METHOD__, 'http' );
 
         $xhr = $event->getRequest()->headers->has( 'hx-request' );
 
         $event->getRequest()->attributes->set( 'htmx', $xhr );
         $event->getRequest()->attributes->set( 'type', $xhr ? 'XMLHttpRequest' : 'HttpRequest' );
-        $event->getRequest()->attributes->set( 'use_template', $xhr ? $this::CONTENT : $this::DOCUMENT );
+        $event->getRequest()->attributes->set( 'use_template', $xhr ? Template::CONTENT : Template::DOCUMENT );
+
+        $this->clerk::stop( __METHOD__ );
     }
 
     public function onKernelView( ViewEvent $event ) : void
@@ -74,11 +72,13 @@ final class RequestListener extends HttpEventListener
         if ( $this->shouldSkip( $event ) ) {
             return;
         }
-
-        Clerk::event( __METHOD__, $this::class );
+        $this->clerk::event( __METHOD__, 'http' );
 
         $controller = $event->controllerArgumentsEvent->getController();
 
+        /**
+         * Call methods annotated with {@see OnContent::class} or {@see OnDocument::class}.
+         */
         if ( \is_array( $controller ) && $controller[0] instanceof Controller ) {
             $controller = $controller[0];
             try {
@@ -92,6 +92,8 @@ final class RequestListener extends HttpEventListener
         }
 
         $event->setResponse( $this->resolveViewResponse( $event->getControllerResult() ) );
+
+        $this->clerk::stop( __METHOD__ );
     }
 
     /**
@@ -102,10 +104,12 @@ final class RequestListener extends HttpEventListener
         if ( $this->shouldSkip( $event ) ) {
             return;
         }
+        $this->clerk::event( __CLASS__.'::getTemplateAttributes', 'http' );
 
         $event->getRequest()->attributes->add(
             $this->getTemplateAttributes( $event->getRequest() ),
         );
+        $this->clerk::stop( __CLASS__.'::getTemplateAttributes' );
     }
 
     public function onKernelException( ExceptionEvent $event ) : void
@@ -119,8 +123,6 @@ final class RequestListener extends HttpEventListener
 
     private function resolveViewResponse( mixed $content ) : Response
     {
-        Clerk::event( __METHOD__, $this::class );
-
         if ( \is_string( $content ) || $content instanceof Stringable ) {
             $content = (string) $content;
         }
@@ -131,7 +133,6 @@ final class RequestListener extends HttpEventListener
                 message   : 'Controller return value is {type}, the {Response} object requires {string}|{null}. {null} was provided instead.',
                 context   : ['type' => \gettype( $content )],
             );
-            Clerk::event( __METHOD__.'::EXCEPTION', $this::class );
             $content = null;
         }
 
@@ -151,8 +152,6 @@ final class RequestListener extends HttpEventListener
      */
     private function getTemplateAttributes( Request $request ) : array
     {
-        Clerk::event( __METHOD__, $this::class );
-
         $caller = $request->attributes->get( '_controller' );
 
         \assert( \is_string( $caller ) );

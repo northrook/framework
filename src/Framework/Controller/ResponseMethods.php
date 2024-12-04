@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\Framework\Controller;
 
 use Core\Framework\Autowire\CurrentRequest;
-use Core\Symfony\DependencyInjection\ServiceContainer;
+use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
 use Exception;
 use Northrook\Filesystem\URL;
 use Symfony\Component\Finder\SplFileInfo;
@@ -15,13 +15,19 @@ use Symfony\Component\HttpFoundation\{BinaryFileResponse,
     RedirectResponse,
     Request,
     Response,
-    ResponseHeaderBag};
+    ResponseHeaderBag
+};
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Throwable;
 
+/**
+ * @phpstan-require-implements ServiceContainerInterface
+ *
+ * @author Martin Nielsen <mn@northrook.com>
+ */
 trait ResponseMethods
 {
     use ServiceContainer, CurrentRequest;
@@ -48,7 +54,7 @@ trait ResponseMethods
             );
         }
         catch ( Exception $exception ) {
-            throw $this->notFoundException( previous: $exception );
+            throw $this->notFoundException( previous : $exception );
         }
     }
 
@@ -64,7 +70,6 @@ trait ResponseMethods
         string|URL $url,
         int        $status = 302,
     ) : RedirectResponse {
-
         // TODO: [route] to URL
         // TODO: Validate $url->exists - update $status
         // TODO: Log failing redirects
@@ -74,7 +79,7 @@ trait ResponseMethods
         }
 
         if ( ! $url->exists() ) {
-            throw $this->notFoundException(  );
+            throw $this->notFoundException();
         }
 
         return new RedirectResponse( $url->path, $status );
@@ -120,9 +125,7 @@ trait ResponseMethods
         array                          $context = [],
         SerializerInterface|null|false $serializer = null,
     ) : JsonResponse {
-
         if ( false !== $serializer ) {
-
             $serializer ??= $this->serviceLocator( SerializerInterface::class );
             $context = \array_merge( ['json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS], $context );
             $json    = $serializer->serialize( $data, 'json', $context );
@@ -166,8 +169,10 @@ trait ResponseMethods
      *
      * @return NotFoundHttpException
      */
-    final protected function notFoundException( string $message = 'Not Found', ?Throwable $previous = null ) : NotFoundHttpException
-    {
+    final protected function notFoundException(
+        string     $message = 'Not Found',
+        ?Throwable $previous = null,
+    ) : NotFoundHttpException {
         return new NotFoundHttpException( $message, $previous );
     }
 }

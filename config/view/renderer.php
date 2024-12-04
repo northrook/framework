@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\View\{Controller\ResponseRenderer,
+use Core\View\{
     IconService,
     Latte,
     Template\Extension\IconPackExtension,
@@ -18,11 +18,6 @@ use Core\View\{Controller\ResponseRenderer,
 return static function( ContainerConfigurator $container ) : void {
     //
     $container->services()
-            //
-        ->set( ResponseRenderer::class )
-        ->tag( 'kernel.event_listener', ['event' => 'kernel.response'] )
-        ->tag( 'kernel.event_listener', ['event' => 'kernel.exception'] )
-
             //
         ->set( IconService::class )
         ->tag( 'core.service_locator' )

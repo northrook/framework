@@ -18,6 +18,11 @@ trait CurrentRequest
         return $this->serviceLocator( Request::class );
     }
 
+    final protected function isXhrRequest() : bool
+    {
+        return $this->getRequest()->attributes->get( 'xhr', false );
+    }
+
     final protected function isManagedRequest() : bool
     {
         return \is_subclass_of(

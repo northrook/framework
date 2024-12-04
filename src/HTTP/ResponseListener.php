@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final class ResponseListener extends HttpEventListener
 {
     /** @var 'content'|'document'|'string'|'template' */
-    private string $type;
+    private string $type = 'document';
 
     private string $content;
 
@@ -82,18 +82,18 @@ final class ResponseListener extends HttpEventListener
             return;
         }
 
+        /** @var string $use */
+        $use = $event->getRequest()->attributes->get( 'use_template' );
+
+        /** @var array{_document_template: ?string, _content_template: ?string} $templates */
+        $templates = $event->getRequest()->attributes->get( 'templates' );
+
         if ( \str_ends_with( $this->content, '.latte' ) ) {
             $template = $this->content;
 
-            $this->type = 'template';
+            $this->type = $use ? 'document' : 'template';
         }
         else {
-            /** @var string $use */
-            $use = $event->getRequest()->attributes->get( 'use_template' );
-
-            /** @var array{_document_template: ?string, _content_template: ?string} $templates */
-            $templates = $event->getRequest()->attributes->get( 'templates' );
-
             if ( ! $template = $templates[$use] ?? null ) {
                 throw new NotFoundHttpException( 'Template "'.$this->content.'" not found.' );
             }
