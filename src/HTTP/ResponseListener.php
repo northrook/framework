@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\HTTP;
 
+use Core\View\Render\HtmlViewDocument;
 use Core\Framework\Response\{Document, Headers, Parameters};
 use Core\Symfony\EventListener\HttpEventListener;
 use Core\View\Template\TemplateCompiler;
@@ -43,24 +44,24 @@ final class ResponseListener extends HttpEventListener
 
         if ( 'document' === $this->type ) {
             dump( __METHOD__.'[document]' );
-            // $view = new HtmlViewDocument(
-            //         $this->document(),
-            //         $this->content,
-            //         $this->serviceLocator,
-            // );
+            $view = new HtmlViewDocument(
+                $this->document(),
+                $this->content,
+                $this->serviceLocator,
+            );
 
-            // $this->content = $view->render();
+            $this->content = $view->render();
         }
 
-        // $event->getResponse()->setContent( $this->content );
-        // $this->setResponseHeaders( $event );
+        $event->getResponse()->setContent( $this->content );
+        $this->setResponseHeaders( $event );
         dump( $this );
     }
 
     #[NoReturn]
     public function onKernelException( ExceptionEvent $event ) : void
     {
-        dd( $event::class, $event, $this );
+        // dd( $event::class, $event, $this );
     }
 
     final protected function setResponseContent( ResponseEvent $event ) : void
@@ -81,9 +82,28 @@ final class ResponseListener extends HttpEventListener
             return;
         }
 
-        $template = \str_ends_with( $this->content, '.latte' )
-                ? $this->content
-                : $this->controllerTemplate( $event );
+        if ( \str_ends_with( $this->content, '.latte' ) ) {
+            $template = $this->content;
+
+            $this->type = 'template';
+        }
+        else {
+            /** @var string $use */
+            $use = $event->getRequest()->attributes->get( 'use_template' );
+
+            /** @var array{_document_template: ?string, _content_template: ?string} $templates */
+            $templates = $event->getRequest()->attributes->get( 'templates' );
+
+            if ( ! $template = $templates[$use] ?? null ) {
+                throw new NotFoundHttpException( 'Template "'.$this->content.'" not found.' );
+            }
+
+            $this->type = match ( $use ) {
+                '_document_template' => 'document',
+                '_content_template'  => 'content',
+                default              => 'template',
+            };
+        }
 
         $this->template()->clearTemplateCache();
 
@@ -113,37 +133,6 @@ final class ResponseListener extends HttpEventListener
         // TODO : X-Robots
         // TODO : lang
         // TODO : cache
-    }
-
-    /**
-     * Determine if the {@see Response} `$content` is a template.
-     *
-     * - Empty `$content` will use {@see Controller} attribute templates.
-     * - If the `$content` contains no whitespace, and ends with `.latte`, it is a template
-     * - All other strings will be considered as `text/plain`
-     *
-     * @param ResponseEvent $event
-     *
-     * @return string
-     */
-    private function controllerTemplate( ResponseEvent $event ) : string
-    {
-        $use = $event->getRequest()->attributes->get( 'use_template' );
-
-        /** @var array{_document_template: ?string, _content_template: ?string} $template */
-        $templates = $event->getRequest()->attributes->get( 'templates' );
-
-        if ( ! $template = $templates[$use] ?? null ) {
-            throw new NotFoundHttpException( 'Template "'.$this->content.'" not found.' );
-        }
-
-        $this->type = match ( $use ) {
-            '_document_template' => 'document',
-            '_content_template'  => 'content',
-            default              => 'template',
-        };
-
-        return $template;
     }
 
     private function document() : Document

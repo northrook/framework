@@ -7,8 +7,7 @@ namespace Core\HTTP;
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
 use Core\Symfony\EventListener\HttpEventListener;
-use Symfony\Component\HttpKernel\Event\{ControllerArgumentsEvent,
-    ControllerEvent,
+use Symfony\Component\HttpKernel\Event\{
     ExceptionEvent,
     RequestEvent,
     ResponseEvent,
@@ -40,12 +39,10 @@ final class RequestListener extends HttpEventListener
     public static function getSubscribedEvents() : array
     {
         return [
-            KernelEvents::REQUEST         => 'onKernelRequest',
-            KernelEvents::CONTROLLER      => 'onKernelController',
-            'kernel.controller_arguments' => 'onKernelControllerArguments',
-            KernelEvents::VIEW            => ['onKernelView'],
-            KernelEvents::RESPONSE        => ['onKernelResponse', 512],
-            'kernel.exception'            => 'onKernelException',
+            KernelEvents::REQUEST  => 'onKernelRequest',
+            KernelEvents::VIEW     => ['onKernelView'],
+            KernelEvents::RESPONSE => ['onKernelResponse', 512],
+            'kernel.exception'     => 'onKernelException',
         ];
     }
 
@@ -62,6 +59,7 @@ final class RequestListener extends HttpEventListener
         if ( $this->shouldSkip( $event ) ) {
             return;
         }
+
         Clerk::event( __METHOD__, $this::class );
 
         $xhr = $event->getRequest()->headers->has( 'hx-request' );
@@ -69,24 +67,6 @@ final class RequestListener extends HttpEventListener
         $event->getRequest()->attributes->set( 'htmx', $xhr );
         $event->getRequest()->attributes->set( 'type', $xhr ? 'XMLHttpRequest' : 'HttpRequest' );
         $event->getRequest()->attributes->set( 'use_template', $xhr ? $this::CONTENT : $this::DOCUMENT );
-
-        dump( __METHOD__ );
-    }
-
-    public function onKernelController( ControllerEvent $event ) : void
-    {
-        if ( $this->shouldSkip( $event ) ) {
-            return;
-        }
-        dump( __METHOD__ );
-    }
-
-    public function onKernelControllerArguments( ControllerArgumentsEvent $event ) : void
-    {
-        if ( $this->shouldSkip( $event ) ) {
-            return;
-        }
-        dump( __METHOD__ );
     }
 
     public function onKernelView( ViewEvent $event ) : void
@@ -112,7 +92,6 @@ final class RequestListener extends HttpEventListener
         }
 
         $event->setResponse( $this->resolveViewResponse( $event->getControllerResult() ) );
-        dump( $this );
     }
 
     /**
@@ -141,6 +120,7 @@ final class RequestListener extends HttpEventListener
     private function resolveViewResponse( mixed $content ) : Response
     {
         Clerk::event( __METHOD__, $this::class );
+
         if ( \is_string( $content ) || $content instanceof Stringable ) {
             $content = (string) $content;
         }
@@ -172,6 +152,7 @@ final class RequestListener extends HttpEventListener
     private function getTemplateAttributes( Request $request ) : array
     {
         Clerk::event( __METHOD__, $this::class );
+
         $caller = $request->attributes->get( '_controller' );
 
         \assert( \is_string( $caller ) );
