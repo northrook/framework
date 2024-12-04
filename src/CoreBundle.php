@@ -52,6 +52,7 @@ final class CoreBundle extends AbstractBundle
 
     /** @var string[] */
     private const array CONFIG = [
+        '../config/framework/http.php',
         '../config/framework/assets.php',
         '../config/framework/response.php',
         '../config/framework/services.php',
