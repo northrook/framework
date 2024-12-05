@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\HTTP;
 
+use Core\View\DocumentView;
 use Core\View\Render\HtmlViewDocument;
 use Core\Framework\Response\{Document, Headers, Parameters};
 use Core\Symfony\EventListener\HttpEventListener;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpKernel\Event\{ExceptionEvent, ResponseEvent};
 use JetBrains\PhpStorm\NoReturn;
 use Northrook\Logger\Log;
 use Symfony\Component\HttpKernel\Exception\{NotFoundHttpException};
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 final class ResponseListener extends HttpEventListener
@@ -42,6 +44,13 @@ final class ResponseListener extends HttpEventListener
             $this->headers()->set( 'X-Robots-Tag', 'noindex, nofollow' );
         }
 
+        $document = new DocumentView(
+            $this->document(),
+            $this->serviceLocator,
+            $this->resolveToastMessages(),
+            $this->content,
+        );
+
         if ( 'document' === $this->type ) {
             dump( __METHOD__.'[document]' );
             $view = new HtmlViewDocument(
@@ -62,6 +71,13 @@ final class ResponseListener extends HttpEventListener
     public function onKernelException( ExceptionEvent $event ) : void
     {
         // dd( $event::class, $event, $this );
+    }
+
+    final protected function resolveToastMessages( ?FlashBagInterface $flashBag = null ) : array
+    {
+        $toasts = [];
+
+        return $toasts;
     }
 
     final protected function setResponseContent( ResponseEvent $event ) : void

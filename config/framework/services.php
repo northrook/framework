@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Core\Service\ToastService;
 use Core\Framework\{CurrentRequest, Pathfinder, Settings};
 use Core\Framework\Response\{Document, Headers, Parameters};
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -22,15 +23,19 @@ use Symfony\Component\Serializer\SerializerInterface;
 return static function( ContainerConfigurator $container ) : void {
     $services = $container->services();
 
+    $services
+        ->set( ToastService::class )
+        ->tag( 'core.service_locator' );
+
     $services->defaults()
         ->tag( 'controller.service_arguments' )
         ->autowire()
 
-        // Current Request handler
+            // Current Request handler
         ->set( CurrentRequest::class )
         ->args( [service( 'request_stack' )] )
 
-        // Find and return registered paths
+            // Find and return registered paths
         ->set( Pathfinder::class )
         ->args(
             [
