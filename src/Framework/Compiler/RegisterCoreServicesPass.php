@@ -20,6 +20,8 @@ final class RegisterCoreServicesPass extends CompilerPass
 
         $this->registerTaggedServices( $container );
         $this->injectServiceLocator( $container );
+
+        // $container->s
     }
 
     private function registerTaggedServices( ContainerBuilder $container ) : void

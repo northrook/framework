@@ -8,8 +8,9 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Cache\MemoizationCache;
 use Core\Service\ToastService;
-use Core\Framework\{CurrentRequest, Pathfinder, Settings};
+use Core\Framework\{CurrentRequest, DependencyInjection\StaticServiceInitializer, Pathfinder, Settings};
 use Core\Framework\Response\{Document, Headers, Parameters};
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -22,6 +23,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 return static function( ContainerConfigurator $container ) : void {
     $services = $container->services();
+
+    $services
+        ->set( StaticServiceInitializer::class )
+        ->args( [service( MemoizationCache::class )] )
+        ->tag( 'kernel.event_listener', ['event' => ['kernel.request', 1_024]] );
 
     $services
         ->set( ToastService::class )
