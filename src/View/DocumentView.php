@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Core\View;
 
 use Core\Framework\Response\Document;
+use Core\Service\{AssetLocator, ToastService};
 use Core\View\Component\Attributes;
 use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
 use Support\Str;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 use InvalidArgumentException;
 use Throwable;
 use function Support\toString;
@@ -24,21 +24,45 @@ final class DocumentView implements ServiceContainerInterface
     private array $content = [];
 
     /**
-     * @param Document       $document
-     * @param ServiceLocator $serviceLocator
-     * @param array|string   ...$content
+     * @param Document         $document
+     * @param ComponentFactory $componentFactory
+     * @param AssetLocator     $assetLocator
      */
     public function __construct(
         private readonly Document         $document,
-        protected readonly ServiceLocator $serviceLocator,
-        array|string                   ...$content,
+        private readonly ComponentFactory $componentFactory,
+        private readonly AssetLocator     $assetLocator,
     ) {
-        $this
-            ->setInnerContent( ...$content )
-            ->enqueueInvokedAssets();
+        $this->enqueueInvokedAssets();
     }
 
-    public function contentHtml() : string
+    /**
+     * Assign `$this->content` from provided `$content`.
+     *
+     * @param ...$content
+     *
+     * @return self
+     */
+    public function setInnerContent( ...$content ) : self
+    {
+        foreach ( $content as $html ) {
+            try {
+                if ( \is_string( $html ) ) {
+                    $this->content[] = $html;
+                }
+                else {
+                    $this->content = \array_merge( $this->content, $html );
+                }
+            }
+            catch ( Throwable $e ) {
+                $message = 'The '.__METHOD__.'( ... $content ) only accepts string|string[]. '.$e->getMessage();
+                throw new InvalidArgumentException( $message );
+            }
+        }
+        return $this;
+    }
+
+    public function renderContentHtml() : string
     {
         return <<<CONTENT
             {$this->head()}
@@ -46,7 +70,7 @@ final class DocumentView implements ServiceContainerInterface
             CONTENT;
     }
 
-    public function documentHtml() : string
+    public function renderDocumentHtml() : string
     {
         return <<<DOCUMENT
             <!DOCTYPE html>
@@ -114,7 +138,7 @@ final class DocumentView implements ServiceContainerInterface
      */
     private function html() : string
     {
-        $attributes = $this->document->pull( 'html', null );
+        $attributes = $this->document->pull( 'html' );
 
         \assert( \is_array( $attributes ) || \is_null( $attributes ) );
 
@@ -130,7 +154,7 @@ final class DocumentView implements ServiceContainerInterface
      */
     private function body() : string
     {
-        $attributes = $this->document->pull( 'body', null );
+        $attributes = $this->document->pull( 'body' );
 
         \assert( \is_array( $attributes ) || \is_null( $attributes ) );
 
@@ -155,37 +179,11 @@ final class DocumentView implements ServiceContainerInterface
     {
         $html = '';
 
-        foreach ( $this->head as $name => $value ) {
+        foreach ( $this->head as $value ) {
             $html .= '    '.$value.PHP_EOL;
         }
 
         return $html;
-    }
-
-    /**
-     * Assign `$this->content` from provided `$content`.
-     *
-     * @param ...$content
-     *
-     * @return self
-     */
-    private function setInnerContent( ...$content ) : self
-    {
-        foreach ( $content as $html ) {
-            try {
-                if ( \is_string( $html ) ) {
-                    $this->content[] = $html;
-                }
-                else {
-                    $this->content = \array_merge( $this->content, $html );
-                }
-            }
-            catch ( Throwable $e ) {
-                $message = 'The '.__METHOD__.'( ... $content ) only accepts string|string[]. '.$e->getMessage();
-                throw new InvalidArgumentException( $message );
-            }
-        }
-        return $this;
     }
 
     private function enqueueInvokedAssets() : void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\HTTP;
 
+use Core\Service\ToastService;
 use Core\View\DocumentView;
 use Core\View\Render\HtmlViewDocument;
 use Core\Framework\Response\{Document, Headers, Parameters};
@@ -44,9 +45,9 @@ final class ResponseListener extends HttpEventListener
             $this->headers()->set( 'X-Robots-Tag', 'noindex, nofollow' );
         }
 
-        $document = new DocumentView(
-            $this->document(),
-            $this->serviceLocator,
+        $document = $this->serviceLocator( DocumentView::class );
+
+        $document->setInnerContent(
             $this->resolveToastMessages(),
             $this->content,
         );
@@ -73,7 +74,7 @@ final class ResponseListener extends HttpEventListener
             // ->assets( 'style' )
             // ->assets( 'link' );
 
-            $this->content = $document->documentHtml();
+            $this->content = $document->renderDocumentHtml();
         }
         else {
             $document
@@ -83,7 +84,7 @@ final class ResponseListener extends HttpEventListener
             // ->assets( 'script' )
             // ->assets( 'style' )
             // ->assets( 'link' );
-            $this->content = $document->contentHtml();
+            $this->content = $document->renderContentHtml();
         }
 
         $event->getResponse()->setContent( $this->content );
@@ -101,7 +102,28 @@ final class ResponseListener extends HttpEventListener
 
     final protected function resolveToastMessages( ?FlashBagInterface $flashBag = null ) : array
     {
+        $toastService = $this->serviceLocator( ToastService::class );
+
+        dump( $toastService );
         $toasts = [];
+        // foreach ( $this->serviceLocator( ToastService::class )->getMessages() as $id => $message ) {
+        //     $this->notifications[$id] = new Notification(
+        //             $message->type,
+        //             $message->title,
+        //             $message->description,
+        //             $message->timeout,
+        //     );
+        //
+        //     if ( ! $message->description ) {
+        //         $this->notifications[$id]->attributes->add( 'class', 'compact' );
+        //     }
+        //
+        //     if ( ! $message->timeout && 'error' !== $message->type ) {
+        //         $this->notifications[$id]->setTimeout( 5_000 );
+        //     }
+        //
+        //     $this->notifications[$id] = (string) $this->notifications[$id];
+        // }
 
         return $toasts;
     }
