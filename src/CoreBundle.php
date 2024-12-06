@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Core;
 
+use Override;
 use Core\Framework\Compiler\{ApplicationConfigPass,
     AssetBunderDiscoverPass,
     RegisterCoreServicesPass,
     SettingsCompilerPass
 };
-use Core\Symfony\DependencyInjection\AutowireActionsCompilerPass;
+use Core\Symfony\DependencyInjection\AutowireActionsPass;
 use Core\View\Compiler\RegisterCoreComponentsPass;
-use Override;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -60,6 +60,7 @@ final class CoreBundle extends AbstractBundle
         '../config/framework/services.php',
         '../config/framework/settings.php',
         '../config/framework/profiler.php',
+        '../config/framework/toasts.php',
         '../config/framework/controllers/public.php',
         '../config/view/components.php',
         '../config/view/latte.php',
@@ -84,7 +85,7 @@ final class CoreBundle extends AbstractBundle
     public function build( ContainerBuilder $container ) : void
     {
         $container
-            ->addCompilerPass( new AutowireActionsCompilerPass() )
+            ->addCompilerPass( new AutowireActionsPass() )
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
             ->addCompilerPass( new SettingsCompilerPass() )

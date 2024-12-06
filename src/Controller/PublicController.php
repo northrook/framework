@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Core\Controller;
 
 use Core\Framework\Controller\Attribute\OnDocument;
-use Core\Framework\Autowire\Pathfinder;
+use Core\Framework\Autowire\{Pathfinder, Toast};
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
-use Core\Service\AssetBundler;
 use Core\Framework\Response\{Document, Parameters};
 use Latte\Engine;
 use Symfony\Component\Routing\Attribute\Route;
@@ -67,13 +66,13 @@ final class PublicController extends Controller
         Template( 'demo.latte' ) // content template
     ]
     public function demo(
-        Document     $document,
-        Parameters   $parameters,
-        AssetBundler $assetBundler,
+        Document   $document,
+        Parameters $parameters,
+        Toast      $toast,
     ) : string {
         $document( 'Index Demo Template' );
 
-        dump( $assetBundler->compile() );
+        dump( $toast );
 
         return 'demo.latte';
     }

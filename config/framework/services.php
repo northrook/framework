@@ -27,11 +27,13 @@ return static function( ContainerConfigurator $container ) : void {
     $services
         ->set( StaticServiceInitializer::class )
         ->args( [service( MemoizationCache::class )] )
-        ->tag( 'kernel.event_listener', ['event' => ['kernel.request', 1_024]] );
-
-    $services
-        ->set( ToastService::class )
-        ->tag( 'core.service_locator' );
+        ->tag(
+            'kernel.event_listener',
+            [
+                'event'    => 'kernel.request',
+                'priority' => 1_024,
+            ],
+        );
 
     $services->defaults()
         ->tag( 'controller.service_arguments' )
