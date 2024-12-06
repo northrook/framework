@@ -25,10 +25,11 @@ final class Toast implements ActionInterface
     }
 
     /**
-     * @param string            $status
-     * @param string            $message
-     * @param null|array|string $description
-     * @param ?int              $timeout
+     * @param 'danger'|'info'|'notice'|'success'|'warning' $status
+     * @param string                                       $message
+     * @param null|array|string                            $description [optional] accepts {@see \HTML\Tag::INLINE}
+     * @param ?int                                         $timeout     [auto] time in seconds before the toast is dismissed
+     * @param ?string                                      $icon        [auto] based on `$status`
      *
      * @return void
      */
@@ -37,6 +38,7 @@ final class Toast implements ActionInterface
         string            $message,
         null|string|array $description = null,
         ?int              $timeout = null,
+        ?string           $icon = null,
     ) : void {
         // TODO: Implement __invoke() method.
     }

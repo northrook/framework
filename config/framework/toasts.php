@@ -16,7 +16,7 @@ return static function( ContainerConfigurator $container ) : void {
 
             // Toast Flashbag Handler
         ->set( ToastService::class )
-        ->args( [service( 'session' )] )
+        ->args( [service( 'request_stack' )] )
         ->tag( 'core.service_locator' )
 
             // Toast Action
