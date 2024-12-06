@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\Framework\Response\Document;
-use Core\View\{ComponentFactory, DocumentView};
+use Core\View\{DocumentView};
 use Core\Service\{AssetLocator};
 use Northrook\Clerk;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
@@ -34,10 +34,9 @@ return static function( ContainerConfigurator $container ) : void {
         ->args(
             [
                 service( Document::class ),
-                service( ComponentFactory::class ),
                 service( AssetLocator::class ),
             ],
-        )->tag( 'core.service_locator')
+        )->tag( 'core.service_locator' )
 
             //
         ->set( \Core\HTTP\ResponseListener::class )

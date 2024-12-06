@@ -28,8 +28,8 @@ final class ResponseListener extends HttpEventListener
     public static function getSubscribedEvents() : array
     {
         return [
-                KernelEvents::RESPONSE  => ['onKernelResponse', 20],
-                KernelEvents::EXCEPTION => ['onKernelException', 40],
+            KernelEvents::RESPONSE  => ['onKernelResponse', 20],
+            KernelEvents::EXCEPTION => ['onKernelException', 40],
         ];
     }
 
@@ -49,9 +49,10 @@ final class ResponseListener extends HttpEventListener
         $document = $this->serviceLocator( DocumentView::class );
 
         $document->setInnerContent(
-                $this->resolveToastMessages(),
-                $this->content,
-        );
+            $this->resolveToastMessages(),
+            $this->content,
+        )
+            ->enqueueInvokedAssets();
 
         // if ( 'document' === $this->type ) {
         //     dump( __METHOD__.'[document]' );
@@ -66,10 +67,10 @@ final class ResponseListener extends HttpEventListener
 
         if ( 'document' === $this->type ) {
             $document
-                    ->meta( 'meta.viewport' )
-                    ->meta( 'document' )
-                    ->meta( 'robots' )
-                    ->meta( 'meta' );
+                ->meta( 'meta.viewport' )
+                ->meta( 'document' )
+                ->meta( 'robots' )
+                ->meta( 'meta' );
             // ->assets( 'font' )
             // ->assets( 'script' )
             // ->assets( 'style' )
@@ -79,8 +80,8 @@ final class ResponseListener extends HttpEventListener
         }
         else {
             $document
-                    ->meta( 'document' )
-                    ->meta( 'meta' );
+                ->meta( 'document' )
+                ->meta( 'meta' );
             // ->assets( 'font' )
             // ->assets( 'script' )
             // ->assets( 'style' )
@@ -110,16 +111,17 @@ final class ResponseListener extends HttpEventListener
             return [];
         }
 
-        // $compiler
-        $factory = $this->serviceLocator( ComponentFactory::class );
-        $toasts  = [];
+        $toasts = [];
 
-        foreach ( $toastService->getAllMessages( ) as $message ) {
+        foreach ( $toastService->getAllMessages() as $message ) {
             // $component = $factory->getComponent( Toast::class );
             // $component->create( $message->getArguments() );
 
             // dump( $component->render(  ) );
-            $toasts[] = $factory->render( Toast::class, $message->getArguments() );
+            $toasts[] = $this->componentFactory()->render(
+                Toast::class,
+                $message->getArguments(),
+            );
             // $toasts[] = $factory->create( $message );
         }
         // foreach ( $this->serviceLocator( ToastService::class )->getMessages() as $id => $message ) {
@@ -141,7 +143,7 @@ final class ResponseListener extends HttpEventListener
         //     $this->notifications[$id] = (string) $this->notifications[$id];
         // }
 
-        dump($toasts);
+        dump( $toasts );
 
         return $toasts;
     }
@@ -150,8 +152,8 @@ final class ResponseListener extends HttpEventListener
     {
         if ( isset( $this->content ) ) {
             Log::warning(
-                    '{method} called repeatedly, but will only be handled {once}.',
-                    ['method' => __METHOD__],
+                '{method} called repeatedly, but will only be handled {once}.',
+                ['method' => __METHOD__],
             );
             return;
         }
@@ -235,5 +237,10 @@ final class ResponseListener extends HttpEventListener
     private function template() : TemplateCompiler
     {
         return $this->serviceLocator( TemplateCompiler::class );
+    }
+
+    private function componentFactory() : ComponentFactory
+    {
+        return $this->serviceLocator( ComponentFactory::class );
     }
 }

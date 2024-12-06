@@ -1,11 +1,11 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 namespace Core\View;
 
 use Core\Framework\Response\Document;
-use Core\Service\{AssetLocator, ToastService};
+use Core\Service\{AssetLocator};
 use Core\View\Component\Attributes;
 use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
 use Support\Str;
@@ -24,17 +24,13 @@ final class DocumentView implements ServiceContainerInterface
     private array $content = [];
 
     /**
-     * @param Document          $document
-     * @param ComponentFactory  $componentFactory
-     * @param AssetLocator      $assetLocator
+     * @param Document     $document
+     * @param AssetLocator $assetLocator
      */
     public function __construct(
-            private readonly Document         $document,
-            private readonly ComponentFactory $componentFactory,
-            private readonly AssetLocator     $assetLocator,
-    )
-    {
-        $this->enqueueInvokedAssets();
+        private readonly Document     $document,
+        private readonly AssetLocator $assetLocator,
+    ) {
     }
 
     /**
@@ -56,7 +52,7 @@ final class DocumentView implements ServiceContainerInterface
                 }
             }
             catch ( Throwable $e ) {
-                $message = 'The ' . __METHOD__ . '( ... $content ) only accepts string|string[]. ' . $e->getMessage();
+                $message = 'The '.__METHOD__.'( ... $content ) only accepts string|string[]. '.$e->getMessage();
                 throw new InvalidArgumentException( $message );
             }
         }
@@ -95,12 +91,12 @@ final class DocumentView implements ServiceContainerInterface
 
     public function meta( string $name, ?string $comment = null ) : self
     {
-        if ( !$value = $this->document->pull( $name ) ) {
+        if ( ! $value = $this->document->pull( $name ) ) {
             return $this;
         }
 
         if ( $comment ) {
-            $this->head[] = '<!-- ' . $comment . ' -->';
+            $this->head[] = '<!-- '.$comment.' -->';
         }
 
         // dump(
@@ -108,7 +104,7 @@ final class DocumentView implements ServiceContainerInterface
         //         $name,
         //         $value);
 
-        $meta = \is_array( $value ) ? $value : [ $name => $value ];
+        $meta = \is_array( $value ) ? $value : [$name => $value];
 
         foreach ( $meta as $name => $value ) {
             if ( $value = toString( $value ) ) {
@@ -147,7 +143,7 @@ final class DocumentView implements ServiceContainerInterface
             $attributes = (string) new Attributes( $attributes );
         }
 
-        return 'html' . ( $attributes ? ' ' . $attributes : '' );
+        return 'html'.( $attributes ? ' '.$attributes : '' );
     }
 
     /**
@@ -163,7 +159,7 @@ final class DocumentView implements ServiceContainerInterface
             $attributes = (string) new Attributes( $attributes );
         }
 
-        return 'body' . ( $attributes ? ' ' . $attributes : '' );
+        return 'body'.( $attributes ? ' '.$attributes : '' );
     }
 
     /**
@@ -181,17 +177,20 @@ final class DocumentView implements ServiceContainerInterface
         $html = '';
 
         foreach ( $this->head as $value ) {
-            $html .= '    ' . $value . PHP_EOL;
+            $html .= '    '.$value.PHP_EOL;
         }
 
         return $html;
     }
 
-    private function enqueueInvokedAssets() : void
+    public function enqueueInvokedAssets( ?ComponentFactory $componentFactory = null ) : self
     {
-        // TODO ::
-        $assets = $this->componentFactory->getInstantiated();
+        $componentFactory ??= $this->serviceLocator( ComponentFactory::class );
+
+        $assets = $componentFactory->getInstantiated();
         dump( $assets );
         // $this->document->assets();
+
+        return $this;
     }
 }
