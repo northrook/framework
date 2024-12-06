@@ -1,19 +1,19 @@
 {templateType Core\View\Component\Toast}
-<toast>
+<toast n:attr=$attributes class={$status} data-timeout={$timeout}>
     <button class="close" aria-label="Close" type="button"></button>
-    <output role="status" class="">
+    <output role="status">
         <i class="status">
             {icon($status)}
             <span class="status-type">{$status}</span>
             <time datetime="{$timestamp}">
                 {* TODO : Loop over each $instance, set first as 'current' - hide test with CSS *}
-                {$timestamp}
+                {$when}
             </time>
         </i>
-        <span class="message">message</span>
+        <span class="message">{$message}</span>
     </output>
     <details n:if="$description">
         <summary>Description</summary>
-        <p>Details</p>
+        {$description}
     </details>
 </toast>

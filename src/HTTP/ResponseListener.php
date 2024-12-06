@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Core\HTTP;
 
 use Core\Service\ToastService;
-use Core\View\DocumentView;
+use Core\View\Component\Toast;
+use Core\View\{ComponentFactory, DocumentView};
 use Core\View\Render\HtmlViewDocument;
 use Core\Framework\Response\{Document, Headers, Parameters};
 use Core\Symfony\EventListener\HttpEventListener;
@@ -27,8 +28,8 @@ final class ResponseListener extends HttpEventListener
     public static function getSubscribedEvents() : array
     {
         return [
-            KernelEvents::RESPONSE  => ['onKernelResponse', 20],
-            KernelEvents::EXCEPTION => ['onKernelException', 40],
+                KernelEvents::RESPONSE  => ['onKernelResponse', 20],
+                KernelEvents::EXCEPTION => ['onKernelException', 40],
         ];
     }
 
@@ -48,8 +49,8 @@ final class ResponseListener extends HttpEventListener
         $document = $this->serviceLocator( DocumentView::class );
 
         $document->setInnerContent(
-            $this->resolveToastMessages(),
-            $this->content,
+                $this->resolveToastMessages(),
+                $this->content,
         );
 
         // if ( 'document' === $this->type ) {
@@ -65,10 +66,10 @@ final class ResponseListener extends HttpEventListener
 
         if ( 'document' === $this->type ) {
             $document
-                ->meta( 'meta.viewport' )
-                ->meta( 'document' )
-                ->meta( 'robots' )
-                ->meta( 'meta' );
+                    ->meta( 'meta.viewport' )
+                    ->meta( 'document' )
+                    ->meta( 'robots' )
+                    ->meta( 'meta' );
             // ->assets( 'font' )
             // ->assets( 'script' )
             // ->assets( 'style' )
@@ -78,8 +79,8 @@ final class ResponseListener extends HttpEventListener
         }
         else {
             $document
-                ->meta( 'document' )
-                ->meta( 'meta' );
+                    ->meta( 'document' )
+                    ->meta( 'meta' );
             // ->assets( 'font' )
             // ->assets( 'script' )
             // ->assets( 'style' )
@@ -102,10 +103,25 @@ final class ResponseListener extends HttpEventListener
 
     final protected function resolveToastMessages( ?FlashBagInterface $flashBag = null ) : array
     {
-        $toastService = $this->serviceLocator( ToastService::class )->getAllMessages( true );
+        $toastService = $this->serviceLocator( ToastService::class );
 
-        dump( $toastService );
-        $toasts = [];
+        // Bail early if no Toasts are found
+        if ( ! $toastService->hasMessages() ) {
+            return [];
+        }
+
+        // $compiler
+        $factory = $this->serviceLocator( ComponentFactory::class );
+        $toasts  = [];
+
+        foreach ( $toastService->getAllMessages( ) as $message ) {
+            // $component = $factory->getComponent( Toast::class );
+            // $component->create( $message->getArguments() );
+
+            // dump( $component->render(  ) );
+            $toasts[] = $factory->render( Toast::class, $message->getArguments() );
+            // $toasts[] = $factory->create( $message );
+        }
         // foreach ( $this->serviceLocator( ToastService::class )->getMessages() as $id => $message ) {
         //     $this->notifications[$id] = new Notification(
         //             $message->type,
@@ -125,6 +141,8 @@ final class ResponseListener extends HttpEventListener
         //     $this->notifications[$id] = (string) $this->notifications[$id];
         // }
 
+        dump($toasts);
+
         return $toasts;
     }
 
@@ -132,8 +150,8 @@ final class ResponseListener extends HttpEventListener
     {
         if ( isset( $this->content ) ) {
             Log::warning(
-                '{method} called repeatedly, but will only be handled {once}.',
-                ['method' => __METHOD__],
+                    '{method} called repeatedly, but will only be handled {once}.',
+                    ['method' => __METHOD__],
             );
             return;
         }

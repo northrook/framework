@@ -39,7 +39,7 @@ final readonly class ToastService
             $toastMessage->bump( $description );
         }
         else {
-            $toastMessage = new ToastMessage( $id, ...\get_defined_vars() );
+            $toastMessage = new ToastMessage( $id, $status, $message, $description, $timeout, $icon);
         }
 
         $this->getFlashBag()->set( $id, [$toastMessage] );
@@ -54,25 +54,41 @@ final readonly class ToastService
         return $message instanceof ToastMessage ? $message : null;
     }
 
+    /**
+     * @param bool $peek
+     *
+     * @return ToastMessage[]
+     */
     public function getAllMessages( bool $peek = false ) : array
     {
-        $messages         = [];
         $flashBagMessages = $peek ? $this->getFlashBag()->peekAll() : $this->getFlashBag()->all();
+
+        if ( ! $flashBagMessages ) {
+            return [];
+        }
+
+        $messages = [];
 
         foreach ( $flashBagMessages as $keyOrType => $message ) {
             \assert( \is_array( $message ) && \is_string( $keyOrType ), __METHOD__ );
 
-            if ( \strlen( $keyOrType ) === 16 ) {
-                dump( "key: {$keyOrType}" );
+            if ( \strlen( $keyOrType ) === 16 && $message[0] instanceof ToastMessage ) {
+                $messages[$keyOrType] = $message[0];
             }
             else {
-                dump( "type: {$keyOrType}" );
+                foreach ( $message as $title ) {
+                    $id            = \hash( 'xxh3', $keyOrType.$title );
+                    $messages[$id] = new ToastMessage( $id, $keyOrType, $title );
+                }
             }
-
-            dump( $message );
         }
 
         return $messages;
+    }
+
+    public function hasMessages() : bool
+    {
+        return ! empty( $this->getFlashBag()->peekAll() );
     }
 
     public function hasMessage( string $id ) : bool

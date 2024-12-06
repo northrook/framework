@@ -95,7 +95,7 @@ final class ToastMessage
 
     public function getArguments() : array
     {
-        $description = \array_reverse( \array_filter( $this->occurrences ) );
+        $description = \array_reverse( \array_filter( $this->occurrences ) )[0] ?? null;
 
         return [
             'id'          => $this->id,

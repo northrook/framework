@@ -19,6 +19,7 @@ final class ApplicationConfigPass extends CompilerPass
         $this->path( 'config/packages/debug.yaml' )->remove();
 
         $this
+            ->generateToastMeta()
             ->generateAppKernel( true )
             ->generatePublicIndex(
                 true,
@@ -37,10 +38,9 @@ final class ApplicationConfigPass extends CompilerPass
 
         $byConstants = $reflect->getConstants( ReflectionClassConstant::IS_PUBLIC );
 
-        $toastStatusTypes = "'".\implode( "', '", $byConstants )."'";
-        dump( $byConstants, $toastStatusTypes );
+        $status = \array_filter( $byConstants, static fn( $value ) => \is_string( $value ) );
 
-        return $this;
+        $toastStatusTypes = "'".\implode( "', '", $status )."'";
 
         $this->createPhpFile(
             '.phpstorm.meta.php/.toast_action.meta.php',
@@ -50,11 +50,12 @@ final class ApplicationConfigPass extends CompilerPass
                 namespace PHPSTORM_META;
                     
                 expectedArguments(
-                    \Core\Framework\Autowire\Pathfinder::pathfinder(),
+                    \Core\Framework\Autowire\Toast::__invoke(),
                     0,
                     {$toastStatusTypes}
                 );
                 PHP,
+            true,
         );
 
         return $this;
@@ -230,12 +231,3 @@ final class ApplicationConfigPass extends CompilerPass
         return $this;
     }
 }
-
-// $import = [
-//         '@CoreBundle/src/Controller/' => 'Core\Controller',
-//         '../src/Controller/'          => 'App\Controller',
-// ];
-//
-// foreach ( $import as $path => $namespace ) {
-//     $routes->import( [ 'path' => $path, 'namespace' => $namespace ], 'attribute' );
-// }

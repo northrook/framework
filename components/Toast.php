@@ -33,6 +33,7 @@ use Support\Time;
 
  */
 
+
 #[ViewComponent( 'toast:{status}' )]
 final class Toast extends Component
 {
@@ -44,16 +45,29 @@ final class Toast extends Component
 
     public ?int $timeout = null;
 
-    public Html $timestamp;
+    public int $timestamp;
+
+    public Html $when;
+
+    public string $icon;
+
+    protected function parseArguments( array &$arguments ) : void
+    {
+        $timestamp = new Time( $arguments[ 'instances' ][ 0 ] ?? $arguments[ 'timestamp' ] ?? 'now' );
+
+        dump( $timestamp );
+        $this->timestamp = $timestamp->unixTimestamp;
+        $this->when      = new Html( $timestamp->format( $timestamp::FORMAT_HUMAN, true ) );
+
+        $this->icon = $arguments[ 'icon' ] ?? $arguments[ 'status' ] ?? 'notice';
+
+        // unset( $arguments[ 'timestamp' ] );
+        // dump( $this, $arguments );
+    }
+
 
     protected function compile( TemplateCompiler $compiler ) : string
     {
-        // $message       = 'Testing Toasties';
-        $message       = null;
-        $this->message = $message ?? \ucfirst( $this->status );
-
-        $this->timestamp = new Html( Time::now() );
-
-        return $compiler->render( __DIR__.'/toast.latte', $this );
+        return $compiler->render( __DIR__ . '/toast.latte', $this );
     }
 }

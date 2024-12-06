@@ -4,6 +4,7 @@ namespace Core\Framework\Autowire;
 
 use Core\Service\ToastService;
 use Core\Symfony\DependencyInjection\ActionInterface;
+use JetBrains\PhpStorm\ExpectedValues;
 
 final class Toast implements ActionInterface
 {
@@ -36,7 +37,7 @@ final class Toast implements ActionInterface
      * @return void
      */
     public function __invoke(
-        string            $status,
+        #[ExpectedValues( values : self::STATUS )] string            $status,
         string            $message,
         null|string|array $description = null,
         ?int              $timeout = null,
