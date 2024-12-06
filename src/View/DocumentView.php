@@ -7,9 +7,11 @@ namespace Core\View;
 use Core\Framework\Response\Document;
 use Core\View\Component\Attributes;
 use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
+use Support\Str;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use InvalidArgumentException;
 use Throwable;
+use function Support\toString;
 
 final class DocumentView implements ServiceContainerInterface
 {
@@ -63,6 +65,49 @@ final class DocumentView implements ServiceContainerInterface
     {
         return \implode( $separator, $this->content );
     }
+
+    // :: Generate Document Meta
+
+    public function meta( string $name, ?string $comment = null ) : self
+    {
+        if ( ! $value = $this->document->pull( $name ) ) {
+            return $this;
+        }
+
+        if ( $comment ) {
+            $this->head[] = '<!-- '.$comment.' -->';
+        }
+
+        // dump(
+        //         $this->document,
+        //         $name,
+        //         $value);
+
+        $meta = \is_array( $value ) ? $value : [$name => $value];
+
+        foreach ( $meta as $name => $value ) {
+            if ( $value = toString( $value ) ) {
+                $name         = Str::after( $name, '.' );
+                $this->head[] = match ( $name ) {
+                    'title' => $this->metaTitle( $value ),
+                    default => "<meta name=\"{$name}\" content=\"{$value}\">",
+                };
+            }
+        }
+
+        return $this;
+    }
+
+    // TODO : Title, Description, Keywords, Author, etc - separate service?
+    private function metaTitle( ?string $value ) : string
+    {
+        // $value ??= $this->settings()->get( 'site.name', $_SERVER['SERVER_NAME'] );
+        $value ??= 'no title';
+
+        return "<title>{$value}</title>";
+    }
+
+    // :: End
 
     /**
      * @return string `<html ...>`

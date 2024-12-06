@@ -6,7 +6,6 @@ namespace Core\Service;
 
 use Core\Service\ToastService\ToastMessage;
 use Symfony\Component\HttpFoundation as Http;
-use Core\Framework\Autowire\Toast;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\{FlashBagAwareSessionInterface};
 
@@ -40,17 +39,10 @@ final readonly class ToastService
             $toastMessage->bump( $description );
         }
         else {
-            $toastMessage = new ToastMessage(
-                $id,
-                $status,
-                $message,
-                $description,
-                $timeout,
-                $icon,
-            );
+            $toastMessage = new ToastMessage( $id, ...\get_defined_vars() );
         }
 
-        $this->getFlashBag()->set( $id, $toastMessage );
+        $this->getFlashBag()->set( $id, [$toastMessage] );
 
         return $this;
     }

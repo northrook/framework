@@ -79,7 +79,7 @@ final class ToastMessage
 
     protected function setIcon( ?string $icon ) : void
     {
-        if ( ! \ctype_alpha( \str_replace( [':', '.', '-'], '', $icon ) ) ) {
+        if ( $icon && ! \ctype_alpha( \str_replace( [':', '.', '-'], '', $icon ) ) ) {
             $message
                     = $this::class.' invalid icon key; may only contain ASCII letters and colon, period, or hyphens.';
             throw new InvalidArgumentException( $message );

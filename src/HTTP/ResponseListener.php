@@ -51,20 +51,46 @@ final class ResponseListener extends HttpEventListener
             $this->content,
         );
 
-        if ( 'document' === $this->type ) {
-            dump( __METHOD__.'[document]' );
-            $view = new HtmlViewDocument(
-                $this->document(),
-                $this->content,
-                $this->serviceLocator,
-            );
+        // if ( 'document' === $this->type ) {
+        //     dump( __METHOD__.'[document]' );
+        //     $view = new HtmlViewDocument(
+        //         $this->document(),
+        //         $this->content,
+        //         $this->serviceLocator,
+        //     );
+        //
+        //     $this->content = $view->render();
+        // }
 
-            $this->content = $view->render();
+        if ( 'document' === $this->type ) {
+            $document
+                ->meta( 'meta.viewport' )
+                ->meta( 'document' )
+                ->meta( 'robots' )
+                ->meta( 'meta' );
+            // ->assets( 'font' )
+            // ->assets( 'script' )
+            // ->assets( 'style' )
+            // ->assets( 'link' );
+
+            $this->content = $document->documentHtml();
+        }
+        else {
+            $document
+                ->meta( 'document' )
+                ->meta( 'meta' );
+            // ->assets( 'font' )
+            // ->assets( 'script' )
+            // ->assets( 'style' )
+            // ->assets( 'link' );
+            $this->content = $document->contentHtml();
         }
 
         $event->getResponse()->setContent( $this->content );
         $this->setResponseHeaders( $event );
-        dump( $this );
+        // dump( $this );
+
+        $this->clerk::stop( $this->listenerId );
     }
 
     #[NoReturn]

@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Core\Framework\Compiler;
 
+use Core\Framework\Autowire\Toast;
 use Override;
 use Core\Symfony\DependencyInjection\CompilerPass;
+use Support\Reflect;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use ReflectionClassConstant;
 
 final class ApplicationConfigPass extends CompilerPass
 {
@@ -26,6 +29,35 @@ final class ApplicationConfigPass extends CompilerPass
             ->createConfigServices()
             ->configurePreload()
             ->coreControllerRoutes();
+    }
+
+    protected function generateToastMeta() : self
+    {
+        $reflect = Reflect::class( Toast::class );
+
+        $byConstants = $reflect->getConstants( ReflectionClassConstant::IS_PUBLIC );
+
+        $toastStatusTypes = "'".\implode( "', '", $byConstants )."'";
+        dump( $byConstants, $toastStatusTypes );
+
+        return $this;
+
+        $this->createPhpFile(
+            '.phpstorm.meta.php/.toast_action.meta.php',
+            <<<PHP
+                <?php 
+                    
+                namespace PHPSTORM_META;
+                    
+                expectedArguments(
+                    \Core\Framework\Autowire\Pathfinder::pathfinder(),
+                    0,
+                    {$toastStatusTypes}
+                );
+                PHP,
+        );
+
+        return $this;
     }
 
     protected function generateAppKernel( bool $override = false, string ...$comment ) : self
