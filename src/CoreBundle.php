@@ -9,6 +9,7 @@ use Core\Framework\Compiler\{ApplicationConfigPass,
     RegisterCoreServicesPass,
     SettingsCompilerPass
 };
+use Core\Symfony\DependencyInjection\AutowireActionsCompilerPass;
 use Core\View\Compiler\RegisterCoreComponentsPass;
 use Override;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
@@ -83,6 +84,7 @@ final class CoreBundle extends AbstractBundle
     public function build( ContainerBuilder $container ) : void
     {
         $container
+            ->addCompilerPass( new AutowireActionsCompilerPass() )
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
             ->addCompilerPass( new SettingsCompilerPass() )
