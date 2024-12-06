@@ -102,7 +102,7 @@ final class ResponseListener extends HttpEventListener
 
     final protected function resolveToastMessages( ?FlashBagInterface $flashBag = null ) : array
     {
-        $toastService = $this->serviceLocator( ToastService::class );
+        $toastService = $this->serviceLocator( ToastService::class )->getAllMessages( true );
 
         dump( $toastService );
         $toasts = [];

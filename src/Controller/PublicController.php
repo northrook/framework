@@ -72,7 +72,10 @@ final class PublicController extends Controller
     ) : string {
         $document( 'Index Demo Template' );
 
-        dump( $toast );
+        foreach ( \range( 0, \rand( 2, 7 ) ) as $key => $value ) {
+            $status = (string) \array_rand( $toast::STATUS );
+            $toast( $status, 'Hello there, this is a '.$status );
+        }
 
         return 'demo.latte';
     }

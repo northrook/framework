@@ -37,7 +37,7 @@ return static function( ContainerConfigurator $container ) : void {
                 service( ComponentFactory::class ),
                 service( AssetLocator::class ),
             ],
-        )
+        )->tag( 'core.service_locator')
 
             //
         ->set( \Core\HTTP\ResponseListener::class )
