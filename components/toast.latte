@@ -3,7 +3,7 @@
     <button class="close" aria-label="Close" type="button"></button>
     <output role="status">
         <i class="status">
-            {icon($status)}
+            {icon($status, height: '1rem', width: '1rem')}
             <span class="status-type">{$status}</span>
             <time datetime="{$timestamp}">
                 {* TODO : Loop over each $instance, set first as 'current' - hide test with CSS *}

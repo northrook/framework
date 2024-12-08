@@ -11,14 +11,14 @@ toast {
   margin-bottom   : var(--gap);
   border-radius   : .25rem;
 
-  font-size       : var(--font-size-small);
+  font-size       : var(--text-body);
 
   transition      : opacity 200ms ease, transform 200ms ease, max-height 200ms ease, margin 200ms ease, background-color 200ms ease;
   transform       : translateX(0);
   opacity         : 1;
 
   backdrop-filter : blur(5px);
-  box-shadow      : 1px 1px 1rem -.125rem var(--shade);
+  box-shadow      : 1px 1px 1rem -.125rem var(--baseline-500);
 }
 
 /* Background */
@@ -69,10 +69,10 @@ toast i.status {
 }
 
 toast i.status svg.icon {
-  height    : 1em;
-  width     : 1em;
+  height : 1em;
+  width  : 1em;
   /*translate : 0 -.063em;*/
-  color     : var(--intent);
+  color  : var(--intent);
 }
 
 toast i.status > span {

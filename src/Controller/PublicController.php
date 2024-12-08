@@ -73,7 +73,7 @@ final class PublicController extends Controller
         $document( 'Index Demo Template' );
 
         foreach ( \range( 0, \rand( 2, 7 ) ) as $key => $value ) {
-            $status = (string) \array_rand( $toast::STATUS );
+            $status = (string) $toast::STATUS[\array_rand( $toast::STATUS )];
             $toast( $status, 'Hello there, this is a '.$status );
         }
 

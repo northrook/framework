@@ -15,6 +15,45 @@ final class StyleFramework
      * @noinspection CssUnresolvedCustomProperty
      */
     public const string BASELINE = <<<'CSS'
+        html {
+          --background: var(--baseline-800);
+          --color: var(--baseline-200);
+          font-family : var(--font-body), system-ui;
+          font-size : var(--text-body);
+        }
+        p, .heading, .h1, .h2, .h3, .h4 {
+          overflow-wrap : break-word;
+          text-wrap     : pretty;
+        }
+        .heading {
+          --color: var(--primary-500);
+          font-family   : var(--font-heading), sans-serif;
+          font-weight   : var(--weight-heading);
+        }
+        h1, .h1 {
+          font-size : var(--text-h1);
+        }
+        h2, .h2 {
+          font-size : var(--text-h2);
+        }
+        h3, .h3 {
+          font-size : var(--text-h3);
+        }
+        h4, .h4 {
+          font-size : var(--text-h4);
+        }
+        small {
+          font-size : var(--text-small);
+        }
+        .content > * + * {
+          margin-top : var(--line-height);
+        }
+        .nowrap {
+          white-space : nowrap;
+        }
+        code, pre {
+          tab-size : 4ch;
+        }
         [role=list] {
           display        : flex;
           flex-direction : column;
