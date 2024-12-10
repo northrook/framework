@@ -51,8 +51,8 @@ final class ResponseListener extends HttpEventListener
         $document->setInnerContent(
             $this->resolveToastMessages(),
             $this->content,
-        )
-            ->enqueueInvokedAssets();
+        );
+            // ->enqueueInvokedAssets();
 
         // if ( 'document' === $this->type ) {
         //     dump( __METHOD__.'[document]' );

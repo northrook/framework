@@ -29,6 +29,10 @@ parameters:
 			path: *.php
 
 		-
+			message: "#Constructor of class .+DependencyInjection.+ has an unused parameter .+.#"
+			path: *.php
+
+		-
 			message: "#Method .+ should return .+ but returns mixed.#"
 			path: *.php
 

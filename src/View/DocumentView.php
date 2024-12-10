@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\View;
 
 use Core\Framework\Response\Document;
-use Core\Service\{AssetLocator};
+use Core\Service\{AssetManager};
 use Core\View\Component\Attributes;
 use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
 use Support\Str;
@@ -25,12 +25,13 @@ final class DocumentView implements ServiceContainerInterface
 
     /**
      * @param Document     $document
-     * @param AssetLocator $assetLocator
+     * @param AssetManager $assetManager
      */
     public function __construct(
         private readonly Document     $document,
-        private readonly AssetLocator $assetLocator,
+        private readonly AssetManager $assetManager,
     ) {
+        dump( $this );
     }
 
     /**

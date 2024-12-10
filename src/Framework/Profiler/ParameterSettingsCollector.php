@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Framework\Profiler;
 
-use Core\Symfony\SettingsInterface;
+use Core\Framework\Settings;
 use Override;
 use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -22,7 +22,7 @@ final class ParameterSettingsCollector extends AbstractDataCollector
 
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
-        private readonly SettingsInterface     $settings,
+        private readonly Settings     $settings,
     ) {
     }
 

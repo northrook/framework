@@ -14,13 +14,13 @@ trait Pathfinder
     /**
      * @param ?string $get
      *
-     * @return null|\Core\Framework\Pathfinder|string
+     * @return null|\Core\Pathfinder|string
      */
-    final protected function pathfinder( ?string $get = null ) : \Core\Framework\Pathfinder|null|string
+    final protected function pathfinder( ?string $get = null ) : \Core\Pathfinder|null|string
     {
         if ( $get ) {
-            return $this->serviceLocator( \Core\Framework\Pathfinder::class )->get( $get );
+            return $this->serviceLocator( \Core\Pathfinder::class )->get( $get );
         }
-        return $this->serviceLocator( \Core\Framework\Pathfinder::class );
+        return $this->serviceLocator( \Core\Pathfinder::class );
     }
 }

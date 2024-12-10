@@ -5,12 +5,19 @@ declare(strict_types=1);
 namespace Core\Framework\DependencyInjection;
 
 use Cache\MemoizationCache;
+use Northrook\Clerk;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
-final class StaticServiceInitializer
+final readonly class StaticServiceInitializer
 {
-    public function __construct( MemoizationCache $memoizationCache )
-    {
+    /**
+     * @param Clerk            $clerk
+     * @param MemoizationCache $memoizationCache
+     */
+    public function __construct(
+        Clerk            $clerk,
+        MemoizationCache $memoizationCache,
+    ) {
     }
 
     public function __invoke( RequestEvent $event ) : void

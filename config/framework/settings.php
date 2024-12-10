@@ -8,9 +8,8 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\CoreBundle;
+use Core\{CoreBundle, Framework\Settings, Pathfinder};
 use Northrook\ArrayStore;
-use Core\Framework\{Pathfinder, Settings};
 
 return static function( ContainerConfigurator $container ) : void {
     //
@@ -27,6 +26,7 @@ return static function( ContainerConfigurator $container ) : void {
     }
 
     $container->services()
+            //
         ->set( 'core.settings_store', ArrayStore::class )
         ->args( [param( 'path.settings_store' ), Settings::class] )
 

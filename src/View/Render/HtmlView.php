@@ -7,6 +7,7 @@ use Core\Service\AssetLocator;
 use Core\Symfony\DependencyInjection\ServiceContainer;
 use Core\Framework\Response\Document;
 use Core\View\ComponentFactory;
+use JetBrains\PhpStorm\Deprecated;
 use Northrook\HTML\Element\Attributes;
 use Northrook\Logger\Log;
 use Support\Str;
@@ -14,6 +15,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 use Stringable;
 use function Support\toString;
 
+#[Deprecated]
 abstract class HtmlView implements Stringable
 {
     use ServiceContainer, Settings;
@@ -23,9 +25,9 @@ abstract class HtmlView implements Stringable
     private array $head = [];
 
     public function __construct(
-            private readonly Document         $document,
-            private string                    $content,
-            protected readonly ServiceLocator $serviceLocator,
+        private readonly Document         $document,
+        private string                    $content,
+        protected readonly ServiceLocator $serviceLocator,
     ) {
     }
 
@@ -164,9 +166,9 @@ abstract class HtmlView implements Stringable
 
             $id     = $asset['id']     ?? null ? ' id="'.$asset['id'].'"' : '';
             $inline = $asset['inline'] ?? false;
-            $path   = $locator->get( $asset['path'] . '.css' );
-            dump($path);
-            $contents = file_get_contents( $path['path'] );
+            $path   = $locator->get( $asset['path'].'.css' );
+            dump( $path );
+            $contents = \file_get_contents( $path['path'] );
             dump( $contents );
 
             $assign = '<style'.$id.'>'.$contents.'</style>';

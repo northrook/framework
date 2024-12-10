@@ -2,8 +2,8 @@
 
 namespace Core\Framework\Autowire;
 
+use Support\Interface\ActionInterface;
 use Core\Service\ToastService;
-use Core\Symfony\DependencyInjection\ActionInterface;
 use JetBrains\PhpStorm\ExpectedValues;
 
 final class Toast implements ActionInterface

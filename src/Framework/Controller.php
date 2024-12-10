@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Framework;
 
+use Core\Pathfinder;
 use Core\Framework\Controller\Attribute\OnContent;
 use Core\Framework\Controller\Attribute\{OnDocument};
 use Core\Framework\Controller\ResponseMethods;

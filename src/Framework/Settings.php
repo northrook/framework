@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Framework;
 
-use Core\Symfony\SettingsInterface;
+use Core\SettingsInterface;
 use Exception\NotImplementedException;
 use Northrook\ArrayStore;
 use UnitEnum;
@@ -14,7 +14,7 @@ use InvalidArgumentException;
  * @template TKey of array-key
  * @template TValue of mixed
  */
-final readonly class Settings implements SettingsInterface
+final readonly class Settings
 {
     private ArrayStore $settings;
 

@@ -10,7 +10,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\Framework\Response\Document;
 use Core\View\{DocumentView};
-use Core\Service\{AssetLocator};
+use Core\Service\{AssetManager};
 use Northrook\Clerk;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
@@ -23,24 +23,21 @@ return static function( ContainerConfigurator $container ) : void {
 
             //
         ->set( \Core\HTTP\RequestListener::class )
-        ->args( [service( Clerk::class ), service( 'cache.core.request_response' )] )
+        ->args( [service( Clerk::class ), service( 'cache.core.request_response' ), service( 'logger' )] )
         ->tag( 'kernel.event_subscriber' )
         ->tag( 'monolog.logger', ['channel' => 'http'] )
-
             //
+        ->set( \Core\HTTP\ResponseListener::class )
+        ->args( [service( Clerk::class ), service( 'cache.core.request_response' ), service( 'logger' )] )
+        ->tag( 'kernel.event_subscriber' )
+        ->tag( 'monolog.logger', ['channel' => 'http'] )
 
             // Sending HTML Response
         ->set( DocumentView::class )
         ->args(
             [
                 service( Document::class ),
-                service( AssetLocator::class ),
+                service( AssetManager::class ),
             ],
-        )->tag( 'core.service_locator' )
-
-            //
-        ->set( \Core\HTTP\ResponseListener::class )
-        ->args( [service( Clerk::class ), service( 'cache.core.request_response' )] )
-        ->tag( 'kernel.event_subscriber' )
-        ->tag( 'monolog.logger', ['channel' => 'http'] );
+        )->tag( 'core.service_locator' );
 };

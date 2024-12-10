@@ -9,9 +9,10 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Cache\MemoizationCache;
-use Core\Service\ToastService;
-use Core\Framework\{CurrentRequest, DependencyInjection\StaticServiceInitializer, Pathfinder, Settings};
+use Core\Pathfinder;
+use Core\Framework\{CurrentRequest, DependencyInjection\StaticServiceInitializer, Settings};
 use Core\Framework\Response\{Document, Headers, Parameters};
+use Northrook\Clerk;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -26,7 +27,12 @@ return static function( ContainerConfigurator $container ) : void {
 
     $services
         ->set( StaticServiceInitializer::class )
-        ->args( [service( MemoizationCache::class )] )
+        ->args(
+            [
+                service( Clerk::class ),
+                service( MemoizationCache::class ),
+            ],
+        )
         ->tag(
             'kernel.event_listener',
             [
@@ -41,16 +47,7 @@ return static function( ContainerConfigurator $container ) : void {
 
             // Current Request handler
         ->set( CurrentRequest::class )
-        ->args( [service( 'request_stack' )] )
-
-            // Find and return registered paths
-        ->set( Pathfinder::class )
-        ->args(
-            [
-                service( 'parameter_bag' ),
-                '%kernel.cache_dir%/pathfinder.cache.php',
-            ],
-        );
+        ->args( [service( 'request_stack' )] );
 
     /** @used-by \Core\Symfony\DependencyInjection\ServiceContainer */
     $container->services()

@@ -59,6 +59,7 @@ final class CoreBundle extends AbstractBundle
         '../config/framework/response.php',
         '../config/framework/services.php',
         '../config/framework/settings.php',
+        '../config/framework/pathfinder.php',
         '../config/framework/profiler.php',
         '../config/framework/toasts.php',
         '../config/framework/controllers/public.php',
@@ -89,8 +90,8 @@ final class CoreBundle extends AbstractBundle
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
             ->addCompilerPass( new SettingsCompilerPass() )
-            ->addCompilerPass( new RegisterCoreComponentsPass() )
-            ->addCompilerPass( new AssetBunderDiscoverPass(), PassConfig::TYPE_OPTIMIZE );
+            ->addCompilerPass( new RegisterCoreComponentsPass() );
+            // ->addCompilerPass( new AssetBunderDiscoverPass(), PassConfig::TYPE_OPTIMIZE );
     }
 
     /**
