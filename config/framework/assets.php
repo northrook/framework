@@ -21,6 +21,8 @@ return static function( ContainerConfigurator $container ) : void {
         ->set( AssetManager\AssetFactory::class )
         ->args(
             [
+                '%kernel.project_dir%/public/assets/',
+                '%kernel.project_dir%/var/assets/',
                 CompilerPass::PLACEHOLDER_ARG,
                 // '%path.asset_manifest%',
             ],

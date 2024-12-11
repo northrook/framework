@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Core\Framework\Compiler;
 
 use Core\Framework\Autowire\Toast;
+use Core\Symfony\Console\Output;
 use Override;
 use Core\Symfony\DependencyInjection\CompilerPass;
-use Support\Reflect;
+use Support\{Normalize, Reflect};
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use ReflectionClassConstant;
+use Exception;
 
 final class ApplicationConfigPass extends CompilerPass
 {
@@ -18,7 +20,7 @@ final class ApplicationConfigPass extends CompilerPass
     {
         $this->path( 'config/packages/debug.yaml' )->remove();
 
-        $this->parseParameterBag();
+        $this->normalizePathParameters();
 
         $this
             ->generateToastMeta()
@@ -34,17 +36,33 @@ final class ApplicationConfigPass extends CompilerPass
             ->coreControllerRoutes();
     }
 
-    protected function parseParameterBag() : void
+    protected function normalizePathParameters() : void
     {
         $handle = [];
 
         foreach ( $this->parameterBag->all() as $key => $value ) {
-            dump( [$key => $value] );
+            // Only parse prefixed keys
+            if ( \str_starts_with( $key, 'dir.' ) || \str_starts_with( $key, 'path.' ) ) {
+                // Skip pure-placeholders
+                if ( \str_starts_with( $value, '%' ) && \str_ends_with( $value, '%' ) ) {
+                    continue;
+                }
+
+                // Normalize and report
+                try {
+                    $value = Normalize::path( $value );
+                    $this->parameterBag->set( $key, $value );
+                    $handle[] = [Output::format( '[OK]', 'info' )."{$key} : {$value}"];
+                }
+                catch ( Exception $e ) {
+                    $handle[] = [Output::format( '[OK]', 'info' )."{$key} : {$e->getMessage()}"];
+                }
+            }
         }
 
-        $this->console->listing( $handle );
-
-        unset( $handle );
+        if ( ! empty( $handle ) ) {
+            Output::table( __METHOD__, $handle );
+        }
     }
 
     protected function generateToastMeta() : self

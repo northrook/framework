@@ -90,8 +90,8 @@ final class CoreBundle extends AbstractBundle
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
             ->addCompilerPass( new SettingsCompilerPass() )
-            ->addCompilerPass( new RegisterCoreComponentsPass() );
-            // ->addCompilerPass( new AssetBunderDiscoverPass(), PassConfig::TYPE_OPTIMIZE );
+            ->addCompilerPass( new RegisterCoreComponentsPass() )
+            ->addCompilerPass( new AssetBunderDiscoverPass(), PassConfig::TYPE_OPTIMIZE );
     }
 
     /**
