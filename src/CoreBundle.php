@@ -6,7 +6,7 @@ namespace Core;
 
 use Override;
 use Core\Framework\Compiler\{ApplicationConfigPass,
-    AssetBunderDiscoverPass,
+    AssetSourceDiscoveryPass,
     RegisterCoreServicesPass,
     SettingsCompilerPass
 };
@@ -91,7 +91,7 @@ final class CoreBundle extends AbstractBundle
             ->addCompilerPass( new ApplicationConfigPass() )
             ->addCompilerPass( new SettingsCompilerPass() )
             ->addCompilerPass( new RegisterCoreComponentsPass() )
-            ->addCompilerPass( new AssetBunderDiscoverPass(), PassConfig::TYPE_OPTIMIZE );
+            ->addCompilerPass( new AssetSourceDiscoveryPass(), PassConfig::TYPE_OPTIMIZE );
     }
 
     /**

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Core\Framework\Compiler;
 
-use Core\Service\AssetBundler;
-use Core\Service\AssetBundler\AssetManifest;
 use Core\Symfony\DependencyInjection\CompilerPass;
 use Core\View\ComponentFactory;
 use Support\{FileInfo};
@@ -25,39 +23,28 @@ use Override;
  *
  * @author Martin Nielsen <mn@northrook.com>
  */
-final class AssetBunderDiscoverPass extends CompilerPass
+final class AssetSourceDiscoveryPass extends CompilerPass
 {
+    private array $directories = [];
+
     private array $assets = [];
 
     #[Override]
     public function compile( ContainerBuilder $container ) : void
     {
-        $hasManifest = $container->hasDefinition( AssetManifest::class );
-        $hasBundler  = $container->hasDefinition( AssetBundler::class );
+        $this->parseParameterBag();
+        dump( $this );
+    }
 
-        if ( ! $hasManifest ) {
-            $this->console->error( 'Required service '.AssetManifest::class.' is not defined.' );
+    protected function parseParameterBag() : void
+    {
+        foreach ( $this->parameterBag->all() as $key => $value ) {
+            if ( ! \str_starts_with( $key, 'dir.asset_source' ) ) {
+                continue;
+            }
+
+            $this->directories[\substr( $key, \strlen( 'dir.asset_source' ) )] = $value;
         }
-        if ( ! $hasBundler ) {
-            $this->console->error( 'Required service '.AssetBundler::class.' is not defined.' );
-        }
-
-        if ( ! $hasBundler || ! $hasManifest ) {
-            dump( __METHOD__.' no can do.' );
-            return;
-        }
-
-        $assetBundlerService = $container->getDefinition( AssetBundler::class );
-
-        $this->discoverAssetDirectories();
-
-        if ( $container->hasDefinition( ComponentFactory::class ) ) {
-            $componentFactory     = $container->getDefinition( ComponentFactory::class );
-            $registeredComponents = $componentFactory->getArguments()[0] ?? [];
-            $this->discoverComponentDirectories( $registeredComponents );
-        }
-
-        $assetBundlerService->replaceArgument( 1, $this->assets );
     }
 
     private function discoverAssetDirectories() : void
@@ -136,3 +123,30 @@ final class AssetBunderDiscoverPass extends CompilerPass
         }
     }
 }
+
+// $hasManifest = $container->hasDefinition( AssetManifest::class );
+// $hasBundler  = $container->hasDefinition( AssetBundler::class );
+//
+// if ( ! $hasManifest ) {
+//     $this->console->error( 'Required service '.AssetManifest::class.' is not defined.' );
+// }
+// if ( ! $hasBundler ) {
+//     $this->console->error( 'Required service '.AssetBundler::class.' is not defined.' );
+// }
+//
+// if ( ! $hasBundler || ! $hasManifest ) {
+//     dump( __METHOD__.' no can do.' );
+//     return;
+// }
+//
+// $assetBundlerService = $container->getDefinition( AssetBundler::class );
+//
+// $this->discoverAssetDirectories();
+//
+// if ( $container->hasDefinition( ComponentFactory::class ) ) {
+//     $componentFactory     = $container->getDefinition( ComponentFactory::class );
+//     $registeredComponents = $componentFactory->getArguments()[0] ?? [];
+//     $this->discoverComponentDirectories( $registeredComponents );
+// }
+//
+// $assetBundlerService->replaceArgument( 1, $this->assets );
