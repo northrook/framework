@@ -18,6 +18,8 @@ final class ApplicationConfigPass extends CompilerPass
     {
         $this->path( 'config/packages/debug.yaml' )->remove();
 
+        $this->parseParameterBag();
+
         $this
             ->generateToastMeta()
             ->generateAppKernel( true )
@@ -30,6 +32,19 @@ final class ApplicationConfigPass extends CompilerPass
             ->createConfigServices()
             ->configurePreload()
             ->coreControllerRoutes();
+    }
+
+    protected function parseParameterBag() : void
+    {
+        $handle = [];
+
+        foreach ( $this->parameterBag->all() as $key => $value ) {
+            dump( [$key => $value] );
+        }
+
+        $this->console->listing( $handle );
+
+        unset( $handle );
     }
 
     protected function generateToastMeta() : self

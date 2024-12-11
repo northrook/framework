@@ -10,7 +10,9 @@ use Symfony\Component\HttpKernel\Event\{ExceptionEvent, ResponseEvent, Terminate
 
 final readonly class ClerkProfiler implements EventSubscriberInterface
 {
-    public function __construct( private Clerk $monitor ) {}
+    public function __construct( private Clerk $monitor )
+    {
+    }
 
     public static function getSubscribedEvents() : array
     {

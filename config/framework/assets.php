@@ -9,25 +9,14 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\Service\AssetManager;
-use Core\Service\AssetManager\Model\StyleAsset;
 use Core\Symfony\DependencyInjection\CompilerPass;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->parameters()
-        ->set(
-            'register_asset.public',
-            StyleAsset::register(
-                'public',
-                \Support\FileScanner::get(
-                    \dirname( __DIR__, 3 ).'/assets/styles',
-                    'css',
-                    recursion : true,
-                ),
-            ),
-        );
+        ->set( 'dir.asset_source.app', '%kernel.project_dir%/assets/' )
+        ->set( 'dir.asset_source.core', \dirname( __DIR__, 2 ).'/assets/' );
 
     $container->services()
-
             //
         ->set( AssetManager\AssetFactory::class )
         ->args(
