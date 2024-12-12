@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core\Controller;
 
 use Core\Framework\Controller\Attribute\OnDocument;
+use Core\Service\AssetManager\AssetCompiler;
 use Core\Framework\Autowire\{Pathfinder, Toast};
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
@@ -17,6 +18,12 @@ use Symfony\Component\Routing\Attribute\Route;
 ]
 final class PublicController extends Controller
 {
+    public function __construct(
+        protected AssetCompiler $assetCompiler,
+    ) {
+        dump( $this );
+    }
+
     use Pathfinder;
 
     #[OnDocument]
