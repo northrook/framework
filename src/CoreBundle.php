@@ -29,9 +29,10 @@ final class CoreBundle extends AbstractBundle
         // Assets
         'dir.assets'        => '%dir.root%/assets',
         'dir.public.assets' => '%dir.root%/public/assets',
-        'dir.assets.build'  => '%dir.root%/var/assets',
+        'dir.assets.build'  => '%dir.root%/assets/build',
         'dir.core.assets'   => '%dir.core%/assets',
         'dir.assets.themes' => '%dir.core%/assets',
+        'dir.assets.cache'  => __DIR__.'/var/assets',
         //
         'path.asset_manifest' => '%dir.root%/var/assets/manifest.php',
 

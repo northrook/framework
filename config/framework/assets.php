@@ -10,17 +10,26 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\Pathfinder;
 use Core\Service\AssetManager;
-use Core\Symfony\DependencyInjection\CompilerPass;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
+            // Asset Manager Services
+        ->defaults()->autoconfigure()
+            //
+            //
             // Manifest
         ->set( AssetManager\AssetManifest::class )
-        ->args( [param( 'path.asset_manifest' ), service( 'logger' )] )
-        ->tag( 'monolog.logger', ['channel' => 'asset_manifest'] )
-        ->autoconfigure()
+        ->args(
+            [
+                param( 'path.asset_manifest' ),
+                service( 'logger' ),
+            ],
+        )
+        ->tag( 'monolog.logger', ['channel' => 'asset_manager'] )
             //
-        ->set( AssetManager\AssetCompiler::class )
+            //
+            // Locator
+        ->set( AssetManager\AssetLocator::class )
         ->args(
             [
                 service( Pathfinder::class ),
@@ -28,24 +37,21 @@ return static function( ContainerConfigurator $container ) : void {
                 service( 'logger' ),
             ],
         )
+        ->tag( 'monolog.logger', ['channel' => 'asset_manager'] )
             //
-        ->set( AssetManager\AssetFactory::class )
-        ->args(
-            [
-                '%kernel.project_dir%/public/assets/',
-                '%kernel.project_dir%/var/assets/',
-                CompilerPass::PLACEHOLDER_ARG,
-                // '%path.asset_manifest%',
-            ],
-        )
             //
+            // Manager
         ->set( AssetManager::class )
         ->args(
             [
-                service( AssetManager\AssetCompiler::class ),
+                service( AssetManager\AssetManifest::class ),
+                service( AssetManager\AssetLocator::class ),
+                service( Pathfinder::class ),
+                null, // $settings
+                null, // $cache
                 service( 'logger' ),
             ],
         )
         ->tag( 'core.service_locator' )
-        ->tag( 'monolog.logger', ['channel' => 'assets'] );
+        ->tag( 'monolog.logger', ['channel' => 'asset_manager'] );
 };

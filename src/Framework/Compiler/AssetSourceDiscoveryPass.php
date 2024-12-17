@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Core\Framework\Compiler;
 
+use Core\Pathfinder;
+use Core\Service\AssetManager\{AssetLocator, AssetManifest};
 use Core\Symfony\DependencyInjection\CompilerPass;
-use Core\View\ComponentFactory;
-use Support\{FileInfo};
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Override;
 
@@ -25,128 +25,24 @@ use Override;
  */
 final class AssetSourceDiscoveryPass extends CompilerPass
 {
-    private array $directories = [];
-
-    private array $assets = [];
+    protected readonly AssetLocator $assetLocator;
 
     #[Override]
     public function compile( ContainerBuilder $container ) : void
     {
-        $this->parseParameterBag();
-        dump( $this );
-    }
-
-    protected function parseParameterBag() : void
-    {
-        foreach ( $this->parameterBag->all() as $key => $value ) {
-            if ( ! \str_starts_with( $key, 'dir.asset_source' ) ) {
-                continue;
-            }
-
-            $this->directories[\substr( $key, \strlen( 'dir.asset_source' ) )] = $value;
-        }
-    }
-
-    private function discoverAssetDirectories() : void
-    {
-        $skip = ['dir.public.assets', 'dir.assets.storage', 'dir.assets.themes'];
-
-        $directories = [
-            'core' => null,
-            'app'  => null,
-        ];
-
-        foreach ( $this->parameterBag->all() as $key => $directory ) {
-            if ( \in_array( $key, $skip ) ) {
-                continue;
-            }
-
-            if ( \str_starts_with( $key, 'dir.' ) && \str_ends_with( $key, '.assets' ) ) {
-                $offset = \strlen( 'dir.' );
-                $inset  = \strlen( '.assets' );
-                $key    = \substr( $key, $offset, -$inset ) ?: 'app';
-                // dump( $key );
-                $directories[$key] = $directory;
-            }
+        if ( ! $container->hasDefinition( AssetLocator::class ) ) {
+            $this->console->error( 'Asset source locator not found' );
+            return;
         }
 
-        $assets = [];
+        $pathfinder   = $container->getDefinition( Pathfinder::class );
+        $manifest     = $container->getDefinition( AssetManifest::class );
+        $assetLocator = $container->getDefinition( AssetLocator::class );
 
-        foreach ( $directories as $key => $directory ) {
-            if ( ! $directory ) {
-                $this->console->error( 'Required directory '.$directory.' does not exist.' );
-
-                continue;
-            }
-
-            foreach ( \glob( $directory.'/**/*.{css,js}', GLOB_BRACE ) as $file ) {
-                $this->parseAsset( $file, $key );
-            }
-        }
-    }
-
-    private function discoverComponentDirectories( array $registeredComponents ) : void
-    {
-        foreach ( $registeredComponents as $component ) {
-            $component = new ComponentFactory\ComponentProperties( ...$component );
-
-            foreach ( $component->assets as $asset ) {
-                $this->parseAsset( $asset, $component->name );
-            }
-        }
-    }
-
-    private function parseAsset( string $asset, ?string $key = null ) : void
-    {
-        $asset = new FileInfo( $asset );
-
-        if ( ! $asset->isReadable() || ! $asset->isFile() ) {
-            $this->console->error( "Asset '{$asset}' is ".( $asset->isFile() ? 'not readable.' : 'not a file.' ) );
-        }
-
-        $key = \implode(
-            '.',
-            \array_filter(
-                [
-                    $key,
-                    $asset->getExtension(),
-                    $asset->getBasename( '.'.$asset->getExtension() ),
-                ],
-            ),
+        dump(
+            $pathfinder,
+            $manifest,
+            $assetLocator,
         );
-
-        if ( \in_array( $asset->getExtension(), ['css', 'js'] ) ) {
-            $this->assets[$key] = $asset->getRealPath();
-        }
-        else {
-            $this->console->warning( 'Unknown asset type: '.$asset->getExtension() );
-        }
     }
 }
-
-// $hasManifest = $container->hasDefinition( AssetManifest::class );
-// $hasBundler  = $container->hasDefinition( AssetBundler::class );
-//
-// if ( ! $hasManifest ) {
-//     $this->console->error( 'Required service '.AssetManifest::class.' is not defined.' );
-// }
-// if ( ! $hasBundler ) {
-//     $this->console->error( 'Required service '.AssetBundler::class.' is not defined.' );
-// }
-//
-// if ( ! $hasBundler || ! $hasManifest ) {
-//     dump( __METHOD__.' no can do.' );
-//     return;
-// }
-//
-// $assetBundlerService = $container->getDefinition( AssetBundler::class );
-//
-// $this->discoverAssetDirectories();
-//
-// if ( $container->hasDefinition( ComponentFactory::class ) ) {
-//     $componentFactory     = $container->getDefinition( ComponentFactory::class );
-//     $registeredComponents = $componentFactory->getArguments()[0] ?? [];
-//     $this->discoverComponentDirectories( $registeredComponents );
-// }
-//
-// $assetBundlerService->replaceArgument( 1, $this->assets );

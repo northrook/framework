@@ -5,27 +5,18 @@ declare(strict_types=1);
 namespace Core\Controller;
 
 use Core\Framework\Controller\Attribute\OnDocument;
-use Core\Service\AssetManager\AssetCompiler;
-use Core\Framework\Autowire\{Pathfinder, Toast};
+use Core\Framework\Autowire\{Toast};
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
 use Core\Framework\Response\{Document, Parameters};
-use Latte\Engine;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[
-    Route( '/', 'public:' ),
-]
+#[Route(
+    path : '/',
+    name : 'public:',
+)]
 final class PublicController extends Controller
 {
-    public function __construct(
-        protected AssetCompiler $assetCompiler,
-    ) {
-        dump( $this );
-    }
-
-    use Pathfinder;
-
     #[OnDocument]
     public function onDocumentResponse( Document $document ) : void
     {
@@ -38,12 +29,15 @@ final class PublicController extends Controller
             ],
         )
             ->add( 'meta.viewport', 'width=device-width,initial-scale=1' )
-            ->style( 'core', inline : true )
-            ->script( 'core', inline : true );
+            ->style( 'core', inline : true );
+        // ->script( 'core', inline : true );
     }
 
     #[
-        Route( ['/', '/{route}'], 'index', priority : -100 ),
+        Route( [
+            'default' => '/',
+            'dynamic' => '/{route}',
+        ], 'index', priority : -100 ),
         Template( 'welcome.latte' ) // content template
     ]
     public function index(
@@ -55,7 +49,7 @@ final class PublicController extends Controller
     }
 
     #[
-        Route( ['/tailwind'], 'tailwind' ),
+        Route( '/tailwind', 'tailwind' ),
         Template( 'demo.latte' ) // content template
     ]
     public function tailwind(
@@ -69,7 +63,7 @@ final class PublicController extends Controller
     }
 
     #[
-        Route( ['/demo'], 'demo' ),
+        Route( '/demo', 'demo' ),
         Template( 'demo.latte' ) // content template
     ]
     public function demo(
@@ -85,15 +79,6 @@ final class PublicController extends Controller
         }
 
         return 'demo.latte';
-    }
-
-    #[Route( 'toast', 'notification' )]
-    public function notification() : void
-    {
-        $latte    = new Engine();
-        $template = $latte->createTemplate( $this->pathfinder( 'dir.core.templates/component/toast.latte' ) );
-
-        dump( $template );
     }
 
     #[Route( 'hello', 'boilerplate' )]
