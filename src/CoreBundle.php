@@ -6,7 +6,7 @@ namespace Core;
 
 use Override;
 use Core\Framework\Compiler\{ApplicationConfigPass,
-    AssetSourceDiscoveryPass,
+    AssetDiscoveryPass,
     RegisterCoreServicesPass,
     SettingsCompilerPass
 };
@@ -28,11 +28,12 @@ final class CoreBundle extends AbstractBundle
 
         // Assets
         'dir.assets'        => '%dir.root%/assets',
-        'dir.public.assets' => '%dir.root%/public/assets',
+        'dir.assets.public' => '%dir.root%/public/assets',
         'dir.assets.build'  => '%dir.root%/assets/build',
         'dir.core.assets'   => '%dir.core%/assets',
         'dir.assets.themes' => '%dir.core%/assets',
         'dir.assets.cache'  => __DIR__.'/var/assets',
+        //
         //
         'path.asset_manifest' => '%dir.root%/var/assets/manifest.php',
 
@@ -48,8 +49,8 @@ final class CoreBundle extends AbstractBundle
         'path.theme.core' => '%dir.core%/config/themes/core.php',
 
         // Settings DataStore
-        'path.settings_store'   => '%dir.var%/settings/data_store.php',
-        'path.settings_history' => '%dir.var%/settings/history_store.php',
+        'path.settings_store'   => '%dir.root%/var/settings/data_store.php',
+        'path.settings_history' => '%dir.root%/var/settings/history_store.php',
     ];
 
     /** @var string[] */
@@ -92,7 +93,7 @@ final class CoreBundle extends AbstractBundle
             ->addCompilerPass( new ApplicationConfigPass() )
             ->addCompilerPass( new SettingsCompilerPass() )
             ->addCompilerPass( new RegisterCoreComponentsPass() )
-            ->addCompilerPass( new AssetSourceDiscoveryPass(), PassConfig::TYPE_OPTIMIZE );
+            ->addCompilerPass( new AssetDiscoveryPass(), PassConfig::TYPE_OPTIMIZE );
     }
 
     /**

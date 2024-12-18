@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\View;
 
 use Core\Framework\Response\Document;
-use Core\Service\{AssetManager};
+use Core\Service\AssetManager;
 use Core\View\Component\Attributes;
 use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
 use Support\Str;
@@ -31,7 +31,7 @@ final class DocumentView implements ServiceContainerInterface
         private readonly Document     $document,
         private readonly AssetManager $assetManager,
     ) {
-        dump( $this );
+        dump( $this->assetManager->get( 'style.app' ) );
     }
 
     /**

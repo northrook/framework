@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Core\Service\DesignSystem;
 
 use Core\Service\DesignSystem\StyleFramework\{AtomicRule, Color, Display, Variables};
-use Northrook\Filesystem\File;
-use Support\Str;
-
+use Support\{Filesystem, Str};
 final class StyleFramework
 {
     /**
@@ -117,7 +115,7 @@ final class StyleFramework
 
     public function generateStub( string $savePath ) : void
     {
-        File::save( $savePath, $this->style() );
+        Filesystem::save( $savePath, $this->style() );
     }
 
     public function generate( ?string $atomicRule = null ) : self

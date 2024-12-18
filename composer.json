@@ -34,7 +34,6 @@
     "northrook/logger": "dev-main",
     "northrook/clerk": "dev-main",
     "northrook/support": "dev-main",
-    "northrook/filesystem": "dev-main",
     "northrook/array-access": "dev-main",
     "northrook/html-element": "dev-main",
     "latte/latte": "^3.0",
@@ -43,7 +42,7 @@
     "tempest/highlight": "^2.11",
     "northrook/core-view": "dev-main",
     "northrook/pathfinder": "dev-main",
-    "northrook/asset-manager": "dev-main",
+    "northrook/assets": "dev-main",
     "northrook/settings": "dev-main"
   },
   "conflict": {
