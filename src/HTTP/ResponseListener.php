@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Core\HTTP;
 
+use Core\HTTP\Response\{Document, Headers};
 use Core\Service\ToastService;
 use Core\View\Component\Toast;
-use Core\View\{ComponentFactory, DocumentView};
+use Core\View\{ComponentFactory, DocumentView, Parameters};
 use Core\View\Render\HtmlViewDocument;
-use Core\Framework\Response\{Document, Headers, Parameters};
 use Core\Symfony\EventListener\HttpEventListener;
 use Core\View\Template\TemplateCompiler;
 use Symfony\Component\HttpKernel\Event\{ExceptionEvent, ResponseEvent};
@@ -52,7 +52,7 @@ final class ResponseListener extends HttpEventListener
             $this->resolveToastMessages(),
             $this->content,
         );
-            // ->enqueueInvokedAssets();
+        // ->enqueueInvokedAssets();
 
         // if ( 'document' === $this->type ) {
         //     dump( __METHOD__.'[document]' );

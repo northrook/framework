@@ -23,7 +23,7 @@ return static function( ContainerConfigurator $container ) : void {
             // Framework Asset Manager
         ->set( AssetManager::class )
         ->arg( 0, service( AssetFactory::class ) )
-            // ->arg( 1, service( [Cache] ) )
+        ->arg( 1, null ) // $cache
         ->arg( 2, service( 'logger' ) )
         ->tag( 'core.service_locator' )
             //
@@ -31,7 +31,7 @@ return static function( ContainerConfigurator $container ) : void {
         ->set( AssetFactory::class )
         ->arg( 0, service( AssetManifest::class ) )
         ->arg( 1, service( Pathfinder::class ) )
-            // ->arg( 2, service( [Settings] ) )
+        ->arg( 2, null ) // $settings
         ->arg( 3, service( 'logger' ) )
             //
             // Manifest

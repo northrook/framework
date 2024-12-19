@@ -1,8 +1,8 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
-namespace Core\Framework\Response;
+namespace Core\View;
 
 /**
  * @author Martin Nielsen <mn@northrook.com>
@@ -11,6 +11,9 @@ final class Parameters
 {
     private ?object $object = null;
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $parameters = [];
 
     /**
@@ -18,7 +21,7 @@ final class Parameters
      *
      * This excludes using array $parameters for the template.
      *
-     * @param object  $object
+     * @param object $object
      *
      * @return void
      */
@@ -29,13 +32,13 @@ final class Parameters
 
     public function add( string $key, mixed $value ) : Parameters
     {
-        $this->parameters[ $key ] ??= $value;
+        $this->parameters[$key] ??= $value;
         return $this;
     }
 
     public function set( string $key, mixed $value ) : self
     {
-        $this->parameters[ $key ] = $value;
+        $this->parameters[$key] = $value;
         return $this;
     }
 
@@ -46,10 +49,10 @@ final class Parameters
 
     public function get( string $key ) : mixed
     {
-        return $this->parameters[ $key ] ?? null;
+        return $this->parameters[$key] ?? null;
     }
 
-    public function getParameters() : object | array
+    public function getParameters() : object|array
     {
         // TODO : handle array->object
         return $this->object ?? $this->parameters;

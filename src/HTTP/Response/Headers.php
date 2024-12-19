@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Core\Framework\Response;
+namespace Core\HTTP\Response;
 
+use Support\Interface\ActionInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 // : Content Type
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 //  https://www.madx.digital/glossary/x-robots-tag
 //  https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
 
-final class Headers extends ResponseHeaderBag
+final class Headers extends ResponseHeaderBag implements ActionInterface
 {
     /**
      * Set one or more response headers.
@@ -22,7 +23,7 @@ final class Headers extends ResponseHeaderBag
      * - Assigned to the {@see ResponseHeaderBag::class}.
      *
      * @param array<string, null|array<string, string>|bool|string>|string $set
-     * @param null|array<array-key,mixed>|bool|string                      $value
+     * @param null|bool|string|string[]                                    $value
      * @param bool                                                         $replace [true]
      *
      * @return ResponseHeaderBag
@@ -32,7 +33,7 @@ final class Headers extends ResponseHeaderBag
         bool|string|array|null $value = null,
         bool                   $replace = true,
     ) : ResponseHeaderBag {
-        // Allows setting multiple values
+        // Set multiple values
         if ( \is_array( $set ) ) {
             foreach ( $set as $key => $value ) {
                 $this->__invoke( $key, $value, $replace );

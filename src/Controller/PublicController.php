@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Core\Controller;
 
 use Core\Framework\Controller\Attribute\OnDocument;
+use Core\HTTP\Response\Document;
 use Core\Framework\Autowire\{Toast};
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
-use Core\Framework\Response\{Document, Parameters};
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(
@@ -20,17 +20,13 @@ final class PublicController extends Controller
     #[OnDocument]
     public function onDocumentResponse( Document $document ) : void
     {
-        $document->add(
-            [
-                'html.lang'   => 'en',
-                'html.id'     => 'top',
-                'html.theme'  => $document->get( 'theme.name' ) ?? 'system',
-                'html.status' => 'init',
-            ],
-        )
-            ->add( 'meta.viewport', 'width=device-width,initial-scale=1' )
-            ->style( 'core', inline : true );
-        // ->script( 'core', inline : true );
+        $document(
+            'Public Document Title',
+        );
+
+        $document
+            ->add( 'html.lang', 'en' )
+            ->asset( 'core' );
     }
 
     #[
@@ -40,12 +36,9 @@ final class PublicController extends Controller
         ], 'index', priority : -100 ),
         Template( 'welcome.latte' ) // content template
     ]
-    public function index(
-        Document   $document,
-        Parameters $parameters,
-    ) : void {
+    public function index( Document $document ) : void
+    {
         $document( 'Index Demo Template' );
-        $parameters->set( 'content', 'Hello there!' );
     }
 
     #[
@@ -53,11 +46,10 @@ final class PublicController extends Controller
         Template( 'demo.latte' ) // content template
     ]
     public function tailwind(
-        Document   $document,
-        Parameters $parameters,
+        Document $document,
     ) : string {
         $document( 'Tailwind Demo Template' );
-        $document->script( 'https://cdn.tailwindcss.com', 'tailwindcss' );
+        // $document->script( 'https://cdn.tailwindcss.com', 'tailwindcss' );
 
         return 'tailwind.latte';
     }
@@ -67,9 +59,8 @@ final class PublicController extends Controller
         Template( 'demo.latte' ) // content template
     ]
     public function demo(
-        Document   $document,
-        Parameters $parameters,
-        Toast      $toast,
+        Document $document,
+        Toast    $toast,
     ) : string {
         $document( 'Index Demo Template' );
 

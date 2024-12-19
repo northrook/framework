@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Core\Framework;
 
+use Core\HTTP\Response\{Document, Headers};
 use Core\Pathfinder;
 use Core\Framework\Controller\Attribute\OnContent;
 use Core\Framework\Controller\Attribute\{OnDocument};
 use Core\Framework\Controller\ResponseMethods;
 use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
-use Core\Framework\Response\{Parameters, Document, Headers};
 use Northrook\Logger\Log;
 use ReflectionClass;
 use ReflectionException;
@@ -37,7 +37,6 @@ abstract class Controller implements ServiceContainerInterface
 
         $autowire = [
             Headers::class,
-            Parameters::class,
             Document::class,
             Pathfinder::class,
         ];

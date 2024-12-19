@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\Framework\Response\Document;
+use Core\HTTP\Response\Document;
 use Core\View\{DocumentView};
 use Core\Service\{AssetManager};
 use Northrook\Clerk;
