@@ -18,6 +18,7 @@ return static function( ContainerConfigurator $container ) : void {
 
             // ResponseHeaderBag Service
         ->set( Headers::class )
+        ->arg( 0, service( 'request_stack' ) )
 
             // Document Properties
         ->set( Document::class )

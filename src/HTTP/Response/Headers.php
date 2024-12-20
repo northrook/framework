@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\HTTP\Response;
 
 use Support\Interface\ActionInterface;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\{HeaderBag, RequestStack, ResponseHeaderBag};
 
 // : Content Type
 //  https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type
@@ -15,8 +15,14 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 //  https://www.madx.digital/glossary/x-robots-tag
 //  https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
 
-final class Headers extends ResponseHeaderBag implements ActionInterface
+final class Headers implements ActionInterface
 {
+    protected ?HeaderBag $tempHeaderBag;
+
+    public function __construct( private readonly RequestStack $requestStack )
+    {
+    }
+
     /**
      * Set one or more response headers.
      *
@@ -26,13 +32,13 @@ final class Headers extends ResponseHeaderBag implements ActionInterface
      * @param null|bool|string|string[]                                    $value
      * @param bool                                                         $replace [true]
      *
-     * @return ResponseHeaderBag
+     * @return Headers
      */
     public function __invoke(
         string|array           $set,
         bool|string|array|null $value = null,
         bool                   $replace = true,
-    ) : ResponseHeaderBag {
+    ) : Headers {
         // Set multiple values
         if ( \is_array( $set ) ) {
             foreach ( $set as $key => $value ) {
@@ -46,8 +52,94 @@ final class Headers extends ResponseHeaderBag implements ActionInterface
             $value = $value ? 'true' : 'false';
         }
 
-        $this->set( $set, $value, $replace );
+        $this->requestHeaderBag()->set( $set, $value, $replace );
 
         return $this;
+    }
+
+    /**
+     * Adds new headers the current HTTP headers set.
+     *
+     * @param array $headers
+     */
+    public function add( array $headers ) : void
+    {
+        $this->requestHeaderBag()->add( $headers );
+    }
+
+    /**
+     * Returns the first header by name or the default one.
+     *
+     * @param string  $key
+     * @param ?string $default
+     *
+     * @return null|string
+     */
+    public function get( string $key, ?string $default = null ) : ?string
+    {
+        return $this->requestHeaderBag()->get( $key, $default );
+    }
+
+    /**
+     * Sets a header by name.
+     *
+     * @param string               $key
+     * @param null|string|string[] $values  The value or an array of values
+     * @param bool                 $replace Whether to replace the actual value or not (true by default)
+     */
+    public function set( string $key, string|array|null $values, bool $replace = true ) : void
+    {
+        $this->requestHeaderBag()->set( $key, $values, $replace );
+    }
+
+    /**
+     * Returns true if the HTTP header is defined.
+     *
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function has( string $key ) : bool
+    {
+        return $this->requestHeaderBag()->has( $key );
+    }
+
+    /**
+     * Returns true if the given HTTP header contains the given value.
+     *
+     * @param string $key
+     * @param string $value
+     *
+     * @return bool
+     */
+    public function contains( string $key, string $value ) : bool
+    {
+        return $this->requestHeaderBag()->contains( $key, $value );
+    }
+
+    /**
+     * Removes a header.
+     *
+     * @param string $key
+     */
+    public function remove( string $key ) : void
+    {
+        $this->requestHeaderBag()->remove( $key );
+    }
+
+    private function requestHeaderBag() : HeaderBag
+    {
+        $currentRequest = $this->requestStack->getCurrentRequest();
+
+        if ( ! $currentRequest ) {
+            return $this->tempHeaderBag ??= new ResponseHeaderBag();
+        }
+        $headerBag = $currentRequest->headers;
+
+        if ( $this->tempHeaderBag ) {
+            $headerBag->add( $this->tempHeaderBag->all() );
+            $this->tempHeaderBag = null;
+        }
+        return $headerBag;
     }
 }
