@@ -26,7 +26,7 @@ final class PublicController extends Controller
 
         $document
             ->add( 'html.lang', 'en' )
-            ->asset( 'core' );
+            ->asset( 'style.core' );
     }
 
     #[

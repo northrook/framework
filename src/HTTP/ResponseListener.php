@@ -143,7 +143,7 @@ final class ResponseListener extends HttpEventListener
         //     $this->notifications[$id] = (string) $this->notifications[$id];
         // }
 
-        dump( $toasts );
+        // dump( $toasts );
 
         return $toasts;
     }
@@ -198,9 +198,6 @@ final class ResponseListener extends HttpEventListener
     {
         // Always remove the identifying header
         // \header_remove( 'X-Powered-By' );
-
-        // Merge headers
-        $event->getResponse()->headers->add( $this->headers()->all() );
 
         $event->getResponse()->headers->set( 'Content-Type', 'text/html', false );
 

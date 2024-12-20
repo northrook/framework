@@ -3,6 +3,8 @@
 namespace Core\Service;
 
 use Core\Assets\AssetFactory;
+use Core\Assets\Factory\Asset\StyleAsset;
+use Core\Service\DesignSystem\StyleFramework;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -14,6 +16,20 @@ class AssetManager extends \Core\Assets\AssetManager
         ?LoggerInterface $logger = null,
     ) {
         parent::__construct( $factory, $cache, $logger );
-        dump( $this );
+
+        $this->factory->addAssetModelCallback(
+            'style.core',
+            function( StyleAsset $asset ) : StyleAsset {
+                $style = new StyleFramework();
+
+                $asset->addSource( $style->style() );
+
+                $localAssets = $asset->pathfinder->get( 'dir.core.assets/styles/core' );
+
+                dump( $localAssets );
+
+                return $asset;
+            },
+        );
     }
 }

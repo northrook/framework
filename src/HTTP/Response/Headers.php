@@ -60,7 +60,7 @@ final class Headers implements ActionInterface
     /**
      * Adds new headers the current HTTP headers set.
      *
-     * @param array $headers
+     * @param array<string, null|string|string[]> $headers
      */
     public function add( array $headers ) : void
     {
@@ -127,19 +127,24 @@ final class Headers implements ActionInterface
         $this->requestHeaderBag()->remove( $key );
     }
 
+    /**
+     * Access the {@see HeaderBag}.
+     *
+     * @return \Symfony\Component\HttpFoundation\HeaderBag
+     */
     private function requestHeaderBag() : HeaderBag
     {
-        $currentRequest = $this->requestStack->getCurrentRequest();
+        $currentHeaderBag = $this->requestStack->getCurrentRequest()?->headers;
 
-        if ( ! $currentRequest ) {
-            return $this->tempHeaderBag ??= new ResponseHeaderBag();
+        if ( ! $currentHeaderBag ) {
+            return $this->tempHeaderBag ??= new HeaderBag();
         }
-        $headerBag = $currentRequest->headers;
 
-        if ( $this->tempHeaderBag ) {
-            $headerBag->add( $this->tempHeaderBag->all() );
+        if ( isset( $this->tempHeaderBag ) ) {
+            $currentHeaderBag->add( $this->tempHeaderBag->all() );
             $this->tempHeaderBag = null;
         }
-        return $headerBag;
+
+        return $currentHeaderBag;
     }
 }
