@@ -6,6 +6,7 @@ namespace Core\Controller;
 
 use Core\Framework\Controller\Attribute\OnDocument;
 use Core\HTTP\Response\Document;
+use Symfony\Component\HttpFoundation\Request;
 use Core\Framework\Autowire\{Toast};
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
@@ -36,7 +37,7 @@ final class PublicController extends Controller
         ], 'index', priority : -100 ),
         Template( 'welcome.latte' ) // content template
     ]
-    public function index( Document $document ) : void
+    public function index( Document $document, Request $request ) : void
     {
         $document( 'Index Demo Template' );
     }

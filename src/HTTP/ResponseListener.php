@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types = 1 );
 
 namespace Core\HTTP;
 
@@ -28,8 +28,8 @@ final class ResponseListener extends HttpEventListener
     public static function getSubscribedEvents() : array
     {
         return [
-            KernelEvents::RESPONSE  => ['onKernelResponse', 20],
-            KernelEvents::EXCEPTION => ['onKernelException', 40],
+                KernelEvents::RESPONSE  => [ 'onKernelResponse', 20 ],
+                KernelEvents::EXCEPTION => [ 'onKernelException', 40 ],
         ];
     }
 
@@ -41,7 +41,7 @@ final class ResponseListener extends HttpEventListener
 
         $this->setResponseContent( $event );
 
-        if ( ! $this->document()->isPublic ) {
+        if ( !$this->document()->isPublic ) {
             $this->document()->set( 'robots', 'noindex, nofollow' );
             $this->headers()->set( 'X-Robots-Tag', 'noindex, nofollow' );
         }
@@ -49,8 +49,8 @@ final class ResponseListener extends HttpEventListener
         $document = $this->serviceLocator( DocumentView::class );
 
         $document->setInnerContent(
-            $this->resolveToastMessages(),
-            $this->content,
+                $this->resolveToastMessages(),
+                $this->content,
         );
         // ->enqueueInvokedAssets();
 
@@ -67,10 +67,11 @@ final class ResponseListener extends HttpEventListener
 
         if ( 'document' === $this->type ) {
             $document
-                ->meta( 'meta.viewport' )
-                ->meta( 'document' )
-                ->meta( 'robots' )
-                ->meta( 'meta' );
+                    ->meta( 'meta.viewport' )
+                    ->meta( 'document' )
+                    ->meta( 'robots' )
+                    ->meta( 'meta' )
+                    ->assets();
             // ->assets( 'font' )
             // ->assets( 'script' )
             // ->assets( 'style' )
@@ -80,8 +81,8 @@ final class ResponseListener extends HttpEventListener
         }
         else {
             $document
-                ->meta( 'document' )
-                ->meta( 'meta' );
+                    ->meta( 'document' )
+                    ->meta( 'meta' );
             // ->assets( 'font' )
             // ->assets( 'script' )
             // ->assets( 'style' )
@@ -107,7 +108,7 @@ final class ResponseListener extends HttpEventListener
         $toastService = $this->serviceLocator( ToastService::class );
 
         // Bail early if no Toasts are found
-        if ( ! $toastService->hasMessages() ) {
+        if ( !$toastService->hasMessages() ) {
             return [];
         }
 
@@ -119,8 +120,8 @@ final class ResponseListener extends HttpEventListener
 
             // dump( $component->render(  ) );
             $toasts[] = $this->componentFactory()->render(
-                Toast::class,
-                $message->getArguments(),
+                    Toast::class,
+                    $message->getArguments(),
             );
             // $toasts[] = $factory->create( $message );
         }
@@ -152,8 +153,8 @@ final class ResponseListener extends HttpEventListener
     {
         if ( isset( $this->content ) ) {
             Log::warning(
-                '{method} called repeatedly, but will only be handled {once}.',
-                ['method' => __METHOD__],
+                    '{method} called repeatedly, but will only be handled {once}.',
+                    [ 'method' => __METHOD__ ],
             );
             return;
         }
@@ -178,8 +179,8 @@ final class ResponseListener extends HttpEventListener
             $this->type = $use ? 'document' : 'template';
         }
         else {
-            if ( ! $template = $templates[$use] ?? null ) {
-                throw new NotFoundHttpException( 'Template "'.$this->content.'" not found.' );
+            if ( !$template = $templates[ $use ] ?? null ) {
+                throw new NotFoundHttpException( 'Template "' . $this->content . '" not found.' );
             }
 
             $this->type = match ( $use ) {
@@ -226,7 +227,7 @@ final class ResponseListener extends HttpEventListener
         return $this->serviceLocator( Headers::class );
     }
 
-    private function parameters() : object|array
+    private function parameters() : object | array
     {
         return $this->serviceLocator( Parameters::class )->getParameters();
     }
