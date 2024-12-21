@@ -3,7 +3,7 @@
 namespace Core\Service;
 
 use Core\Assets\AssetFactory;
-use Core\Assets\Factory\Asset\StyleAsset;
+use Core\Assets\Factory\Asset\{ScriptAsset, StyleAsset};
 use Core\Service\DesignSystem\StyleFramework;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -11,30 +11,50 @@ use Symfony\Contracts\Cache\CacheInterface;
 class AssetManager extends \Core\Assets\AssetManager
 {
     final public function __construct(
-            AssetFactory     $factory,
-            ?CacheInterface  $cache = null,
-            ?LoggerInterface $logger = null,
-    )
-    {
+        AssetFactory     $factory,
+        ?CacheInterface  $cache = null,
+        ?LoggerInterface $logger = null,
+    ) {
         parent::__construct( $factory, $cache, $logger );
 
         $this->factory->addAssetModelCallback(
-                'style.core',
-                function( StyleAsset $asset ) : StyleAsset
-                {
-                    $style = new StyleFramework();
+            'script.core',
+            function( ScriptAsset $asset ) : ScriptAsset {
+                $localAssets = $asset->pathfinder->getFileInfo(
+                    path      : 'dir.core.assets/scripts/core',
+                    assertive : true,
+                );
 
-                    $asset->addSource( $style->style() );
+                foreach ( $localAssets->glob( '/*.js' ) as $localAsset ) {
+                    $asset->addSource( (string) $localAsset );
+                }
 
-                    $localAssets = $asset->pathfinder->getFileInfo( 'dir.core.assets/styles/core' );
+                $asset->prefersInline();
 
-                    foreach ( $localAssets->glob( '/*.css' ) as $localAsset ) {
-                        dump( $localAsset );
-                        $asset->addSource( $localAsset );
-                    }
+                return $asset;
+            },
+        );
 
-                    return $asset;
-                },
+        $this->factory->addAssetModelCallback(
+            'style.core',
+            function( StyleAsset $asset ) : StyleAsset {
+                $style = new StyleFramework();
+
+                $asset->addSource( $style->style() );
+
+                $localAssets = $asset->pathfinder->getFileInfo(
+                    path      : 'dir.core.assets/styles/core',
+                    assertive : true,
+                );
+
+                foreach ( $localAssets->glob( '/*.css' ) as $localAsset ) {
+                    $asset->addSource( $localAsset );
+                }
+
+                $asset->prefersInline();
+
+                return $asset;
+            },
         );
     }
 }
