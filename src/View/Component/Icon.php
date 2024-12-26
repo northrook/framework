@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Core\View\Component;
 
 use Core\Service\IconService;
-use Core\Symfony\DependencyInjection\Autodiscover;
 use Core\View\Attribute\ViewComponent;
 use Core\View\{Component};
 
 #[ViewComponent( 'icon:{get}', true, 128 )]
-#[Autodiscover( 'view_component.icon' )]
 final class Icon extends AbstractComponent
 {
     public function __construct(

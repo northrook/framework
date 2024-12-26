@@ -14,13 +14,13 @@ return static function( ContainerConfigurator $container ) : void {
     $container->services()
 
             // Component Service Locator
-        ->set( 'core.component_locator' )
+        ->set( 'view.component_locator' )
         ->tag( 'container.service_locator' )
         ->args( [[]] )
 
             // The Factory
         ->set( ComponentFactory::class )
-        ->arg( '$locator', service( 'core.component_locator' ) )
+        ->arg( '$locator', service( 'view.component_locator' ) )
         ->tag( 'core.service_locator' )
         ->tag( 'monolog.logger', ['channel' => 'components'] );
 };
