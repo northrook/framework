@@ -16,7 +16,7 @@ return static function( ContainerConfigurator $container ) : void {
     $container->parameters()->set(
         'view.template_engine',
         Config::templateEngine(
-            cacheDirectory      : '%dir.var%/view',
+            cacheDirectory      : '%dir.cache.view%',
             templateDirectories : ['%dir.templates%', '%dir.core.templates%'],
         ),
     );

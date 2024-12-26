@@ -42,8 +42,9 @@ final class CoreBundle extends AbstractBundle
         'dir.core.templates' => '%dir.core%/templates',
 
         // Cache
-        'dir.cache'      => '%kernel.cache_dir%',
-        'dir.view.cache' => '%kernel.cache_dir%/view',
+        'dir.cache'       => '%kernel.cache_dir%',
+        'dir.cache.latte' => '%kernel.cache_dir%/latte',
+        'dir.cache.view'  => '%kernel.cache_dir%/view',
 
         // Themes
         'path.theme.core' => '%dir.core%/config/themes/core.php',
