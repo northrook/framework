@@ -9,7 +9,7 @@ use Core\View\{Component};
 // use Core\View\Template\TemplateCompiler;
 use Northrook\HTML\Element\Tag;
 
-#[ViewComponent( Tag::HEADING, true, 128 )]
+// #[ViewComponent( Tag::HEADING, true, 128 )]
 final class Heading
 {
     public string $get;

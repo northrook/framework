@@ -91,12 +91,8 @@ final class CoreBundle extends AbstractBundle
             ->addCompilerPass( new AutowireActionsPass() )
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
-            ->addCompilerPass( new SettingsCompilerPass() )
-            ->addCompilerPass(
-                new RegisterViewComponentsPass(
-                    [__DIR__.'/View/Component'],
-                ),
-            );
+            ->addCompilerPass( new SettingsCompilerPass() );
+        // ->addCompilerPass( new RegisterViewComponentsPass( __DIR__.'/View/Component' ) )
     }
 
     /**

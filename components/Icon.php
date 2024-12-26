@@ -8,7 +8,7 @@ use Core\Service\IconService;
 use Core\View\Attribute\ViewComponent;
 use Core\View\{Component};
 
-#[ViewComponent( 'icon:{get}', true, 128 )]
+// #[ViewComponent( 'icon:{get}', true, 128 )]
 final class Icon extends AbstractComponent
 {
     public function __construct(

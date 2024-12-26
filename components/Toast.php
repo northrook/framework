@@ -33,7 +33,7 @@ use Support\Time;
 
  */
 
-#[ViewComponent( 'toast:{status}' )]
+// #[ViewComponent( 'toast:{status}' )]
 final class Toast
 {
     // public string $status = 'notice';
