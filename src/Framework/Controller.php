@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Framework;
 
-use Core\HTTP\Response\{Document, Headers};
+use Core\Http\Response\{Document, Headers};
 use Core\Pathfinder;
 use Core\Framework\Controller\Attribute\OnContent;
 use Core\Framework\Controller\Attribute\{OnDocument};

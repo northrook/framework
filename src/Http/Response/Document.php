@@ -1,8 +1,8 @@
 <?php
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
-namespace Core\HTTP\Response;
+namespace Core\Http\Response;
 
 use Core\Assets\Factory\Asset\Type;
 use Psr\Log\LoggerInterface;
@@ -14,8 +14,8 @@ use function Support\toString;
 final class Document implements ActionInterface
 {
     private const array GROUPS = [
-            'document' => [ 'title', 'description', 'author', 'keywords' ],
-            'theme'    => [ 'color', 'scheme', 'name' ],
+        'document' => ['title', 'description', 'author', 'keywords'],
+        'theme'    => ['color', 'scheme', 'name'],
     ];
 
     /** @var bool automatically locked when read. */
@@ -31,26 +31,25 @@ final class Document implements ActionInterface
     public bool $isPublic = false;
 
     public function __construct(
-            private readonly ?LoggerInterface $logger = null,
+        private readonly ?LoggerInterface $logger = null,
     ) {}
 
     /**
-     * @param null|string           $title
-     * @param null|string           $description
-     * @param null|string|string[]  $keywords
-     * @param null|string           $author
-     * @param null|string           $status
+     * @param null|string          $title
+     * @param null|string          $description
+     * @param null|string|string[] $keywords
+     * @param null|string          $author
+     * @param null|string          $status
      *
      * @return $this
      */
     public function __invoke(
-            ?string               $title = null,
-            ?string               $description = null,
-            null | string | array $keywords = null,
-            ?string               $author = null,
-            ?string               $status = null,
-    ) : self
-    {
+        ?string           $title = null,
+        ?string           $description = null,
+        null|string|array $keywords = null,
+        ?string           $author = null,
+        ?string           $status = null,
+    ) : self {
         if ( $this->isLocked( __METHOD__ ) ) {
             return $this;
         }
@@ -64,32 +63,30 @@ final class Document implements ActionInterface
     }
 
     /**
-     * @param 'document.author'|'document.description'|'document.keywords'|'document.title'|'html.id'|'html.lang'|string  $key
-     * @param null|array|bool|int|string                                                                                  $value
+     * @param 'document.author'|'document.description'|'document.keywords'|'document.title'|'html.id'|'html.lang'|string $key
+     * @param null|array|bool|int|string                                                                                 $value
      *
      * @return $this
      */
     public function add(
-            string                             $key,
-            null | string | int | bool | array $value,
-    ) : self
-    {
+        string                     $key,
+        null|string|int|bool|array $value,
+    ) : self {
         $this->set( $key, $value, false );
         return $this;
     }
 
     public function html(
-            ?string $class = null,
-            ?string $status = null,
-            ?string $id = null,
-            ?string $locale = null,
-            string  ...$attributes,
-    ) : self
-    {
+        ?string   $class = null,
+        ?string   $status = null,
+        ?string   $id = null,
+        ?string   $locale = null,
+        string ...$attributes,
+    ) : self {
         if ( $this->isLocked( __METHOD__ ) ) {
             return $this;
         }
-        $set = \array_filter( [ 'html' => $id, 'class' => $class, 'status' => $status, ...$attributes ] );
+        $set = \array_filter( ['html' => $id, 'class' => $class, 'status' => $status, ...$attributes] );
 
         foreach ( $set as $name => $value ) {
             $this->set( "head.{$name}", $value );
@@ -97,7 +94,7 @@ final class Document implements ActionInterface
         return $this;
     }
 
-    public function head( string $key, string | Stringable $html ) : Document
+    public function head( string $key, string|Stringable $html ) : Document
     {
         if ( $this->isLocked( __METHOD__ ) ) {
             return $this;
@@ -107,7 +104,7 @@ final class Document implements ActionInterface
         // TODO : Cache
         // TODO : Linting / validation step
 
-        $this->set( 'head.' . Normalize::key( $key ), $value );
+        $this->set( 'head.'.Normalize::key( $key ), $value );
 
         return $this;
     }
@@ -118,8 +115,8 @@ final class Document implements ActionInterface
      * - This method does not validate the name or content.
      * - The name is automatically prefixed with the group if relevant.
      *
-     * @param 'author'|'description'|'keywords'|'title'|string  $name
-     * @param string                                            ...$content
+     * @param 'author'|'description'|'keywords'|'title'|string $name
+     * @param string                                           ...$content
      *
      * @return $this
      */
@@ -134,12 +131,12 @@ final class Document implements ActionInterface
     }
 
     /**
-     * @param string  $bot      = [ 'googlebot', 'bingbot', 'yandexbot'][$any]
-     * @param string  ...$rule  = [
-     *                          'index', 'noindex', 'follow', 'nofollow',
-     *                          'index, follow', 'noindex, nofollow',
-     *                          'noarchive', 'nosnippet', 'nositelinkssearchbox'
-     *                          ][$any]
+     * @param string $bot     = [ 'googlebot', 'bingbot', 'yandexbot'][$any]
+     * @param string ...$rule = [
+     *                        'index', 'noindex', 'follow', 'nofollow',
+     *                        'index, follow', 'noindex, nofollow',
+     *                        'noarchive', 'nosnippet', 'nositelinkssearchbox'
+     *                        ][$any]
      *
      * @return Document
      *
@@ -153,10 +150,10 @@ final class Document implements ActionInterface
         $rules = [];
 
         foreach ( $rule as $content ) {
-            if ( !\is_string( $content ) ) {
+            if ( ! \is_string( $content ) ) {
                 $this->logger?->error(
-                        message : 'Invalid robots rule for {bot}, a string is required, but {type} was provided.',
-                        context : [ 'bot' => $bot, 'type' => \gettype( $content ) ],
+                    message : 'Invalid robots rule for {bot}, a string is required, but {type} was provided.',
+                    context : ['bot' => $bot, 'type' => \gettype( $content )],
                 );
 
                 continue;
@@ -182,7 +179,7 @@ final class Document implements ActionInterface
      *
      * The {@see ResponseHandler} will ensure the requested assets are provided if needed.
      *
-     * @param string  ...$enqueue
+     * @param string ...$enqueue
      *
      * @return $this
      */
@@ -194,11 +191,11 @@ final class Document implements ActionInterface
 
         foreach ( $enqueue as $asset ) {
             if ( \str_contains( $asset, '.' ) ) {
-                [ $type, $name ] = \explode( '.', $asset, 2 );
-                $this->assets[ $type ][ $name ] = $asset;
+                [$type, $name]              = \explode( '.', $asset, 2 );
+                $this->assets[$type][$name] = $asset;
             }
             else {
-                $this->assets[ $asset ] = $asset;
+                $this->assets[$asset] = $asset;
             }
         }
 
@@ -206,11 +203,11 @@ final class Document implements ActionInterface
     }
 
     /**
-     * @param array<array-key, mixed>|string  $set
+     * @param array<array-key, mixed>|string $set
      *
      * @return $this
      */
-    public function body( string | array ...$set ) : self
+    public function body( string|array ...$set ) : self
     {
         if ( $this->isLocked( __METHOD__ ) ) {
             return $this;
@@ -222,7 +219,7 @@ final class Document implements ActionInterface
             $separator = 'style' === $name ? ';' : ' ';
             $value     = match ( $name ) {
                 'class', 'style' => \is_array( $value ) ? $value : \explode( $separator, $value ),
-                default          => $value,
+                default => $value,
             };
 
             \assert( \is_string( $value ) );
@@ -233,18 +230,17 @@ final class Document implements ActionInterface
     }
 
     public function theme(
-            string  $scheme = 'dark light',
-            ?string $color = null,
-            ?string $name = 'system',
-    ) : self
-    {
+        string  $scheme = 'dark light',
+        ?string $color = null,
+        ?string $name = 'system',
+    ) : self {
         // Needs to generate theme.scheme.color,
         // this is to allow for different colors based on light/dark
 
         foreach ( [
-                'color'  => $color,
-                'scheme' => $scheme,
-                'name'   => $name,
+            'color'  => $color,
+            'scheme' => $scheme,
+            'name'   => $name,
         ] as $metaName => $content ) {
             $this->set( "theme.{$metaName}", $content );
         }
@@ -253,13 +249,13 @@ final class Document implements ActionInterface
     }
 
     /**
-     * @param string  $key
+     * @param string $key
      *
      * @return null|string|string[]
      */
-    public function get( string $key ) : null | string | array
+    public function get( string $key ) : null|string|array
     {
-        return $this->document[ $key ] ?? null;
+        return $this->document[$key] ?? null;
     }
 
     /**
@@ -271,16 +267,16 @@ final class Document implements ActionInterface
     }
 
     /**
-     * @param string  $key
+     * @param string $key
      *
      * @return null|string|string[]
      */
-    public function pull( string $key ) : null | string | array
+    public function pull( string $key ) : null|string|array
     {
-        $pull = $this->document[ $key ] ?? null;
+        $pull = $this->document[$key] ?? null;
 
         if ( $pull ) {
-            unset( $this->document[ $key ] );
+            unset( $this->document[$key] );
         }
 
         return $pull;
@@ -294,7 +290,7 @@ final class Document implements ActionInterface
         $pull = [];
 
         foreach ( $this->document as $key => $value ) {
-            $pull[ $key ] = $this->pull( $key );
+            $pull[$key] = $this->pull( $key );
         }
 
         return \array_filter( $pull );
@@ -304,25 +300,24 @@ final class Document implements ActionInterface
     // ->assets(.. ) uses the AssetManager
 
     /**
-     * @param string                                         $string
-     * @param null|array<array-key, string>|bool|int|string  $value
-     * @param bool                                           $override
+     * @param string                                        $string
+     * @param null|array<array-key, string>|bool|int|string $value
+     * @param bool                                          $override
      *
      * @return void
      */
     public function set(
-            string                             $string,
-            null | string | int | bool | array $value = null,
-            bool                               $override = true,
-    ) : void
-    {
+        string                     $string,
+        null|string|int|bool|array $value = null,
+        bool                       $override = true,
+    ) : void {
         if ( $this->isLocked( __METHOD__ ) ) {
             return;
         }
 
         $key = $this->key( $string );
 
-        if ( !$override && \array_key_exists( $key, $this->document ) ) {
+        if ( ! $override && \array_key_exists( $key, $this->document ) ) {
             return;
         }
 
@@ -337,7 +332,7 @@ final class Document implements ActionInterface
             return;
         }
 
-        $this->document[ $key ] = $value;
+        $this->document[$key] = $value;
     }
 
     public function getEnqueuedAssets( ?Type $type = null ) : array
@@ -359,24 +354,24 @@ final class Document implements ActionInterface
     }
 
     /**
-     * @param null|array<array-key, string>|bool|int|string  $value
+     * @param null|array<array-key, string>|bool|int|string $value
      *
      * @return string
      */
-    protected function value( null | string | int | bool | array $value = null ) : string
+    protected function value( null|string|int|bool|array $value = null ) : string
     {
         return toString( $value );
     }
 
     private function isLocked( string $method = __CLASS__ ) : bool
     {
-        if ( !$this->locked ) {
+        if ( ! $this->locked ) {
             return false;
         }
 
         $this->logger?->error(
-                'The {caller} is locked. No further changes can be made at this time.',
-                [ 'caller' => $method, 'document' => $this ],
+            'The {caller} is locked. No further changes can be made at this time.',
+            ['caller' => $method, 'document' => $this],
         );
 
         return true;

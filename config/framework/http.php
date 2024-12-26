@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\HTTP\Response\Document;
+use Core\Http\Response\Document;
 use Core\View\{DocumentView};
 use Core\Service\{AssetManager};
 use Northrook\Clerk;
@@ -22,12 +22,12 @@ return static function( ContainerConfigurator $container ) : void {
         ->tag( 'cache.pool' )
 
             //
-        ->set( \Core\HTTP\RequestListener::class )
+        ->set( \Core\Http\RequestListener::class )
         ->args( [service( Clerk::class ), service( 'cache.core.request_response' ), service( 'logger' )] )
         ->tag( 'kernel.event_subscriber' )
         ->tag( 'monolog.logger', ['channel' => 'http'] )
             //
-        ->set( \Core\HTTP\ResponseListener::class )
+        ->set( \Core\Http\ResponseListener::class )
         ->args( [service( Clerk::class ), service( 'cache.core.request_response' ), service( 'logger' )] )
         ->tag( 'kernel.event_subscriber' )
         ->tag( 'monolog.logger', ['channel' => 'http'] )

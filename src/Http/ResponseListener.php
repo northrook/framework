@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Core\HTTP;
+namespace Core\Http;
 
-use Core\HTTP\Response\{Document, Headers};
+use Core\TemplateEngine;
+use Core\Http\Response\{Document, Headers};
 use Core\Service\ToastService;
 use Core\View\Component\Toast;
-use Core\View\{ComponentFactory, DocumentView, Parameters, TemplateEngine};
+use Core\View\{ComponentFactory, DocumentView, Parameters};
 use Core\View\Render\HtmlViewDocument;
 use Core\Symfony\EventListener\HttpEventListener;
 use Symfony\Component\HttpKernel\Event\{ExceptionEvent, ResponseEvent};

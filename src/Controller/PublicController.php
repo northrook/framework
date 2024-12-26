@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\Controller;
 
 use Core\Framework\Controller\Attribute\OnDocument;
-use Core\HTTP\Response\Document;
+use Core\Http\Response\Document;
 use Symfony\Component\HttpFoundation\Request;
 use Core\Framework\Autowire\{Toast};
 use Core\Framework\Controller;

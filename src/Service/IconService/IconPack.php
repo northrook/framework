@@ -2,14 +2,12 @@
 
 namespace Core\Service\IconService;
 
-use Core\View\Interface\IconPackInterface;
-use Northrook\Filesystem\Path;
 use Northrook\HTML\Element;
 use Northrook\Logger\Log;
 use Support\{Str};
 use ValueError;
 
-final class IconPack implements IconPackInterface
+final class IconPack
 {
     private const array DEFAULT = [
         'chevron' => [
@@ -173,10 +171,10 @@ final class IconPack implements IconPackInterface
         }
         else {
             // TODO
-            dump( __METHOD__.' stringPath.' );
-            $path = new Path( $pack );
-
-            $this->name  = $pack;
+            // dump( __METHOD__.' stringPath.' );
+            // $path = new Path( $pack );
+            //
+            // $this->name  = $pack;
             $this->icons = [];
         }
 

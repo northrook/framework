@@ -10,7 +10,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Cache\MemoizationCache;
 use Core\View\Parameters;
-use Core\HTTP\Response\{Document, Headers};
+use Core\Http\Response\{Document, Headers};
 use Core\Pathfinder;
 use Core\Framework\{CurrentRequest, DependencyInjection\StaticServiceInitializer, Settings};
 use Northrook\Clerk;

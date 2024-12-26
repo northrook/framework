@@ -5,7 +5,7 @@ namespace Core\View\Render;
 use Core\Framework\Autowire\Settings;
 use Core\Service\AssetLocator;
 use Core\Symfony\DependencyInjection\ServiceContainer;
-use Core\HTTP\Response\Document;
+use Core\Http\Response\Document;
 use Core\View\ComponentFactory;
 use JetBrains\PhpStorm\Deprecated;
 use Northrook\HTML\Element\Attributes;

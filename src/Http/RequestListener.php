@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\HTTP;
+namespace Core\Http;
 
 use Core\Framework\Controller\Attribute\OnContent;
 use Core\Framework\Controller\Attribute\{OnDocument};
@@ -78,7 +78,7 @@ final class RequestListener extends HttpEventListener
         $controller = $event->controllerArgumentsEvent->getController();
 
         /**
-         * Call methods annotated with {@see OnContent::class} or {@see \Core\Framework\Controller\Attribute\OnDocument::class}.
+         * Call methods annotated with {@see OnContent::class} or {@see OnDocument::class}.
          */
         if ( \is_array( $controller ) && $controller[0] instanceof Controller ) {
             $controller = $controller[0];

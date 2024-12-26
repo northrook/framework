@@ -23,10 +23,9 @@ return static function( ContainerConfigurator $container ) : void {
 
     //
     $container->services()
-            //
-            // ->set( IconService::class )
-            // ->tag( 'core.service_locator' )
-            // ->autowire()
+        ->set( IconService::class )
+        ->tag( 'core.service_locator' )
+        ->autowire()
 
             //
         ->set( TemplateEngine::class )

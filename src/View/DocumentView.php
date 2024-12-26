@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 
 namespace Core\View;
 
-use Core\HTTP\Response\Document;
+use Core\Http\Response\Document;
 use Core\Service\AssetManager;
 use Core\View\Component\Attributes;
 use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};

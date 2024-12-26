@@ -3,13 +3,16 @@
 namespace Core\Service;
 
 use Core\Service\IconService\IconPack;
-use Exception\NotImplementedException;
-use Core\View\Render\{Icon};
-use Core\View\Interface\{IconInterface, IconPackInterface, IconServiceInterface};
+use Core\View\Template\View;
+use BadMethodCallException;
+
+// use Core\View\Render\{Icon};
+// use Core\View\Interface\{IconInterface, IconPackInterface, IconServiceInterface};
 
 // :: Not part of [core-view]
 
-final readonly class IconService implements IconServiceInterface
+// Should be lazy
+final readonly class IconService
 {
     public IconPack $iconPack;
 
@@ -18,16 +21,22 @@ final readonly class IconService implements IconServiceInterface
         $this->iconPack = new IconPack();
     }
 
+    /**
+     * @param string       $name
+     * @param array        $attributes
+     * @param null|string  $fallback
+     *
+     * @return null|string
+     */
     final public function getIcon(
         string  $name,
         array   $attributes = [],
         ?string $fallback = null,
-    ) : ?IconInterface {
-        $icon = $this->iconPack->get( $name, $attributes, $fallback );
-        return $icon ? new Icon( $icon ) : null;
+    ) : ?string {
+        return $this->iconPack->get( $name, $attributes, $fallback );
     }
 
-    public function getIconPack( ?string $name = null ) : IconPackInterface
+    public function getIconPack( ?string $name = null ) : IconPack
     {
         return $this->iconPack;
     }
@@ -39,6 +48,6 @@ final readonly class IconService implements IconServiceInterface
 
     public function hasIconPack( string $name ) : bool
     {
-        throw new NotImplementedException( 'This method is not implemented yet.', IconServiceInterface::class );
+        throw new BadMethodCallException( __METHOD__.' is not implemented.' );
     }
 }

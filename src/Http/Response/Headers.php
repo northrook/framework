@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\HTTP\Response;
+namespace Core\Http\Response;
 
 use JetBrains\PhpStorm\Deprecated;
 use Support\Interface\ActionInterface;
