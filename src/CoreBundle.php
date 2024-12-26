@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Core;
 
+use Core\Symfony\DependencyInjection\{AutodiscoverServicesPass, AutowireActionsPass};
 use Override;
 use Core\View\Compiler\RegisterViewComponentsPass;
 use Core\Framework\Compiler\{ApplicationConfigPass,
-    AssetDiscoveryPass,
     RegisterCoreServicesPass,
     SettingsCompilerPass
 };
-use Core\Symfony\DependencyInjection\AutowireActionsPass;
-use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -89,6 +87,7 @@ final class CoreBundle extends AbstractBundle
     public function build( ContainerBuilder $container ) : void
     {
         $container
+            ->addCompilerPass( new AutodiscoverServicesPass() )
             ->addCompilerPass( new AutowireActionsPass() )
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
@@ -97,8 +96,7 @@ final class CoreBundle extends AbstractBundle
                 new RegisterViewComponentsPass(
                     [__DIR__.'/View/Component'],
                 ),
-            )
-            ->addCompilerPass( new AssetDiscoveryPass(), PassConfig::TYPE_OPTIMIZE );
+            );
     }
 
     /**
