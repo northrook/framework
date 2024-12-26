@@ -23,6 +23,9 @@ return static function( ContainerConfigurator $container ) : void {
 
     //
     $container->services()
+            // ->defaults()
+            // ->autoconfigure()
+            // ->load( 'Core\\View\\Component\\', dirname( __DIR__, 2 ) . '/components/' )
         ->set( IconService::class )
         ->tag( 'core.service_locator' )
         ->autowire()
