@@ -11,7 +11,7 @@ use Support\Str;
 use Tempest\Highlight\Highlighter;
 use const Support\{EMPTY_STRING, WHITESPACE};
 
-#[ViewComponent( ['pre', 'code:{language}:block'], true, -256 )]
+// #[ViewComponent( ['pre', 'code:{language}:block'], true, -256 )]
 final class Code extends Component
 {
     use Component\InnerContent;

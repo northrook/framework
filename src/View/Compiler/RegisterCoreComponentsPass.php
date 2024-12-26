@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Core\View\Compiler;
 
+use JetBrains\PhpStorm\Deprecated;
+
+#[Deprecated]
 class RegisterCoreComponentsPass extends RegisterComponentPass
 {
     public function register() : array

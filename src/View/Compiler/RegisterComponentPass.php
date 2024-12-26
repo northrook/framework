@@ -4,9 +4,11 @@ namespace Core\View\Compiler;
 
 use Core\View\ComponentFactory;
 use Core\View\ComponentFactory\ComponentParser;
+use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Core\Symfony\DependencyInjection\CompilerPass;
 
+#[Deprecated]
 abstract class RegisterComponentPass extends CompilerPass
 {
     private array $components = [];

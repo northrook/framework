@@ -6,7 +6,7 @@ use Core\Service\IconService;
 use Core\View\Attribute\ViewComponent;
 use Core\View\{Component, Template\TemplateCompiler};
 
-#[ViewComponent( ['button', 'button:submit'], true )]
+// #[ViewComponent( ['button', 'button:submit'], true )]
 final class Button extends Component
 {
     use Component\InnerContent;

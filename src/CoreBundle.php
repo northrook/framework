@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Core;
 
 use Override;
+use Core\View\Compiler\RegisterViewComponentsPass;
 use Core\Framework\Compiler\{ApplicationConfigPass,
     AssetDiscoveryPass,
     RegisterCoreServicesPass,
     SettingsCompilerPass
 };
 use Core\Symfony\DependencyInjection\AutowireActionsPass;
-use Core\View\Compiler\RegisterCoreComponentsPass;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -42,8 +42,8 @@ final class CoreBundle extends AbstractBundle
         'dir.core.templates' => '%dir.core%/templates',
 
         // Cache
-        'dir.cache'       => '%kernel.cache_dir%',
-        'dir.cache.latte' => '%kernel.cache_dir%/latte',
+        'dir.cache'      => '%kernel.cache_dir%',
+        'dir.view.cache' => '%kernel.cache_dir%/view',
 
         // Themes
         'path.theme.core' => '%dir.core%/config/themes/core.php',
@@ -92,7 +92,7 @@ final class CoreBundle extends AbstractBundle
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
             ->addCompilerPass( new SettingsCompilerPass() )
-            ->addCompilerPass( new RegisterCoreComponentsPass() )
+            ->addCompilerPass( new RegisterViewComponentsPass() )
             ->addCompilerPass( new AssetDiscoveryPass(), PassConfig::TYPE_OPTIMIZE );
     }
 

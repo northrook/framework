@@ -13,7 +13,7 @@ use function String\stripTags;
 use function Support\toString;
 use const Support\WHITESPACE;
 
-#[ViewComponent( Tag::HEADING, true )]
+// #[ViewComponent( Tag::HEADING, true )]
 final class Heading extends Component
 {
     use Component\InnerContent;

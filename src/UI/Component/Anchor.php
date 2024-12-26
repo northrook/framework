@@ -5,12 +5,11 @@ namespace Core\UI\Component;
 use Core\View\Attribute\ViewComponent;
 use Core\View\Component;
 use Core\View\Template\Node\ComponentNode;
-use Core\View\Template\NodeParser;
-use Core\View\Template\TemplateCompiler;
+use Core\View\Template\{NodeParser, TemplateCompiler};
 use Northrook\Logger\Log;
 
-#[ViewComponent( ['a', 'a:primary', 'a:underline'] )]
-final class Anchor extends Component implements Component\NodeInterface
+// #[ViewComponent( ['a', 'a:primary', 'a:underline'] )]
+final class Anchor extends Component
 {
     use Component\InnerContent;
 

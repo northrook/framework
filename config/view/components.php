@@ -20,15 +20,7 @@ return static function( ContainerConfigurator $container ) : void {
 
             // The Factory
         ->set( ComponentFactory::class )
-        ->args(
-            [
-                /** Replaced by {@see \Core\View\Compiler\RegisterCoreComponentsPass} */
-                [], // $components
-                [], // $tags
-                service( 'core.component_locator' ),
-                // TODO : Cache
-            ],
-        )
+        ->arg( '$locator', service( 'core.component_locator' ) )
         ->tag( 'core.service_locator' )
         ->tag( 'monolog.logger', ['channel' => 'components'] );
 };

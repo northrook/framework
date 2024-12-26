@@ -40,10 +40,10 @@
     "northrook/core-symfony": "dev-main",
     "northrook/html": "dev-main",
     "tempest/highlight": "^2.11",
-    "northrook/core-view": "dev-main",
     "northrook/pathfinder": "dev-main",
     "northrook/assets": "dev-main",
-    "northrook/settings": "dev-main"
+    "northrook/settings": "dev-main",
+    "northrook/view": "dev-main"
   },
   "conflict": {
     "northrook/core": "*"
