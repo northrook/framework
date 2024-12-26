@@ -47,7 +47,7 @@ final class RegisterCoreServicesPass extends CompilerPass
         $coreServiceLocator = $container->getDefinition( 'core.service_locator' );
         $registeredServices = [];
 
-        foreach ( $this->getDeclaredClasses( $container->getServiceIds() ) as $class ) {
+        foreach ( $this->getDeclaredClasses() as $class ) {
             if (
                 implements_interface( $class, ServiceContainerInterface::class )
                 && $container->hasDefinition( $class )
@@ -62,22 +62,5 @@ final class RegisterCoreServicesPass extends CompilerPass
         }
 
         $this->console->table( [__METHOD__], $registeredServices );
-    }
-
-    /**
-     * @param string[] $services
-     *
-     * @return array<int, class-string>
-     */
-    private function getDeclaredClasses( array $services ) : array
-    {
-        return \array_values(
-            \array_unique(
-                [
-                    ...\get_declared_classes(),
-                    ...\array_filter( $services, 'class_exists' ),
-                ],
-            ),
-        );
     }
 }

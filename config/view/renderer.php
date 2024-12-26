@@ -8,24 +8,23 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\{Pathfinder};
+use Core\{Pathfinder, View\Config};
 use Core\Service\IconService;
-use Core\View\{Latte, TemplateEngine};
-use function Core\View\config;
+use Core\TemplateEngine;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->parameters()->set(
         'view.template_engine',
-        [
-            '%kernel.cache_dir%/view',
-            ['dir.templates', 'dir.core.templates'],
-        ],
+        Config::templateEngine(
+            cacheDirectory      : '%dir.var%/view',
+            templateDirectories : ['%dir.templates%', '%dir.core.templates%'],
+        ),
     );
 
     //
     $container->services()
             //
-        // ->set( IconService::class )
+            // ->set( IconService::class )
             // ->tag( 'core.service_locator' )
             // ->autowire()
 
@@ -33,10 +32,7 @@ return static function( ContainerConfigurator $container ) : void {
         ->set( TemplateEngine::class )
         ->tag( 'core.service_locator' )
         ->arg( '$pathfinder', service( Pathfinder::class ) )
-        ->arg(
-            '$configuration',
-            config( '%kernel.cache_dir%/view', ['dir.templates', 'dir.core.templates'] ),
-        )
+        ->arg( '$configuration', param( 'view.template_engine' ) )
         ->arg( '$logger', service( 'logger' ) );
     // ->args(
     //     [
