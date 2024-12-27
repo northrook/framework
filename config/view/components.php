@@ -10,6 +10,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\Symfony\DependencyInjection\CompilerPass;
 use Core\View\ComponentFactory;
+use Core\View\ComponentFactory\ComponentBag;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
@@ -22,11 +23,10 @@ return static function( ContainerConfigurator $container ) : void {
             // The Factory
         ->set( ComponentFactory::class )
         ->arg( '$locator', service( 'view.component_locator' ) )
-        ->arg( '$components', CompilerPass::PLACEHOLDER_ARRAY )
+        ->arg( '$components', abstract_arg( ComponentBag::class ) )
         ->arg( '$logger', service( 'logger' ) )
         ->tag( 'core.service_locator' )
         ->tag( 'monolog.logger', ['channel' => 'components'] )
         ->autowire()
-        ->private()
-        ->lazy();
+        ->private(); // ->lazy()
 };
