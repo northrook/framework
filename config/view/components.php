@@ -24,6 +24,7 @@ return static function( ContainerConfigurator $container ) : void {
         ->set( ComponentFactory::class )
         ->arg( '$locator', service( 'view.component_locator' ) )
         ->arg( '$components', abstract_arg( ComponentBag::class ) )
+        ->arg( '$tags', abstract_arg( 'ComponentProperties::tagged' ) )
         ->arg( '$logger', service( 'logger' ) )
         ->tag( 'core.service_locator' )
         ->tag( 'monolog.logger', ['channel' => 'components'] )
