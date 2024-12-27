@@ -22,6 +22,8 @@ return static function( ContainerConfigurator $container ) : void {
             // The Factory
         ->set( ComponentFactory::class )
         ->arg( '$locator', service( 'view.component_locator' ) )
+        ->arg( '$components', CompilerPass::PLACEHOLDER_ARRAY )
+        ->arg( '$logger', service( 'logger' ) )
         ->tag( 'core.service_locator' )
         ->tag( 'monolog.logger', ['channel' => 'components'] )
         ->autowire()

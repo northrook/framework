@@ -6,6 +6,7 @@ namespace Core\Controller;
 
 use Core\Framework\Controller\Attribute\OnDocument;
 use Core\Http\Response\Document;
+use Core\View\ComponentFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Core\Framework\Autowire\{Toast};
 use Core\Framework\Controller;
@@ -63,6 +64,7 @@ final class PublicController extends Controller
         Document $document,
         Toast    $toast,
     ) : string {
+        dd( $this->serviceLocator( ComponentFactory::class ) );
         $document( 'Index Demo Template' );
 
         foreach ( \range( 0, \rand( 2, 7 ) ) as $key => $value ) {
