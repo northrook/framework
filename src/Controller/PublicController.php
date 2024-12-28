@@ -61,10 +61,13 @@ final class PublicController extends Controller
         Template( 'demo.latte' ) // content template
     ]
     public function demo(
-        Document $document,
-        Toast    $toast,
+        Document         $document,
+        Toast            $toast,
+        ComponentFactory $componentFactory,
     ) : string {
-        dd( $this->serviceLocator( ComponentFactory::class ) );
+        dump( $componentFactory->render( 'view.component.icon' ) );
+
+        dd( __METHOD__ );
         $document( 'Index Demo Template' );
 
         foreach ( \range( 0, \rand( 2, 7 ) ) as $key => $value ) {
