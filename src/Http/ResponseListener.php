@@ -120,10 +120,7 @@ final class ResponseListener extends HttpEventListener
             // $component->create( $message->getArguments() );
 
             // dump( $component->render(  ) );
-            $toasts[] = $this->componentFactory()->render(
-                Toast::class,
-                $message->getArguments(),
-            );
+            $toasts[] = $this->componentFactory()->render( 'view.component.toast', $message->getArguments() );
             // $toasts[] = $factory->create( $message );
         }
         // foreach ( $this->serviceLocator( ToastService::class )->getMessages() as $id => $message ) {
