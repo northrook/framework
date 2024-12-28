@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\{Pathfinder, View\Config};
+use Core\{Pathfinder, View\Config, View\Latte\ViewComponentExtension};
 use Core\Service\IconService;
 use Core\TemplateEngine;
 
@@ -35,7 +35,9 @@ return static function( ContainerConfigurator $container ) : void {
         ->tag( 'core.service_locator' )
         ->arg( '$pathfinder', service( Pathfinder::class ) )
         ->arg( '$configuration', param( 'view.template_engine' ) )
-        ->arg( '$logger', service( 'logger' ) );
+        ->arg( '$logger', service( 'logger' ) )
+        ->arg( '$globalParameters', [] )
+        ->arg( '$engineExtensions', [service( ViewComponentExtension::class )] );
     // ->args(
     //     [
     //

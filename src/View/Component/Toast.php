@@ -62,4 +62,8 @@ final class Toast extends AbstractComponent
     // {
     //     return $compiler->render( __DIR__.'/toast.latte', $this );
     // }
+    protected function render() : string
+    {
+        return "<div id='toast' class='toast'> Toasties </div>" ;
+    }
 }

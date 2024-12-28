@@ -13,6 +13,7 @@ final class Heading extends AbstractComponent
     public string $get;
 
     public string $tag = 'h1';
+
     //
     // protected function parseArguments( array &$arguments ) : void
     // {
@@ -23,4 +24,8 @@ final class Heading extends AbstractComponent
     // {
     //     return $compiler->render( __DIR__.'/heading.latte', $this, cache : false );
     // }
+    protected function render() : string
+    {
+        return '<heading>This will be a heading</heading>';
+    }
 }
