@@ -24,6 +24,7 @@ final class Heading extends AbstractComponent
     // {
     //     return $compiler->render( __DIR__.'/heading.latte', $this, cache : false );
     // }
+
     protected function render() : string
     {
         return '<heading>This will be a heading</heading>';

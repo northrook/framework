@@ -6,12 +6,13 @@ namespace Core\View\Component;
 
 use Core\Service\IconService;
 use Core\View\Attribute\ViewComponent;
+use Northrook\Logger\Log;
 use Core\View\Html\{Tag};
 
 #[ViewComponent( 'icon:{get}', true, 128 )]
 final class Icon extends AbstractComponent
 {
-    protected string $get;
+    protected ?string $get;
 
     protected readonly Tag $tag;
 
@@ -23,6 +24,11 @@ final class Icon extends AbstractComponent
 
     protected function render() : string
     {
+        if ( ! $this->get ) {
+            Log::error( $this::class.': No icon key provided.' );
+            return '';
+        }
+
         $iconHtml = $this->iconService->getIcon( $this->get );
 
         if ( ! $iconHtml ) {
@@ -36,14 +42,3 @@ final class Icon extends AbstractComponent
             HTML;
     }
 }
-
-// #[ViewComponent( 'icon:{get}', true, 128 )]
-// final class Icon extends Component
-// {
-//     public string $get;
-//
-//     protected function compile( TemplateCompiler $compiler ) : string
-//     {
-//         return $compiler->render( __DIR__.'/icon.latte', $this, cache : false );
-//     }
-// }

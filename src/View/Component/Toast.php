@@ -29,8 +29,9 @@ namespace Core\View\Component;
 
  */
 
+use Core\Service\IconService;
 use Core\View\Attribute\ViewComponent;
-use Latte\Runtime\Html;
+use Support\Time;
 
 #[ViewComponent( 'toast:{status}' )]
 final class Toast extends AbstractComponent
@@ -45,26 +46,63 @@ final class Toast extends AbstractComponent
 
     public int $timestamp;
 
-    public Html $when;
+    public string $when;
 
-    public ?string $icon;
+    public string $icon;
 
-    // protected function parseArguments( array &$arguments ) : void
-    // {
-    //     $timestamp = new Time( $arguments['instances'][0] ?? $arguments['timestamp'] ?? 'now' );
-    //
-    //     $this->timestamp = $timestamp->unixTimestamp;
-    //     $this->when      = new Html( $timestamp->format( $timestamp::FORMAT_HUMAN, true ) );
-    //
-    //     $this->icon = $arguments['icon'] ?? $arguments['status'] ?? 'notice';
-    // }
-    //
-    // protected function compile( TemplateCompiler $compiler ) : string
-    // {
-    //     return $compiler->render( __DIR__.'/toast.latte', $this );
-    // }
+    public function __construct( private readonly IconService $iconService ) {}
+
+    protected function prepareArguments( array &$arguments ) : void
+    {
+        $timestamp = new Time( $arguments['instances'][0] ?? $arguments['timestamp'] ?? 'now' );
+
+        $this->timestamp = $timestamp->unixTimestamp;
+        $this->when      = $timestamp->format( $timestamp::FORMAT_HUMAN, true );
+
+        $this->icon = $arguments['icon'] ?? $arguments['status'] ?? 'notice';
+    }
+
+    private function details() : string
+    {
+        if ( $this->description ) {
+            return <<<HTML
+                <details>
+                    <summary>Description</summary>
+                    {$this->description}
+                </details>
+                HTML;
+        }
+        return '';
+    }
+
+    private function icon(
+        string  $height = '1rem',
+        ?string $width = null,
+    ) : string {
+        $width ??= $height;
+        return $this->iconService->getIcon(
+            $this->icon,
+            ['height' => $height, 'width' => $width],
+        ) ?? '';
+    }
+
     protected function render() : string
     {
-        return "<div id='toast' class='toast'> Toasties </div>";
+        return <<<HTML
+            <toast {$this->attributes}>
+                <button class="close" aria-label="Close" type="button"></button>
+                <output role="status">
+                    <i class="status">
+                        {$this->icon()}
+                        <span class="status-type">{$this->status}</span>
+                        <time datetime="{$this->timestamp}">
+                            {$this->when}
+                        </time>
+                    </i>
+                    <span class="message">{$this->message}</span>
+                </output>
+                {$this->details()}
+            </toast>
+            HTML;
     }
 }

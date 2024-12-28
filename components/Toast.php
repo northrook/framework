@@ -36,32 +36,32 @@ use Support\Time;
 // #[ViewComponent( 'toast:{status}' )]
 final class Toast
 {
-    // public string $status = 'notice';
-    //
-    // public string $message;
-    //
-    // public ?string $description = null;
-    //
-    // public ?int $timeout = null;
-    //
-    // public int $timestamp;
-    //
-    // public Html $when;
-    //
-    // public string $icon;
-    //
-    // protected function parseArguments( array &$arguments ) : void
-    // {
-    //     $timestamp = new Time( $arguments['instances'][0] ?? $arguments['timestamp'] ?? 'now' );
-    //
-    //     $this->timestamp = $timestamp->unixTimestamp;
-    //     $this->when      = new Html( $timestamp->format( $timestamp::FORMAT_HUMAN, true ) );
-    //
-    //     $this->icon = $arguments['icon'] ?? $arguments['status'] ?? 'notice';
-    // }
-    //
-    // protected function compile( TemplateCompiler $compiler ) : string
-    // {
-    //     return $compiler->render( __DIR__.'/toast.latte', $this );
-    // }
+    public string $status = 'notice';
+
+    public string $message;
+
+    public ?string $description = null;
+
+    public ?int $timeout = null;
+
+    public int $timestamp;
+
+    public Html $when;
+
+    public string $icon;
+
+    protected function parseArguments( array &$arguments ) : void
+    {
+        $timestamp = new Time( $arguments['instances'][0] ?? $arguments['timestamp'] ?? 'now' );
+
+        $this->timestamp = $timestamp->unixTimestamp;
+        $this->when      = new Html( $timestamp->format( $timestamp::FORMAT_HUMAN, true ) );
+
+        $this->icon = $arguments['icon'] ?? $arguments['status'] ?? 'notice';
+    }
+
+    protected function compile( TemplateCompiler $compiler ) : string
+    {
+        return $compiler->render( __DIR__.'/toast.latte', $this );
+    }
 }
