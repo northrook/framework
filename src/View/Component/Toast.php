@@ -30,24 +30,25 @@ namespace Core\View\Component;
  */
 
 use Core\View\Attribute\ViewComponent;
+use Latte\Runtime\Html;
 
 #[ViewComponent( 'toast:{status}' )]
 final class Toast extends AbstractComponent
 {
-    // public string $status = 'notice';
-    //
-    // public string $message;
-    //
-    // public ?string $description = null;
-    //
-    // public ?int $timeout = null;
-    //
-    // public int $timestamp;
-    //
-    // public Html $when;
-    //
-    // public string $icon;
-    //
+    public string $status = 'notice';
+
+    public string $message;
+
+    public ?string $description = null;
+
+    public ?int $timeout = null;
+
+    public int $timestamp;
+
+    public Html $when;
+
+    public string $icon;
+
     // protected function parseArguments( array &$arguments ) : void
     // {
     //     $timestamp = new Time( $arguments['instances'][0] ?? $arguments['timestamp'] ?? 'now' );
@@ -64,6 +65,6 @@ final class Toast extends AbstractComponent
     // }
     protected function render() : string
     {
-        return "<div id='toast' class='toast'> Toasties </div>" ;
+        return "<div id='toast' class='toast'> Toasties </div>";
     }
 }
