@@ -47,7 +47,7 @@ final class Toast extends AbstractComponent
 
     public Html $when;
 
-    public string $icon;
+    public ?string $icon;
 
     // protected function parseArguments( array &$arguments ) : void
     // {

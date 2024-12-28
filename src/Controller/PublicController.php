@@ -65,9 +65,6 @@ final class PublicController extends Controller
         Toast            $toast,
         ComponentFactory $componentFactory,
     ) : string {
-        dump( $componentFactory->render( 'view.component.icon' ) );
-
-        dd( __METHOD__ );
         $document( 'Index Demo Template' );
 
         foreach ( \range( 0, \rand( 2, 7 ) ) as $key => $value ) {

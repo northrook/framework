@@ -6,7 +6,7 @@ namespace Core\View\Component;
 
 use Core\Service\IconService;
 use Core\View\Attribute\ViewComponent;
-use Core\View\Html\{Attributes, Tag};
+use Core\View\Html\{Tag};
 
 #[ViewComponent( 'icon:{get}', true, 128 )]
 final class Icon extends AbstractComponent
@@ -15,13 +15,10 @@ final class Icon extends AbstractComponent
 
     protected readonly Tag $tag;
 
-    protected readonly Attributes $attributes;
-
     public function __construct(
         private readonly IconService $iconService,
     ) {
-        $this->tag        = Tag::from( 'i' );
-        $this->attributes = new Attributes();
+        $this->tag = Tag::from( 'i' );
     }
 
     protected function render() : string
