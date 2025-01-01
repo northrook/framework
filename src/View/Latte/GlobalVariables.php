@@ -2,6 +2,7 @@
 
 namespace Core\View\Latte;
 
+use JetBrains\PhpStorm\Deprecated;
 use Support\{PropertyAccessor, Time};
 use Symfony\Component\HttpFoundation\{Request, RequestStack};
 use Symfony\Component\HttpFoundation\Session\{SessionInterface};
@@ -26,6 +27,7 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
  * @property-read ?UserInterface  $user
  * @property-read ?TokenInterface $token
  */
+#[Deprecated]
 final readonly class GlobalVariables
 {
     use PropertyAccessor;
@@ -37,6 +39,7 @@ final readonly class GlobalVariables
         private ?TokenStorageInterface    $tokenStorage,
         private CsrfTokenManagerInterface $csrfTokenManager,
     ) {
+        dump( $this::class );
         // TODO : Readonly site settings for timestamp etc
     }
 

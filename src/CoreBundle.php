@@ -65,7 +65,7 @@ final class CoreBundle extends AbstractBundle
         '../config/framework/toasts.php',
         '../config/framework/controllers/public.php',
         '../config/view/components.php',
-        '../config/view/latte.php',
+        // '../config/view/latte.php',
         '../config/view/renderer.php',
     ];
 

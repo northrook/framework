@@ -15,6 +15,7 @@ final readonly class CacheRuntime
         private ?CacheInterface  $cache = null,
         private ?LoggerInterface $logger = null,
     ) {
+        dump( $this::class );
     }
 
     public function get( string $assetId, bool $useCache, callable $callback = null ) : string

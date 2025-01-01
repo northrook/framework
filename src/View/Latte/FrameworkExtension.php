@@ -8,8 +8,7 @@ use Core\Framework\Autowire\UrlGenerator;
 use Core\Symfony\DependencyInjection\ServiceContainerInterface;
 use Core\View\ComponentFactory;
 use Core\View\Latte\Node\InlineStringableNode;
-use Core\View\Template\{NodeParser, TemplateCompiler};
-use Core\View\Template\Node\{ComponentNode, StaticNode};
+use JetBrains\PhpStorm\Deprecated;
 use Latte\Compiler\{Node, NodeTraverser};
 use Latte\Compiler\Nodes\Html\ElementNode;
 use Latte\Compiler\Nodes\Php\ExpressionNode;
@@ -17,6 +16,7 @@ use Latte\Compiler\Nodes\TemplateNode;
 use Latte\Extension as LatteExtension;
 use Override;
 
+#[Deprecated]
 final class FrameworkExtension extends LatteExtension implements ServiceContainerInterface
 {
     use UrlGenerator;
@@ -27,6 +27,7 @@ final class FrameworkExtension extends LatteExtension implements ServiceContaine
 
     public function __construct( public readonly ComponentFactory $factory )
     {
+        dump( $this::class );
     }
 
     public function getTags() : array
@@ -121,27 +122,27 @@ final class FrameworkExtension extends LatteExtension implements ServiceContaine
                     return $node;
                 }
 
-                if ( ! $component->targetTag( $node->name ) ) {
-                    return $node;
-                }
+                return $node;
+                // if ( ! $component->targetTag( $node->name ) ) {
+                // }
 
-                $parser = new NodeParser( $node );
+                // $parser = new NodeParser( $node );
 
-                if ( $component->static ) {
-                    $build = clone $this->factory->getComponent( $component->name );
-                    $build->create(
-                        ComponentNode::nodeArguments( $parser ),
-                        $component->tagged,
-                    );
-
-                    // TODO : Create a ComponentCompiler that does not include the FrameworkExtension
-                    // $html = $build->render( new TemplateCompiler() );
-                    $html = $build->render( $this->serviceLocator( TemplateCompiler::class ) );
-
-                    return $html ? new StaticNode( $html, $node->position ) : $node;
-                }
-
-                return new ComponentNode( $component->name, $parser );
+                // if ( $component->static ) {
+                //     $build = clone $this->factory->getComponent( $component->name );
+                //     $build->create(
+                //         ComponentNode::nodeArguments( $parser ),
+                //         $component->tagged,
+                //     );
+                //
+                //     // TODO : Create a ComponentCompiler that does not include the FrameworkExtension
+                //     // $html = $build->render( new TemplateCompiler() );
+                //     $html = $build->render( $this->serviceLocator( TemplateCompiler::class ) );
+                //
+                //     return $html ? new StaticNode( $html, $node->position ) : $node;
+                // }
+                //
+                // return new ComponentNode( $component->name, $parser );
             },
         );
     }
