@@ -62,22 +62,6 @@ final class StyleFramework
         [role=list].reverse {
           flex-direction : column-reverse;
         }
-        svg.icon {
-          height : var(--size, 1em);
-          width  : var(--size, 1em);
-        }
-        svg.icon.direction\:up {
-          rotate : 0deg;
-        }
-        svg.icon.direction\:right {
-          rotate : 90deg;
-        }
-        svg.icon.direction\:down {
-          rotate : 180deg;
-        }
-        svg.icon.direction\:left {
-          rotate : 270deg;
-        }
         .gap {
           gap: var(--gap-row) var(--gap-col);
         }

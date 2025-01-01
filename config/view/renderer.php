@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\{Pathfinder, View\Config, View\Latte\ViewComponentExtension};
-use Core\Service\IconService;
 use Core\TemplateEngine;
 
 return static function( ContainerConfigurator $container ) : void {
@@ -26,9 +25,9 @@ return static function( ContainerConfigurator $container ) : void {
             // ->defaults()
             // ->autoconfigure()
             // ->load( 'Core\\View\\Component\\', dirname( __DIR__, 2 ) . '/components/' )
-        ->set( IconService::class )
-        ->tag( 'core.service_locator' )
-        ->autowire()
+            // ->set( IconService::class )
+            // ->tag( 'core.service_locator' )
+            // ->autowire()
 
             //
         ->set( TemplateEngine::class )

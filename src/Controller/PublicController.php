@@ -6,6 +6,7 @@ namespace Core\Controller;
 
 use Core\Framework\Controller\Attribute\OnDocument;
 use Core\Http\Response\Document;
+use Core\Service\AssetManager;
 use Core\View\ComponentFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Core\Framework\Autowire\{Toast};
@@ -28,7 +29,7 @@ final class PublicController extends Controller
 
         $document
             ->add( 'html.lang', 'en' )
-            ->asset( 'style.core' );
+            ->asset( 'style.core', 'script.core', 'script.htmx' );
     }
 
     #[
@@ -63,14 +64,31 @@ final class PublicController extends Controller
     public function demo(
         Document         $document,
         Toast            $toast,
+        AssetManager     $assetManager,
         ComponentFactory $componentFactory,
     ) : string {
+        $assetManager->factory->locator()->scan();
         $document( 'Index Demo Template' );
 
-        foreach ( \range( 0, \rand( 2, 7 ) ) as $key => $value ) {
-            $status = (string) $toast::STATUS[\array_rand( $toast::STATUS )];
-            $toast( $status, 'Hello there, this is a '.$status );
-        }
+        $toast(
+            'info',
+            'Useful information Toast.',
+            'It has some details as well. How thoughtful.',
+        );
+
+        // foreach ( \range( 0, \rand( 2, 7 ) ) as $key => $value ) {
+        //     $status      = (string) $toast::STATUS[ \array_rand( $toast::STATUS ) ];
+        //     $description = $key % 2 == 0 ? 'Description' : null;
+        //
+        //     $timeout = 3600 + ( $key * 1000 );
+        //
+        //     $toast(
+        //             $status,
+        //             'Hello there, this is a ' . $status . '. Seed: ' . $key,
+        //             $description,
+        //             $timeout,
+        //     );
+        // }
 
         return 'demo.latte';
     }

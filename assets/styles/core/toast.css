@@ -59,6 +59,27 @@ toast output > * {
   line-height : 1em;
 }
 
+toast accordion {
+  padding : 0 2rem .75rem .75rem;
+}
+
+toast accordion > button {
+  opacity : .8;
+}
+
+toast > accordion > button {
+  opacity    : .8;
+  transition : opacity 200ms ease, color 200ms ease;
+}
+
+toast:has( :hover, :focus, :focus-within) > accordion > button {
+  opacity : 1;
+}
+
+toast > accordion > button:hover {
+  color : var(--intent-dark);
+}
+
 /* Status */
 
 toast i.status {

@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\View\{ComponentFactory, Latte, Template\Extension\IconPackExtension};
+use Core\View\{ComponentFactory, Latte};
 use Core\Service\IconService;
 use Core\View\Latte\Extension\CacheExtension;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
@@ -35,8 +35,8 @@ return static function( ContainerConfigurator $container ) : void {
         ->args( [service( ComponentFactory::class )] )
 
             // IconPack
-        // ->set( IconPackExtension::class )
-        // ->args( [service_closure( IconService::class )] )
+            // ->set( IconPackExtension::class )
+            // ->args( [service_closure( IconService::class )] )
 
             // Cache integration
         ->set( CacheExtension::class )

@@ -19,7 +19,7 @@ final class Display extends AtomicRule
     {
         /** look into aliasing 'none' in {@see \Core\View\Template\NodeParser::attributes()}*/
         return [
-            'hidden'                => ['display' => 'none'],
+            'none'                  => ['display' => 'none'],
             'block'                 => ['display' => 'block'],
             'inline'                => ['display' => 'inline'],
             'inline-block'          => ['display' => 'inline-block'],

@@ -20,16 +20,7 @@ class AssetManager extends \Core\Assets\AssetManager
         $this->factory->addAssetModelCallback(
             'script.core',
             function( ScriptAsset $asset ) : ScriptAsset {
-                $localAssets = $asset->pathfinder->getFileInfo(
-                    path      : 'dir.core.assets/scripts/core',
-                    assertive : true,
-                );
-
-                foreach ( $localAssets->glob( '/*.js' ) as $localAsset ) {
-                    $asset->addSource( (string) $localAsset );
-                }
-
-                $asset->prefersInline();
+                // $asset->prefersInline();
 
                 return $asset;
             },
