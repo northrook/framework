@@ -9,11 +9,14 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\Symfony\DependencyInjection\CompilerPass;
-use Core\View\ComponentFactory;
+use Core\View\{ComponentFactory, IconSet, Interface\IconProviderInterface};
 use Core\View\ComponentFactory\ComponentBag;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
+            // IconSet
+        ->set( IconSet::class )
+        ->alias( IconProviderInterface::class, IconSet::class )
 
             // Component Service Locator
         ->set( 'view.component_locator' )
