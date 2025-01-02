@@ -13,6 +13,4 @@ use Attribute;
  * The method can be injected with services tagged using `core.service_locator`.
  */
 #[Attribute( Attribute::TARGET_METHOD )]
-final class OnContent
-{
-}
+final class OnContent {}

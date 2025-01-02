@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Framework\Compiler;
 
-use Core\Framework\Autowire\Toast;
+use Core\Action\Toast;
 use Core\Symfony\Console\Output;
 use Override;
 use Core\Symfony\DependencyInjection\CompilerPass;
@@ -77,13 +77,13 @@ final class ApplicationConfigPass extends CompilerPass
 
         $this->createPhpFile(
             '.phpstorm.meta.php/.toast_action.meta.php',
-            <<<PHP
+                <<<PHP
                 <?php 
                     
                 namespace PHPSTORM_META;
                     
                 expectedArguments(
-                    \Core\Framework\Autowire\Toast::__invoke(),
+                    \Core\Action\Toast::__invoke(),
                     0,
                     {$toastStatusTypes}
                 );

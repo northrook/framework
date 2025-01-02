@@ -6,6 +6,7 @@ namespace Core\Service\DesignSystem;
 
 use Core\Service\DesignSystem\StyleFramework\{AtomicRule, Color, Display, Variables};
 use Support\{Filesystem, Str};
+
 final class StyleFramework
 {
     /**
@@ -93,9 +94,7 @@ final class StyleFramework
 
     private string $style;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function generateStub( string $savePath ) : void
     {

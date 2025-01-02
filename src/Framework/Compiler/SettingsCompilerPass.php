@@ -34,7 +34,7 @@ final class SettingsCompilerPass extends CompilerPass
 
         [$storagePath, $name] = $container->getDefinition( 'core.settings_store' )->getArguments();
 
-        $settingsStore = new ArrayStore( $storagePath, $name);
+        $settingsStore = new ArrayStore( $storagePath, $name );
 
         $settingsStore->setDefault( $this->getDefaultSettings() );
     }

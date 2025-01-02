@@ -2,10 +2,9 @@
 
 namespace Core\Service\ToastService;
 
-use HTML\Tag;
-use InvalidArgumentException;
+use Core\View\Html\Tag;
 use Support\Time;
-use Throwable;
+use Throwable, InvalidArgumentException;
 
 final class ToastMessage
 {
@@ -93,8 +92,12 @@ final class ToastMessage
         return 'danger' === $this->status ? null : $this->timeout;
     }
 
+    /**
+     * @return array{id: string, status: string, message: null|string, description: null|string, timeout: null|int, instances: string[], timestamp: null|int, icon: null|string}
+     */
     public function getArguments() : array
     {
+        /** @var ?string $description */
         $description = \array_reverse( \array_filter( $this->occurrences ) )[0] ?? null;
 
         return [
@@ -104,11 +107,16 @@ final class ToastMessage
             'description' => $description,
             'timeout'     => $this->getTimeout(),
             'instances'   => $this->occurrences,
-            'timestamp'   => \array_key_first( $this->occurrences ),
+            'timestamp'   => (int) \array_key_first( $this->occurrences ),
             'icon'        => $this->icon,
         ];
     }
 
+    /**
+     * @param null|string|string[] $string
+     *
+     * @return null|string
+     */
     private function escapeHtml( null|string|array $string ) : ?string
     {
         if ( \is_array( $string ) ) {

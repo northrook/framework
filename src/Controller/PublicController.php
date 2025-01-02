@@ -9,7 +9,7 @@ use Core\Http\Response\Document;
 use Core\Service\AssetManager;
 use Core\View\ComponentFactory;
 use Symfony\Component\HttpFoundation\Request;
-use Core\Framework\Autowire\{Toast};
+use Core\Action\{Toast};
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
 use Symfony\Component\Routing\Attribute\Route;

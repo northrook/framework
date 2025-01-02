@@ -11,14 +11,12 @@ use Symfony\Component\HttpFoundation\Session\{FlashBagAwareSessionInterface};
 
 final readonly class ToastService
 {
-    public function __construct( private Http\RequestStack $requestStack )
-    {
-    }
+    public function __construct( private Http\RequestStack $requestStack ) {}
 
     /**
      * @param 'danger'|'info'|'notice'|'success'|'warning' $status
      * @param string                                       $message
-     * @param null|array|string                            $description [optional] accepts {@see \HTML\Tag::INLINE}
+     * @param null|array|string                            $description [optional] accepts {@see Tag::INLINE}
      * @param ?int                                         $timeout     [auto] time in seconds before the toast is dismissed
      * @param ?string                                      $icon        [auto] based on `$status`
      *
@@ -39,7 +37,7 @@ final readonly class ToastService
             $toastMessage->bump( $description );
         }
         else {
-            $toastMessage = new ToastMessage( $id, $status, $message, $description, $timeout, $icon);
+            $toastMessage = new ToastMessage( $id, $status, $message, $description, $timeout, $icon );
         }
 
         $this->getFlashBag()->set( $id, [$toastMessage] );

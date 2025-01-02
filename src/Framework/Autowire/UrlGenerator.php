@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Core\Framework\Autowire;
 
 use Core\Symfony\DependencyInjection\ServiceContainer;
+use JetBrains\PhpStorm\Deprecated;
+use Support\Interface\ActionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+#[Deprecated( 'Moving to Actions', ActionInterface::class )]
 trait UrlGenerator
 {
     use ServiceContainer;

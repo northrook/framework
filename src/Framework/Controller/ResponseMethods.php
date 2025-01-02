@@ -6,8 +6,6 @@ namespace Core\Framework\Controller;
 
 use Core\Framework\Autowire\CurrentRequest;
 use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
-use Exception;
-use Northrook\Filesystem\URL;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\{BinaryFileResponse,
     File,
@@ -21,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-use Throwable;
+use Throwable, Exception;
 
 /**
  * @phpstan-require-implements ServiceContainerInterface

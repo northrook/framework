@@ -19,7 +19,5 @@ final class Template
         DOCUMENT = '_document_template',
         CONTENT  = '_content_template';
 
-    public function __construct( public string $name )
-    {
-    }
+    public function __construct( public string $name ) {}
 }

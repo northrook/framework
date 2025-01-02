@@ -9,7 +9,6 @@ use Core\Http\Response\{Document, Headers};
 use Core\Service\ToastService;
 use Core\View\Component\Toast;
 use Core\View\{ComponentFactory, DocumentView, Parameters};
-use Core\View\Render\HtmlViewDocument;
 use Core\Symfony\EventListener\HttpEventListener;
 use Symfony\Component\HttpKernel\Event\{ExceptionEvent, ResponseEvent};
 use JetBrains\PhpStorm\NoReturn;

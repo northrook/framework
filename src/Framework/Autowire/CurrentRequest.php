@@ -6,9 +6,12 @@ namespace Core\Framework\Autowire;
 
 use Core\Framework\Controller;
 use Core\Symfony\DependencyInjection\ServiceContainer;
+use JetBrains\PhpStorm\Deprecated;
+use Support\Interface\ActionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use function Support\get_class_name;
 
+#[Deprecated( 'Moving to Actions', ActionInterface::class )]
 trait CurrentRequest
 {
     use ServiceContainer;
