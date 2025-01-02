@@ -18,8 +18,6 @@
   "prefer-stable": true,
   "require": {
     "php": ">=8.3",
-    "northrook/html-element": "dev-main",
-    "northrook/html": "dev-main",
     "ext-ctype": "*",
     "ext-zend-opcache": "*",
     "ext-intl": "*",
@@ -36,18 +34,14 @@
     "northrook/clerk": "dev-main",
     "northrook/support": "dev-main",
     "northrook/array-access": "dev-main",
-    "latte/latte": "^3.0",
     "northrook/core-symfony": "dev-main",
-    "tempest/highlight": "^2.11",
     "northrook/pathfinder": "dev-main",
     "northrook/assets": "dev-main",
     "northrook/settings": "dev-main",
     "northrook/view": "dev-main",
     "northrook/view-icons": "dev-main",
-    "northrook/view-components": "dev-main"
-  },
-  "conflict": {
-    "northrook/core": "*"
+    "northrook/view-components": "dev-main",
+    "latte/latte": "^3.0"
   },
   "require-dev": {
     "northrook/dev-env": "dev-main"

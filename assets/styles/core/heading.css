@@ -2,9 +2,22 @@
   --heading-line-height : 1.5em; /* 1.5 min, 5em max */
   --heading-group-gap   : 1.5em;
 }
+
+.heading::before {
+  position   : absolute;
+  content    : '';
+  outline    : 1px solid #ff149315;
+  background : #ff149315;
+  inset      : calc(calc(calc(var(--heading-line-height, 2em) - 1em) * -.5) * -1) 0;
+  z-index    : -1;
+}
+
 /* Single headings */
 .heading {
+  position     : relative;
   margin-block : calc(calc(var(--heading-line-height, 2em) - 1em) * -.5);
+  font-family  : var(--font-heading), sans-serif;
+  font-weight  : var(--weight-heading);
   line-height  : var(--heading-line-height, 2em);
 }
 
