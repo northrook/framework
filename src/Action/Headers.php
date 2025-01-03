@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Core\Http\Response;
+namespace Core\Action;
 
-use JetBrains\PhpStorm\Deprecated;
 use Support\Interface\ActionInterface;
 use Symfony\Component\HttpFoundation\{HeaderBag, RequestStack, ResponseHeaderBag};
 
@@ -16,12 +15,15 @@ use Symfony\Component\HttpFoundation\{HeaderBag, RequestStack, ResponseHeaderBag
 //  https://www.madx.digital/glossary/x-robots-tag
 //  https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
 
-#[Deprecated] // Seems unnecessary when we can autowire the official Request and use $request->headers
+// Seems unnecessary when we can autowire the official Request and use $request->headers
 final class Headers implements ActionInterface
 {
     protected ?HeaderBag $tempHeaderBag;
 
-    public function __construct( private readonly RequestStack $requestStack ) {}
+    public function __construct( private readonly RequestStack $requestStack )
+    {
+        dump( __CLASS__.' instantiated' );
+    }
 
     /**
      * Set one or more response headers.

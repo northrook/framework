@@ -2,10 +2,12 @@
 
 namespace Core\Action;
 
+use Core\Symfony\DependencyInjection\Autodiscover;
 use Support\Interface\ActionInterface;
 use Core\Service\ToastService;
 use JetBrains\PhpStorm\ExpectedValues;
 
+#[Autodiscover]
 final class Toast implements ActionInterface
 {
     public const array STATUS = ['info', 'notice', 'success', 'warning', 'danger'];

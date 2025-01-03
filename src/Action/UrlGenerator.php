@@ -1,27 +1,18 @@
 <?php
 
-declare(strict_types=1);
+namespace Core\Action;
 
-namespace Core\Framework\Autowire;
-
-use Core\Symfony\DependencyInjection\ServiceContainer;
-use JetBrains\PhpStorm\Deprecated;
-use Support\Interface\ActionInterface;
+use Core\Symfony\DependencyInjection\Autodiscover;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-#[Deprecated( 'Moving to Actions', ActionInterface::class )]
-trait UrlGenerator
+#[Autodiscover( tag : ['controller.service_arguments', 'core.service_locator'], autowire : true )]
+final readonly class UrlGenerator
 {
-    use ServiceContainer;
-
-    final protected function urlGenerator() : UrlGeneratorInterface
-    {
-        return $this->serviceLocator( UrlGeneratorInterface::class );
-    }
+    public function __construct( private readonly UrlGeneratorInterface $urlGenerator ) {}
 
     public function generateRoutePath( string $name, array $parameters = [], bool $relative = false ) : string
     {
-        return $this->urlGenerator()->generate(
+        return $this->urlGenerator->generate(
             $name,
             $parameters,
             $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH,
@@ -30,7 +21,7 @@ trait UrlGenerator
 
     public function generateRouteUrl( string $name, array $parameters = [], bool $relative = false ) : string
     {
-        return $this->urlGenerator()->generate(
+        return $this->urlGenerator->generate(
             $name,
             $parameters,
             $relative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL,

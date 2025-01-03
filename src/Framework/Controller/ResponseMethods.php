@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Core\Framework\Controller;
 
-use Core\Framework\Autowire\CurrentRequest;
-use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
+use Core\Framework\Controller;
+use Core\Symfony\DependencyInjection\ServiceContainer;
+use Core\Symfony\Interface\ServiceContainerInterface;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\{BinaryFileResponse,
     File,
@@ -17,9 +18,11 @@ use Symfony\Component\HttpFoundation\{BinaryFileResponse,
 };
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Throwable, Exception;
+use function Support\get_class_name;
 
 /**
  * @phpstan-require-implements ServiceContainerInterface
@@ -28,7 +31,43 @@ use Throwable, Exception;
  */
 trait ResponseMethods
 {
-    use ServiceContainer, CurrentRequest;
+    use ServiceContainer;
+
+    final protected function getRequest() : Request
+    {
+        return $this->serviceLocator( Request::class );
+    }
+
+    final protected function isHtmxRequest() : bool
+    {
+        return $this->getRequest()->attributes->get( 'htmx', false );
+    }
+
+    final protected function isManagedRequest() : bool
+    {
+        return \is_subclass_of(
+            get_class_name( $this->getRequest()->attributes->get( '_controller' ) ),
+            Controller::class,
+        );
+    }
+
+    final protected function generateRoutePath( string $name, array $parameters = [], bool $relative = false ) : string
+    {
+        return $this->urlGenerator()->generate(
+            $name,
+            $parameters,
+            $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH,
+        );
+    }
+
+    final protected function generateRouteUrl( string $name, array $parameters = [], bool $relative = false ) : string
+    {
+        return $this->urlGenerator()->generate(
+            $name,
+            $parameters,
+            $relative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+    }
 
     /**
      * Forwards the request to another controller.
@@ -59,28 +98,28 @@ trait ResponseMethods
     /**
      * Returns a RedirectResponse to the given URL.
      *
-     * @param non-empty-string|URL $url
-     * @param int                  $status [302] The HTTP status code
+     * @param non-empty-string $url
+     * @param int              $status [302] The HTTP status code
      *
      * @return RedirectResponse
      */
     protected function redirectResponse(
-        string|URL $url,
-        int        $status = 302,
+        string $url,
+        int    $status = 302,
     ) : RedirectResponse {
         // TODO: [route] to URL
         // TODO: Validate $url->exists - update $status
         // TODO: Log failing redirects
 
-        if ( \is_string( $url ) ) {
-            $url = new URL( $url );
-        }
+        // if ( \is_string( $url ) ) {
+        //     $url = new FileI( $url );
+        // }
 
-        if ( ! $url->exists() ) {
-            throw $this->notFoundException();
-        }
+        // if ( ! $url->exists() ) {
+        //     throw $this->notFoundException();
+        // }
 
-        return new RedirectResponse( $url->path, $status );
+        return new RedirectResponse( $url, $status );
     }
 
     /**
@@ -173,4 +212,11 @@ trait ResponseMethods
     ) : NotFoundHttpException {
         return new NotFoundHttpException( $message, $previous );
     }
+
+
+    private function urlGenerator() : UrlGeneratorInterface
+    {
+        return $this->serviceLocator( UrlGeneratorInterface::class );
+    }
+
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core;
 
-use Core\Symfony\DependencyInjection\{AutodiscoverServicesPass, AutowireActionsPass};
+use Core\Symfony\Compiler\{AutodiscoverServicesPass, AutowireActionsPass};
 use Override;
 use Core\View\Compiler\RegisterViewComponentsPass;
 use Core\Framework\Compiler\{ApplicationConfigPass,

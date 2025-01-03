@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Core\Http;
 
+use Core\Action\Headers;
 use Core\TemplateEngine;
-use Core\Http\Response\{Document, Headers};
+use Core\Http\Response\{Document};
 use Core\Service\ToastService;
 use Core\View\Component\Toast;
 use Core\View\{ComponentFactory, DocumentView, Parameters};
@@ -51,8 +52,8 @@ final class ResponseListener extends HttpEventListener
         $document->setInnerContent(
             $this->resolveToastMessages(),
             $this->content,
-        );
-        // ->enqueueInvokedAssets();
+        )
+            ->enqueueInvokedAssets();
 
         // if ( 'document' === $this->type ) {
         //     dump( __METHOD__.'[document]' );

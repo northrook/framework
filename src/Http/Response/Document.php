@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Core\Http\Response;
 
 use Core\Assets\Factory\Asset\Type;
+use JetBrains\PhpStorm\Deprecated;
 use Psr\Log\LoggerInterface;
 use Stringable;
 use Support\Interface\ActionInterface;
 use Support\Normalize;
 use function Support\toString;
 
+#[Deprecated]
 final class Document implements ActionInterface
 {
     private const array GROUPS = [

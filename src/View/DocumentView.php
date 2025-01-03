@@ -6,13 +6,16 @@ namespace Core\View;
 
 use Core\Http\Response\Document;
 use Core\Service\AssetManager;
+use Core\Symfony\Interface\ServiceContainerInterface;
+use Core\Symfony\DependencyInjection\ServiceContainer;
 use Core\View\Html\Attributes;
-use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
+use JetBrains\PhpStorm\Deprecated;
 use Support\Str;
 use InvalidArgumentException;
 use Throwable;
 use function Support\toString;
 
+#[Deprecated]
 final class DocumentView implements ServiceContainerInterface
 {
     use ServiceContainer;

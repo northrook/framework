@@ -8,12 +8,11 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Cache\MemoizationCache;
+use Core\Action\Headers;
 use Core\View\Parameters;
-use Core\Http\Response\{Document, Headers};
+use Core\Http\Response\{Document};
 use Core\Pathfinder;
-use Core\Framework\{CurrentRequest, DependencyInjection\StaticServiceInitializer, Settings};
-use Northrook\Clerk;
+use Core\Framework\Settings;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -25,30 +24,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 return static function( ContainerConfigurator $container ) : void {
     $services = $container->services();
-
-    $services
-        ->set( StaticServiceInitializer::class )
-        ->args(
-            [
-                service( Clerk::class ),
-                service( MemoizationCache::class ),
-            ],
-        )
-        ->tag(
-            'kernel.event_listener',
-            [
-                'event'    => 'kernel.request',
-                'priority' => 1_024,
-            ],
-        );
-
-    $services->defaults()
-        ->tag( 'controller.service_arguments' )
-        ->autowire()
-
-            // Current Request handler
-        ->set( CurrentRequest::class )
-        ->args( [service( 'request_stack' )] );
 
     /** @used-by \Core\Symfony\DependencyInjection\ServiceContainer */
     $container->services()

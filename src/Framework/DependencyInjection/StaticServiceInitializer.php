@@ -9,15 +9,15 @@ use Core\Symfony\DependencyInjection\Autodiscover;
 use Northrook\Clerk;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
-// #[Autodiscover(
-//     tags     : [
-//         'kernel.event_listener' => [
-//             'event'    => 'kernel.request',
-//             'priority' => 1_024,
-//         ],
-//     ],
-//     autowire : true,
-// )]
+#[Autodiscover(
+    tag      : [
+        'kernel.event_listener' => [
+            'event'    => 'kernel.request',
+            'priority' => 1_024,
+        ],
+    ],
+    autowire : true,
+)]
 final readonly class StaticServiceInitializer
 {
     /**

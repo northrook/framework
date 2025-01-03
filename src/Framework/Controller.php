@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Core\Framework;
 
-use Core\Http\Response\{Document, Headers};
+use Core\Action\Headers;
+use Core\Symfony\Interface\ServiceContainerInterface;
+use Core\Http\Response\{Document};
 use Core\Pathfinder;
 use Core\Framework\Controller\Attribute\OnContent;
 use Core\Framework\Controller\Attribute\{OnDocument};
 use Core\Framework\Controller\ResponseMethods;
-use Core\Symfony\DependencyInjection\{ServiceContainer, ServiceContainerInterface};
+use Core\Symfony\DependencyInjection\ServiceContainer;
 use Northrook\Logger\Log;
 use ReflectionClass;
 use ReflectionException;
