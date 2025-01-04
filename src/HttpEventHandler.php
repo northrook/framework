@@ -30,11 +30,8 @@ use InvalidArgumentException;
 )]
 final class HttpEventHandler implements EventSubscriberInterface
 {
-    // ..Constructor
-    // - documentView
-    // - cache  - append only on-disk no expiry, clear on exception
-    // - logger - for logging
-    // Clerk using Facade
+    /** @var string the current `_route` name */
+    protected string $route;
 
     /** @var class-string|false The `Controller` used. */
     protected string|false $controller;
@@ -42,8 +39,11 @@ final class HttpEventHandler implements EventSubscriberInterface
     /** @var false|string The `Controller::method` called. */
     protected string|false $action;
 
-    /** @var string the current `_route` name */
-    protected string $route;
+    protected string|false $documentTemplate;
+
+    protected string|false $contentTemplate;
+
+    private readonly bool $ignoredEvent;
 
     public function __construct(
         protected readonly DocumentView    $documentView, // lazy
@@ -52,19 +52,14 @@ final class HttpEventHandler implements EventSubscriberInterface
         protected readonly CacheInterface  $cache,
         // #[Autowire( service : 'logger' )] // autodiscover
         protected readonly LoggerInterface $logger,
-    ) {
-        dump( \spl_object_id( $this ).'\\'.__METHOD__, $this );
-    }
+    ) {}
 
     public static function getSubscribedEvents() : array
     {
         return [
-            KernelEvents::REQUEST  => 'onKernelRequest',
-            KernelEvents::VIEW     => 'onKernelView',
-            KernelEvents::RESPONSE => [
-                ['earlyKernelResponse', 512],
-                ['onKernelResponse', 32],
-            ],
+            KernelEvents::REQUEST   => 'onKernelRequest',
+            KernelEvents::VIEW      => 'onKernelView',
+            KernelEvents::RESPONSE  => ['onKernelResponse', 32],
             KernelEvents::EXCEPTION => 'onKernelException',
         ];
     }
@@ -85,23 +80,15 @@ final class HttpEventHandler implements EventSubscriberInterface
 
         Clerk::event( __METHOD__, $this::class );
 
-        dump( \spl_object_id( $this ).'\\'.__METHOD__, $this, $event );
-
         $htmx = $event->getRequest()->headers->has( 'hx-request' );
 
         $event->getRequest()->attributes->set( 'hx-request', $htmx );
         $event->getRequest()->attributes->set( 'http-type', $htmx ? 'XMLHttpRequest' : 'HttpRequest' );
         $event->getRequest()->attributes->set( 'view-type', $htmx ? Template::CONTENT : Template::DOCUMENT );
-
-        $controllerTemplate = Reflect::getAttribute( $this->controller, Template::class );
-        $methodTemplate     = Reflect::getAttribute( [$this->controller, $this->action], Template::class );
-
         $event->getRequest()->attributes->add(
             [
-                'templates' => [
-                    '_document_template' => $controllerTemplate?->name,
-                    '_content_template'  => $methodTemplate?->name,
-                ],
+                '_view_document' => $this->documentTemplate,
+                '_view_template' => $this->contentTemplate,
             ],
         );
 
@@ -115,8 +102,6 @@ final class HttpEventHandler implements EventSubscriberInterface
         }
 
         Clerk::event( __METHOD__, $this::class );
-
-        dump( \spl_object_id( $this ).'\\'.__METHOD__, $this, $event );
 
         if ( $controller = $event->controllerArgumentsEvent?->getController() ) {
             /**
@@ -140,15 +125,6 @@ final class HttpEventHandler implements EventSubscriberInterface
         Clerk::stop( __METHOD__ );
     }
 
-    public function earlyKernelResponse( ResponseEvent $event ) : void
-    {
-        if ( $this->ignoredEvent( $event ) ) {
-            return;
-        }
-
-        dump( \spl_object_id( $this ).'\\'.__METHOD__.'@512', $this, $event );
-    }
-
     public function onKernelResponse( ResponseEvent $event ) : void
     {
         if ( $this->ignoredEvent( $event ) ) {
@@ -160,15 +136,15 @@ final class HttpEventHandler implements EventSubscriberInterface
 
     public function onKernelException( ExceptionEvent $event ) : void
     {
-        if ( $this->ignoredEvent( $event ) ) {
-            return;
-        }
-
         dump( \spl_object_id( $this ).'\\'.__METHOD__, $this, $event );
     }
 
     private function ignoredEvent( KernelEvent $event ) : bool
     {
+        if ( isset( $this->ignoredEvent ) ) {
+            return $this->ignoredEvent;
+        }
+
         // Ignore raised Exceptions
         if ( $event instanceof ExceptionEvent ) {
             $this->logger->info(
@@ -196,7 +172,7 @@ final class HttpEventHandler implements EventSubscriberInterface
 
         // [$this->controller, $this->action] = $this->resolveEventController( $event );
         try {
-            [$this->controller, $this->action] = $this->cache->get(
+            [$this->controller, $this->action, $this->contentTemplate, $this->documentTemplate] = $this->cache->get(
                 \str_replace( [':', '-', '@', '&'], '.', $this->route ).'.http_event',
                 fn() => $this->resolveEventController( $event ),
             );
@@ -205,13 +181,13 @@ final class HttpEventHandler implements EventSubscriberInterface
             $this->logger->alert( $e->getMessage() );
         }
 
-        return false;
+        return $this->ignoredEvent = ! $this->controller;
     }
 
     /**
      * @param KernelEvent $event
      *
-     * @return array{class-string|false,false|string}
+     * @return array{class-string|false,false|string,false|string,false|string}
      */
     private function resolveEventController( KernelEvent $event ) : array
     {
@@ -224,7 +200,7 @@ final class HttpEventHandler implements EventSubscriberInterface
                 '{method}: Controller attribute was expected be a string. Returning {false}.',
                 ['method' => __METHOD__],
             );
-            return [false, false];
+            return [false, false, false, false];
         }
 
         // Resolve the `$controller` to a class-string and ensure it exists
@@ -236,15 +212,18 @@ final class HttpEventHandler implements EventSubscriberInterface
                 $exception->getMessage(),
                 ['exception' => $exception],
             );
-            return [false, false];
+            return [false, false, false, false];
         }
 
         // Bail if required Interface isn't implemented
         if ( ! \is_subclass_of( $controller, ServiceContainerInterface::class ) ) {
-            return [false, false];
+            return [false, false, false, false];
         }
 
-        return [$controller, $method];
+        $controllerTemplate = Reflect::getAttribute( $controller, Template::class );
+        $methodTemplate     = Reflect::getAttribute( [$controller, $method], Template::class );
+
+        return [$controller, $method, $controllerTemplate?->name ?? false, $methodTemplate?->name ?? false];
     }
 
     private function resolveViewEventResponse( mixed $content ) : Response

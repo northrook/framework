@@ -33,9 +33,9 @@ return static function( ContainerConfigurator $container ) : void {
             [
                 [
                     Pathfinder::class => service( Pathfinder::class ),
-                    Document::class   => service( Document::class ),
+                    // Document::class   => service( Document::class ),
                     Parameters::class => service( Parameters::class ),
-                    Headers::class    => service( Headers::class ),
+                    // Headers::class    => service( Headers::class ),
                     Settings::class   => service( Settings::class ),
 
                     // Symfony

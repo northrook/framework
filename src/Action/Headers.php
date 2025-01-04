@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Action;
 
+use Core\Symfony\DependencyInjection\Autodiscover;
 use Support\Interface\ActionInterface;
 use Symfony\Component\HttpFoundation\{HeaderBag, RequestStack, ResponseHeaderBag};
 
@@ -16,6 +17,7 @@ use Symfony\Component\HttpFoundation\{HeaderBag, RequestStack, ResponseHeaderBag
 //  https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag
 
 // Seems unnecessary when we can autowire the official Request and use $request->headers
+#[Autodiscover]
 final class Headers implements ActionInterface
 {
     protected ?HeaderBag $tempHeaderBag;
