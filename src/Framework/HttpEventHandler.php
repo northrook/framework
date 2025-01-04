@@ -139,7 +139,7 @@ final class HttpEventHandler implements EventSubscriberInterface
         // [$this->controller, $this->action] = $this->resolveEventController( $event );
         try {
             [$this->controller, $this->action] = $this->cache->get(
-                "{$this->route}.http_event",
+                \str_replace( [':', '-', '@', '&'], '.', $this->route ).'.http_event',
                 fn() => $this->resolveEventController( $event ),
             );
         }
