@@ -6,12 +6,10 @@ namespace Core\Framework\Compiler;
 
 use Core\Action\Toast;
 use Core\Symfony\Console\Output;
-use Override;
 use Core\Symfony\DependencyInjection\CompilerPass;
 use Support\{Normalize, Reflect};
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use ReflectionClassConstant;
-use Exception;
+use Override, Exception, ReflectionClassConstant;
 
 final class ApplicationConfigPass extends CompilerPass
 {
@@ -38,8 +36,6 @@ final class ApplicationConfigPass extends CompilerPass
 
     protected function normalizePathParameters() : void
     {
-        $handle = [];
-
         foreach ( $this->parameterBag->all() as $key => $value ) {
             // Only parse prefixed keys
             if ( \str_starts_with( $key, 'dir.' ) || \str_starts_with( $key, 'path.' ) ) {
@@ -52,16 +48,12 @@ final class ApplicationConfigPass extends CompilerPass
                 try {
                     $value = Normalize::path( $value );
                     $this->parameterBag->set( $key, $value );
-                    $handle[] = [Output::format( '[OK]', 'info' )."{$key} : {$value}"];
                 }
                 catch ( Exception $e ) {
-                    $handle[] = [Output::format( '[OK]', 'info' )."{$key} : {$e->getMessage()}"];
+                    $message = Output::format( Output::MARKER, 'error' )."{$key} : {$e->getMessage()}";
+                    Output::printLine( $message );
                 }
             }
-        }
-
-        if ( ! empty( $handle ) ) {
-            Output::table( __METHOD__, $handle );
         }
     }
 
@@ -77,7 +69,7 @@ final class ApplicationConfigPass extends CompilerPass
 
         $this->createPhpFile(
             '.phpstorm.meta.php/.toast_action.meta.php',
-                <<<PHP
+            <<<PHP
                 <?php 
                     
                 namespace PHPSTORM_META;

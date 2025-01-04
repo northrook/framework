@@ -6,9 +6,9 @@ namespace Core\Framework;
 
 use Core\Action\Headers;
 use Core\Symfony\Interface\ServiceContainerInterface;
-use Core\Http\Response\{Document};
 use Core\Pathfinder;
 use Core\Framework\Controller\Attribute\OnContent;
+use Core\View\Document;
 use Core\Framework\Controller\Attribute\{OnDocument};
 use Core\Framework\Controller\ResponseMethods;
 use Core\Symfony\DependencyInjection\ServiceContainer;

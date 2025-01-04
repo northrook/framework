@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Core\Controller;
 
 use Core\Framework\Controller\Attribute\OnDocument;
-use Core\Http\Response\Document;
 use Core\Service\AssetManager;
-use Core\View\ComponentFactory;
+use Core\View\{ComponentFactory, Document};
 use Symfony\Component\HttpFoundation\Request;
 use Core\Action\{Toast};
 use Core\Framework\Controller;
@@ -23,13 +22,9 @@ final class PublicController extends Controller
     #[OnDocument]
     public function onDocumentResponse( Document $document ) : void
     {
-        $document(
-            'Public Document Title',
-        );
-
         $document
-            ->add( 'html.lang', 'en' )
-            ->asset( 'style.core', 'script.core', 'script.htmx' );
+            ->title( 'Public Document Title' )
+            ->assets( 'style.core', 'script.core', 'script.htmx' );
     }
 
     #[

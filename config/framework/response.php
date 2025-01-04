@@ -22,7 +22,7 @@ return static function( ContainerConfigurator $container ) : void {
         ->arg( 0, service( 'request_stack' ) )
 
             // Document Properties
-        ->set( Document::class )
+        // ->set( Document::class )
 
             // Template Parameters
         ->set( Parameters::class );

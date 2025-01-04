@@ -6,10 +6,9 @@ namespace Core\Http;
 
 use Core\Action\Headers;
 use Core\TemplateEngine;
-use Core\Http\Response\{Document};
 use Core\Service\ToastService;
 use Core\View\Component\Toast;
-use Core\View\{ComponentFactory, DocumentView, Parameters};
+use Core\View\{ComponentFactory, Document, Parameters, Template\DocumentView};
 use Core\Symfony\EventListener\HttpEventListener;
 use Symfony\Component\HttpKernel\Event\{ExceptionEvent, ResponseEvent};
 use JetBrains\PhpStorm\NoReturn;
@@ -41,19 +40,23 @@ final class ResponseListener extends HttpEventListener
 
         $this->setResponseContent( $event );
 
-        if ( ! $this->document()->isPublic ) {
-            $this->document()->set( 'robots', 'noindex, nofollow' );
-            $event->getResponse()->headers->set( 'X-Robots-Tag', 'noindex, nofollow' );
-            // $this->headers()->set( );
-        }
+        // if ( ! $this->document()->isPublic ) {
+        //     $this->document()->set( 'robots', 'noindex, nofollow' );
+        //     $event->getResponse()->headers->set( 'X-Robots-Tag', 'noindex, nofollow' );
+        //     // $this->headers()->set( );
+        // }
 
         $document = $this->serviceLocator( DocumentView::class );
 
-        $document->setInnerContent(
-            $this->resolveToastMessages(),
-            $this->content,
-        )
-            ->enqueueInvokedAssets();
+        $document->content( $this->content );
+
+        $this->content = $document->render();
+
+        // $document->setInnerContent(
+        //     $this->resolveToastMessages(),
+        //     $this->content,
+        // )
+        //     ->enqueueInvokedAssets();
 
         // if ( 'document' === $this->type ) {
         //     dump( __METHOD__.'[document]' );
@@ -66,30 +69,30 @@ final class ResponseListener extends HttpEventListener
         //     $this->content = $view->render();
         // }
 
-        if ( 'document' === $this->type ) {
-            $document
-                ->meta( 'meta.viewport' )
-                ->meta( 'document' )
-                ->meta( 'robots' )
-                ->meta( 'meta' )
-                ->assets();
-            // ->assets( 'font' )
-            // ->assets( 'script' )
-            // ->assets( 'style' )
-            // ->assets( 'link' );
-
-            $this->content = $document->renderDocumentHtml();
-        }
-        else {
-            $document
-                ->meta( 'document' )
-                ->meta( 'meta' );
-            // ->assets( 'font' )
-            // ->assets( 'script' )
-            // ->assets( 'style' )
-            // ->assets( 'link' );
-            $this->content = $document->renderContentHtml();
-        }
+        // if ( 'document' === $this->type ) {
+        //     $document
+        //         ->meta( 'meta.viewport' )
+        //         ->meta( 'document' )
+        //         ->meta( 'robots' )
+        //         ->meta( 'meta' )
+        //         ->assets();
+        //     // ->assets( 'font' )
+        //     // ->assets( 'script' )
+        //     // ->assets( 'style' )
+        //     // ->assets( 'link' );
+        //
+        //     $this->content = $document->renderDocumentHtml();
+        // }
+        // else {
+        //     $document
+        //         ->meta( 'document' )
+        //         ->meta( 'meta' );
+        //     // ->assets( 'font' )
+        //     // ->assets( 'script' )
+        //     // ->assets( 'style' )
+        //     // ->assets( 'link' );
+        //     $this->content = $document->renderContentHtml();
+        // }
 
         $event->getResponse()->setContent( $this->content );
         $this->setResponseHeaders( $event );

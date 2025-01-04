@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\Framework\DependencyInjection;
+namespace Core\Framework;
 
 use Cache\MemoizationCache;
 use Core\Symfony\DependencyInjection\Autodiscover;

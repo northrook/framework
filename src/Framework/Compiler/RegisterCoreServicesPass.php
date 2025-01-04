@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Core\Framework\Compiler;
 
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Reference};
-use Core\Symfony\DependencyInjection\{CompilerPass, ServiceContainerInterface};
+use Core\Symfony\DependencyInjection\CompilerPass;
 use Core\Symfony\Console\Output;
+use Core\Symfony\Interface\ServiceContainerInterface;
 use function Support\implements_interface;
 
 final class RegisterCoreServicesPass extends CompilerPass

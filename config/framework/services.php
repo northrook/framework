@@ -9,8 +9,8 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\Action\Headers;
+use Core\View\Document;
 use Core\View\Parameters;
-use Core\Http\Response\{Document};
 use Core\Pathfinder;
 use Core\Framework\Settings;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;

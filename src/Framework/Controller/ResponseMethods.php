@@ -213,10 +213,8 @@ trait ResponseMethods
         return new NotFoundHttpException( $message, $previous );
     }
 
-
     private function urlGenerator() : UrlGeneratorInterface
     {
         return $this->serviceLocator( UrlGeneratorInterface::class );
     }
-
 }

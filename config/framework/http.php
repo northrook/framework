@@ -8,14 +8,20 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\Http\Response\Document;
-use Core\View\{DocumentView};
-use Core\Service\{AssetManager};
 use Northrook\Clerk;
+use Core\Service\AssetManager;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
+            // Cache
+        ->set( 'cache.core.http_event', PhpFilesAdapter::class )
+        ->arg( '$namespace', 'http_event' )
+        ->arg( '$defaultLifetime', 0 )
+        ->arg( '$directory', '%dir.cache%' )
+        ->arg( '$appendOnly', true )
+        ->tag( 'cache.pool' )
+
             // Cache
         ->set( 'cache.core.request_response', PhpFilesAdapter::class )
         ->args( ['memoization', 0, '%dir.cache%'] )
@@ -30,14 +36,14 @@ return static function( ContainerConfigurator $container ) : void {
         ->set( \Core\Http\ResponseListener::class )
         ->args( [service( Clerk::class ), service( 'cache.core.request_response' ), service( 'logger' )] )
         ->tag( 'kernel.event_subscriber' )
-        ->tag( 'monolog.logger', ['channel' => 'http'] )
+        ->tag( 'monolog.logger', ['channel' => 'http'] );
 
-            // Sending HTML Response
-        ->set( DocumentView::class )
-        ->args(
-            [
-                service( Document::class ),
-                service( AssetManager::class ),
-            ],
-        )->tag( 'core.service_locator' );
+    // Sending HTML Response
+    // ->set( DocumentView::class )
+    // ->args(
+    //     [
+    //         service( Document::class ),
+    //         service( AssetManager::class ),
+    //     ],
+    // )->tag( 'core.service_locator' );
 };
