@@ -8,6 +8,7 @@ use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
 use Core\Symfony\DependencyInjection\Autodiscover;
 use Core\Symfony\Interface\ServiceContainerInterface;
+use Core\View\{Document, TemplateEngine};
 use Core\View\Template\DocumentView;
 use Northrook\Clerk;
 use Psr\Log\LoggerInterface;
@@ -19,6 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\{ExceptionEvent, KernelEvent, RequestEvent, ResponseEvent, ViewEvent};
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Contracts\Cache\CacheInterface;
 use function Support\explode_class_callable;
@@ -45,14 +47,25 @@ final class HttpEventHandler implements EventSubscriberInterface
 
     private readonly bool $ignoredEvent;
 
+    /** @var 'content'|'document'|'string'|'template' */
+    private string $type = 'document';
+
+    private readonly Document $document;
+
+    private string $content;
+
     public function __construct(
         protected readonly DocumentView    $documentView, // lazy
+        #[Autowire( service : TemplateEngine::class )]
+        protected readonly TemplateEngine  $templateEngine,
         // config\framework\http
         #[Autowire( service : 'cache.core.http_event' )]
         protected readonly CacheInterface  $cache,
         // #[Autowire( service : 'logger' )] // autodiscover
         protected readonly LoggerInterface $logger,
-    ) {}
+    ) {
+        $this->document = $this->documentView->document;
+    }
 
     public static function getSubscribedEvents() : array
     {
@@ -131,13 +144,96 @@ final class HttpEventHandler implements EventSubscriberInterface
             return;
         }
 
+        Clerk::event( __METHOD__, $this::class );
+
+        $this->setResponseContent( $event );
+
+        $this->documentView->content( $this->content );
+
+        // $this->content = $document->render();
+
+        $event->getResponse()->setContent( $this->documentView->render() );
+
         dump( \spl_object_id( $this ).'\\'.__METHOD__.'@32', $this, $event );
+        Clerk::stop( __METHOD__ );
     }
 
     public function onKernelException( ExceptionEvent $event ) : void
     {
         dump( \spl_object_id( $this ).'\\'.__METHOD__, $this, $event );
     }
+
+    // .. Response
+
+    final protected function setResponseContent( ResponseEvent $event ) : void
+    {
+        if ( isset( $this->content ) ) {
+            $this->logger->warning(
+                '{method} called repeatedly, but will only be handled {once}.',
+                ['method' => __METHOD__],
+            );
+            return;
+        }
+
+        $this->content = (string) $event->getResponse()->getContent() ?: '';
+
+        // If $content any whitespace, we can safely assume it not a template string
+        if ( \str_contains( $this->content, ' ' ) ) {
+            $this->type = 'string';
+            return;
+        }
+
+        /** @var string $use */
+        $use = $event->getRequest()->attributes->get( 'use_template' );
+
+        /** @var array{_document_template: ?string, _content_template: ?string} $templates */
+        $templates = $event->getRequest()->attributes->get( 'templates' );
+
+        if ( \str_ends_with( $this->content, '.latte' ) ) {
+            $template = $this->content;
+
+            $this->type = $use ? 'document' : 'template';
+        }
+        else {
+            if ( ! $template = $templates[$use] ?? null ) {
+                throw new NotFoundHttpException( 'Template "'.$this->content.'" not found.' );
+            }
+
+            $this->type = match ( $use ) {
+                '_document_template' => 'document',
+                '_content_template'  => 'content',
+                default              => 'template',
+            };
+        }
+
+        $this->templateEngine->clearTemplateCache();
+
+        $this->content = $this->templateEngine->render( $template );
+    }
+
+    final protected function setResponseHeaders( ResponseEvent $event ) : void
+    {
+        // Always remove the identifying header
+        // \header_remove( 'X-Powered-By' );
+
+        $event->getResponse()->headers->set( 'Content-Type', 'text/html', false );
+
+        if ( 'content' === $this->type ) {
+            return;
+        }
+
+        // Document only headers
+
+        if ( $this->document->isPublic ) {
+            $event->getResponse()->headers->set( 'X-Robots-Tag', 'noindex, nofollow' );
+        }
+
+        // TODO : X-Robots
+        // TODO : lang
+        // TODO : cache
+    }
+
+    // :: Response
 
     private function ignoredEvent( KernelEvent $event ) : bool
     {
@@ -223,7 +319,7 @@ final class HttpEventHandler implements EventSubscriberInterface
         $controllerTemplate = Reflect::getAttribute( $controller, Template::class );
         $methodTemplate     = Reflect::getAttribute( [$controller, $method], Template::class );
 
-        return [$controller, $method, $controllerTemplate?->name ?? false, $methodTemplate?->name ?? false];
+        return [$controller, $method, $controllerTemplate->name ?? false, $methodTemplate->name ?? false];
     }
 
     private function resolveViewEventResponse( mixed $content ) : Response
