@@ -6,6 +6,7 @@ namespace Core;
 
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
+use Core\Service\AssetManager;
 use Core\Symfony\DependencyInjection\Autodiscover;
 use Core\Symfony\Interface\ServiceContainerInterface;
 use Core\View\{Document, TemplateEngine};
@@ -58,6 +59,7 @@ final class HttpEventHandler implements EventSubscriberInterface
         protected readonly DocumentView    $documentView, // lazy
         #[Autowire( service : TemplateEngine::class )]
         protected readonly TemplateEngine  $templateEngine,
+        protected readonly AssetManager    $assetManager,
         // config\framework\http
         #[Autowire( service : 'cache.core.http_event' )]
         protected readonly CacheInterface  $cache,
@@ -146,13 +148,15 @@ final class HttpEventHandler implements EventSubscriberInterface
 
         Clerk::event( __METHOD__, $this::class );
 
+        dump( $this->document );
+
         $this->setResponseContent( $event );
 
-        $this->documentView->content( $this->content );
+        $this->documentView->setInnerHtml( $this->content );
 
         // $this->content = $document->render();
 
-        $event->getResponse()->setContent( $this->documentView->render() );
+        $event->getResponse()->setContent( (string) $this->documentView );
 
         dump( \spl_object_id( $this ).'\\'.__METHOD__.'@32', $this, $event );
         Clerk::stop( __METHOD__ );

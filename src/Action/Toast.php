@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Core\Action;
 
 use Core\Symfony\DependencyInjection\Autodiscover;
 use Support\Interface\ActionInterface;
 use Core\Service\ToastService;
-use JetBrains\PhpStorm\ExpectedValues;
 
 #[Autodiscover]
 final class Toast implements ActionInterface
@@ -36,7 +37,7 @@ final class Toast implements ActionInterface
      * @return void
      */
     public function __invoke(
-        #[ExpectedValues( values : self::STATUS )] string            $status,
+        string            $status,
         string            $message,
         null|string|array $description = null,
         ?int              $timeout = null,

@@ -57,7 +57,6 @@ final class CoreBundle extends AbstractBundle
         '../config/framework/memoization.php',
         '../config/framework/http.php',
         '../config/framework/assets.php',
-        // '../config/framework/response.php',
         '../config/framework/services.php',
         '../config/framework/settings.php',
         '../config/framework/pathfinder.php',
