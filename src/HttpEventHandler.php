@@ -6,10 +6,10 @@ namespace Core;
 
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
-use Core\Service\AssetManager;
+use Core\Service\{AssetManager, ToastService};
 use Core\Symfony\DependencyInjection\Autodiscover;
 use Core\Symfony\Interface\ServiceContainerInterface;
-use Core\View\{Document, TemplateEngine};
+use Core\View\{ComponentFactory, Document, TemplateEngine};
 use Core\View\Template\DocumentView;
 use Northrook\Clerk;
 use Psr\Log\LoggerInterface;
@@ -56,15 +56,17 @@ final class HttpEventHandler implements EventSubscriberInterface
     private string $content;
 
     public function __construct(
-        protected readonly DocumentView    $documentView, // lazy
+        protected readonly DocumentView     $documentView, // lazy
         #[Autowire( service : TemplateEngine::class )]
-        protected readonly TemplateEngine  $templateEngine,
-        protected readonly AssetManager    $assetManager,
+        protected readonly TemplateEngine   $templateEngine,
+        protected readonly ComponentFactory $componentFactory,
+        protected readonly AssetManager     $assetManager,
+        protected readonly ToastService     $toastService,
         // config\framework\http
         #[Autowire( service : 'cache.core.http_event' )]
-        protected readonly CacheInterface  $cache,
+        protected readonly CacheInterface   $cache,
         // #[Autowire( service : 'logger' )] // autodiscover
-        protected readonly LoggerInterface $logger,
+        protected readonly LoggerInterface  $logger,
     ) {
         $this->document = $this->documentView->document;
     }
@@ -148,9 +150,14 @@ final class HttpEventHandler implements EventSubscriberInterface
 
         Clerk::event( __METHOD__, $this::class );
 
-        dump( $this->document );
+        foreach ( $this->document->getRegisteredAssetKeys() as $assetKey ) {
+            $this->documentView->head->injectHtml(
+                $this->assetManager->get( $assetKey )->getHTML(),
+            );
+        }
 
         $this->setResponseContent( $event );
+        $this->handleToastMessages();
 
         $this->documentView->setInnerHtml( $this->content );
 
@@ -213,6 +220,24 @@ final class HttpEventHandler implements EventSubscriberInterface
         $this->templateEngine->clearTemplateCache();
 
         $this->content = $this->templateEngine->render( $template );
+    }
+
+    final protected function handleToastMessages() : void
+    {
+        if ( ! $this->toastService->hasMessages() ) {
+            return;
+        }
+
+        $toasts = [];
+
+        foreach ( $this->toastService->getAllMessages() as $message ) {
+            $toasts[] = $this->componentFactory->render(
+                'view.component.toast',
+                $message->getArguments(),
+            );
+        }
+
+        $this->documentView->body->content( $toasts, true );
     }
 
     final protected function setResponseHeaders( ResponseEvent $event ) : void

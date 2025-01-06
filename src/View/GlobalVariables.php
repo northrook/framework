@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\View\Latte;
+namespace Core\View;
 
 use JetBrains\PhpStorm\Deprecated;
 use Support\{PropertyAccessor, Time};
