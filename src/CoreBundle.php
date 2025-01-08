@@ -54,9 +54,8 @@ final class CoreBundle extends AbstractBundle
 
     /** @var string[] */
     private const array CONFIG = [
-        '../config/framework/memoization.php',
-        '../config/framework/http.php',
         '../config/framework/assets.php',
+        '../config/framework/cache.php',
         '../config/framework/services.php',
         '../config/framework/settings.php',
         '../config/framework/pathfinder.php',

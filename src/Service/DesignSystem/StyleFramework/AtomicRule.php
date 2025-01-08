@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Core\Service\DesignSystem\StyleFramework;
 
-use Support\Str;
+use Support\{Escape, Str};
 
 function escapeProperty( string $property ) : string
 {
-    return \trim( Str::escape( $property, ':' ) );
+    return \trim( Escape::string( $property, ':' ) );
 }
 
 abstract class AtomicRule
@@ -17,9 +17,7 @@ abstract class AtomicRule
 
     protected array $rules = [];
 
-    final private function __construct()
-    {
-    }
+    final private function __construct() {}
 
     abstract protected function variables() : array;
 

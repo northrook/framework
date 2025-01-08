@@ -19,7 +19,13 @@ use Stringable;
 use Support\Reflect;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\{ExceptionEvent, KernelEvent, RequestEvent, ResponseEvent, ViewEvent};
+use Symfony\Component\HttpKernel\Event\{ExceptionEvent,
+    KernelEvent,
+    RequestEvent,
+    ResponseEvent,
+    TerminateEvent,
+    ViewEvent
+};
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -36,7 +42,7 @@ final class HttpEventHandler implements EventSubscriberInterface
     /** @var string the current `_route` name */
     protected string $route;
 
-    /** @var class-string|false The `Controller` used. */
+    /** @var class-string<Controller>|false The `Controller` used. */
     protected string|false $controller;
 
     /** @var false|string The `Controller::method` called. */
@@ -56,7 +62,7 @@ final class HttpEventHandler implements EventSubscriberInterface
     private string $content;
 
     public function __construct(
-        protected readonly DocumentView     $documentView, // lazy
+        protected readonly DocumentView     $documentView,
         #[Autowire( service : TemplateEngine::class )]
         protected readonly TemplateEngine   $templateEngine,
         protected readonly ComponentFactory $componentFactory,
@@ -78,6 +84,7 @@ final class HttpEventHandler implements EventSubscriberInterface
             KernelEvents::VIEW      => 'onKernelView',
             KernelEvents::RESPONSE  => ['onKernelResponse', 32],
             KernelEvents::EXCEPTION => 'onKernelException',
+            KernelEvents::TERMINATE => 'onKernelTerminate',
         ];
     }
 
@@ -152,26 +159,31 @@ final class HttpEventHandler implements EventSubscriberInterface
 
         foreach ( $this->document->getRegisteredAssetKeys() as $assetKey ) {
             $this->documentView->head->injectHtml(
-                $this->assetManager->get( $assetKey )->getHTML(),
+                $this->assetManager->getAssetHtml( $assetKey )->getHTML(),
             );
         }
 
         $this->setResponseContent( $event );
+
         $this->handleToastMessages();
 
         $this->documentView->setInnerHtml( $this->content );
 
-        // $this->content = $document->render();
-
         $event->getResponse()->setContent( (string) $this->documentView );
 
-        dump( \spl_object_id( $this ).'\\'.__METHOD__.'@32', $this, $event );
+        $this->setResponseHeaders( $event );
+
         Clerk::stop( __METHOD__ );
     }
 
     public function onKernelException( ExceptionEvent $event ) : void
     {
         dump( \spl_object_id( $this ).'\\'.__METHOD__, $this, $event );
+    }
+
+    public function onKernelTerminate( TerminateEvent $event ) : void
+    {
+        $this->assetManager->factory->manifest->commit();
     }
 
     // .. Response
@@ -295,9 +307,13 @@ final class HttpEventHandler implements EventSubscriberInterface
             return true;
         }
 
-        // [$this->controller, $this->action] = $this->resolveEventController( $event );
         try {
-            [$this->controller, $this->action, $this->contentTemplate, $this->documentTemplate] = $this->cache->get(
+            [
+                $this->controller,
+                $this->action,
+                $this->contentTemplate,
+                $this->documentTemplate,
+            ] = $this->cache->get(
                 \str_replace( [':', '-', '@', '&'], '.', $this->route ).'.http_event',
                 fn() => $this->resolveEventController( $event ),
             );
@@ -312,7 +328,7 @@ final class HttpEventHandler implements EventSubscriberInterface
     /**
      * @param KernelEvent $event
      *
-     * @return array{class-string|false,false|string,false|string,false|string}
+     * @return array{class-string<Controller>|false,false|string,false|string,false|string}
      */
     private function resolveEventController( KernelEvent $event ) : array
     {

@@ -14,7 +14,6 @@ use Core\Service\AssetManager;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
-
             // Asset Manager Services
         ->defaults()
         ->autoconfigure()
@@ -22,20 +21,27 @@ return static function( ContainerConfigurator $container ) : void {
             //
             // Framework Asset Manager
         ->set( AssetManager::class )
-        ->arg( 0, service( AssetFactory::class ) )
-        ->arg( 1, null ) // $cache
-        ->arg( 2, service( 'logger' ) )
-        ->tag( 'core.service_locator' )
-            //
-            // Factory & Locator
-        ->set( AssetFactory::class )
-        ->arg( 0, service( AssetManifest::class ) )
-        ->arg( 1, service( Pathfinder::class ) )
-        ->arg( 2, null ) // $settings
-        ->arg( 3, service( 'logger' ) )
-            //
-            // Manifest
-        ->set( AssetManifest::class )
-        ->arg( 0, param( 'path.asset_manifest' ) )
-        ->arg( 1, service( 'logger' ) );
+        ->args(
+            [
+                service( AssetFactory::class ),
+                null, // cache
+                service( 'logger' ),
+            ],
+        )
+        ->tag( 'core.service_locator' );
+    //
+    // Factory & Locator
+    // ->set( AssetFactory::class )
+    // ->args(
+    //     [
+    //         service( AssetManifest::class ),
+    //         service( Pathfinder::class ),
+    //         service( 'logger' ),
+    //     ],
+    // );
+    //
+    // Manifest
+    // ->set( AssetManifest::class )
+    // ->arg( 0, param( 'path.asset_manifest' ) )
+    // ->arg( 1, service( 'logger' ) );
 };

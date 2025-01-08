@@ -47,6 +47,11 @@ final class Variables extends AtomicRule
         'text-small' => '.875rem',
     ];
 
+    protected const array BOX = [
+        'radius-inline' => '.2em',
+        'radius-box'    => '.5rem',
+    ];
+
     // TODO : Generate dynamic sizes:
     // ?      w:16   -> style="--width:  16px"
     // ?      h:1rem -> style="--height: 1rem"
