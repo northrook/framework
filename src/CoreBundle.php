@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Core;
 
 use Core\Symfony\Compiler\{AutodiscoverServicesPass, AutowireActionsPass};
-use Core\Assets\AssetManifest;
+use Core\View\Compiler\{RegisterComponentAssetsPass, RegisterViewComponentsPass};
 use Override;
-use Core\View\Compiler\RegisterViewComponentsPass;
 use Core\Framework\Compiler\{ApplicationConfigPass,
     RegisterCoreServicesPass,
     SettingsCompilerPass
 };
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -85,19 +85,20 @@ final class CoreBundle extends AbstractBundle
     #[Override]
     public function build( ContainerBuilder $container ) : void
     {
-        $assetManifestPath = $container->getParameter( 'dir.assets.manifest' );
-        $assetManifest     = new AssetManifest( $assetManifestPath );
-        dump(
-            $assetManifestPath,
-            $assetManifest,
-        );
         $container
-            ->addCompilerPass( new AutodiscoverServicesPass() )
+            ->addCompilerPass(
+                pass     : new AutodiscoverServicesPass(),
+                priority : 1_024,
+            )
             ->addCompilerPass( new AutowireActionsPass() )
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
             ->addCompilerPass( new SettingsCompilerPass() )
-            ->addCompilerPass( new RegisterViewComponentsPass( $assetManifest ) );
+            ->addCompilerPass( new RegisterViewComponentsPass() )
+            ->addCompilerPass(
+                pass : new RegisterComponentAssetsPass(),
+                type : PassConfig::TYPE_OPTIMIZE,
+            );
     }
 
     /**
