@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core;
 
 use Core\Symfony\Compiler\{AutodiscoverServicesPass, AutowireActionsPass};
+use Core\Assets\AssetManifest;
 use Override;
 use Core\View\Compiler\RegisterViewComponentsPass;
 use Core\Framework\Compiler\{ApplicationConfigPass,
@@ -84,13 +85,19 @@ final class CoreBundle extends AbstractBundle
     #[Override]
     public function build( ContainerBuilder $container ) : void
     {
+        $assetManifestPath = $container->getParameter( 'dir.assets.manifest' );
+        $assetManifest     = new AssetManifest( $assetManifestPath );
+        dump(
+            $assetManifestPath,
+            $assetManifest,
+        );
         $container
             ->addCompilerPass( new AutodiscoverServicesPass() )
             ->addCompilerPass( new AutowireActionsPass() )
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
             ->addCompilerPass( new SettingsCompilerPass() )
-            ->addCompilerPass( new RegisterViewComponentsPass() );
+            ->addCompilerPass( new RegisterViewComponentsPass( $assetManifest ) );
     }
 
     /**
