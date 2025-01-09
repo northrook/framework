@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\{Pathfinder, PathfinderCache};
+use Core\{Pathfinder, PathfinderCache, PathfinderInterface};
 use Core\Symfony\DependencyInjection\CompilerPass;
 
 return static function( ContainerConfigurator $container ) : void {
@@ -23,7 +23,7 @@ return static function( ContainerConfigurator $container ) : void {
                 service( 'logger' ), // $logger = null,
             ],
         )
-        ->tag( 'monolog.logger', ['channel' => 'pathfinder.cache'] )
+        ->tag( 'monolog.logger', ['channel' => 'pathfinder'] )
             //
             // Find and return registered paths
         ->set( Pathfinder::class )
@@ -36,5 +36,6 @@ return static function( ContainerConfigurator $container ) : void {
                 // $logger
             ],
         )
-        ->tag( 'monolog.logger', ['channel' => 'pathfinder'] );
+        ->tag( 'monolog.logger', ['channel' => 'pathfinder'] )
+        ->alias( PathfinderInterface::class, Pathfinder::class );
 };
