@@ -17,7 +17,7 @@ toast {
   transform       : translateX(0);
   opacity         : 1;
 
-  backdrop-filter : blur(5px);
+  backdrop-filter : blur(12px);
   box-shadow      : 1px 1px 1rem -.125rem var(--baseline-500);
 }
 
