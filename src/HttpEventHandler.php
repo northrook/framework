@@ -158,9 +158,13 @@ final class HttpEventHandler implements EventSubscriberInterface
         Clerk::event( __METHOD__, $this::class );
 
         foreach ( $this->document->getRegisteredAssetKeys() as $assetKey ) {
-            $this->documentView->head->injectHtml(
-                $this->assetManager->getAssetHtml( $assetKey )->getHTML(),
-            );
+            $assetModel = $this->assetManager->getAssetHtml( $assetKey );
+            if ( ! $assetModel ) {
+                $this->logger->warning( \sprintf( 'Asset %s not found', $assetKey ) );
+            }
+            else {
+                $this->documentView->head->injectHtml( $assetModel, $assetKey );
+            }
         }
 
         $this->setResponseContent( $event );
