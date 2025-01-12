@@ -40,10 +40,10 @@ final class Variables extends AtomicRule
         'weight-heading' => '500',
 
         'text-body'  => '1rem',
-        'text-h1'    => 'min(max(1.8rem, 6vw), 3.05rem)',
-        'text-h2'    => 'min(max(1.6rem, 6vw), 2rem)',
-        'text-h3'    => 'min(max(1.25rem, 6vw), 1.8rem)',
-        'text-h4'    => 'min(max(1.1rem, 6vw), 1.5rem)',
+        'text-h1'    => 'min(max(1.8em, 6vw), 3.05rem)',
+        'text-h2'    => 'min(max(1.6em, 6vw), 2rem)',
+        'text-h3'    => 'min(max(1.25em, 6vw), 1.5rem)',
+        'text-h4'    => 'min(max(1.1em, 6vw), 1.2rem)',
         'text-small' => '.875rem',
     ];
 

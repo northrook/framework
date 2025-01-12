@@ -51,7 +51,7 @@ pre {
 }
 
 .hl-variable {
-  color : #000000;
+  color : #000;
 }
 
 .hl-comment {
@@ -85,7 +85,7 @@ pre {
 .hl-gutter {
   display      : inline-block;
   font-size    : 0.9em;
-  color        : #555555;
+  color        : #555;
   padding      : 0 1ch;
   margin-right : 1ch;
   user-select  : none;
@@ -93,11 +93,11 @@ pre {
 
 .hl-gutter-addition {
   background-color : #34a853;
-  color            : #ffffff;
+  color            : #fff;
 }
 
 .hl-gutter-deletion {
   background-color : #ea4334;
-  color            : #ffffff;
+  color            : #fff;
 }
 g

@@ -33,6 +33,7 @@
   padding                     : 0;
   min-width                   : 0;
   font                        : inherit;
+  font-size                   : var(--text-body);
   border                      : 0;
   letter-spacing              : inherit;
   color                       : inherit;

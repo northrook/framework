@@ -19,6 +19,7 @@
   font-family  : var(--font-heading), sans-serif;
   font-weight  : var(--weight-heading);
   line-height  : var(--heading-line-height, 2em);
+  gap          : var(--heading-group-gap);
 }
 
 /* Evenly distribute line length */
