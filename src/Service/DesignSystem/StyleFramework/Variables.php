@@ -29,7 +29,7 @@ final class Variables extends AtomicRule
 
     protected const array TYPOGRAPHY = [
         'font-body'    => 'Inter',
-        'font-heading' => 'Times New Roman',
+        'font-heading' => 'Inter',
         'font-code'    => 'monospace',
         'line-height'  => '1.6em',
         'line-spacing' => '.5em', // spacing between inline elements

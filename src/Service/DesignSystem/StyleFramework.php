@@ -24,11 +24,6 @@ final class StyleFramework
           overflow-wrap : break-word;
           text-wrap     : pretty;
         }
-        .heading {
-          --color: var(--primary-500);
-          font-family   : var(--font-heading), sans-serif;
-          font-weight   : var(--weight-heading);
-        }
         h1, .h1 {
           font-size : var(--text-h1);
         }

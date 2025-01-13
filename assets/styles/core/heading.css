@@ -1,47 +1,47 @@
-:root {
-  --heading-line-height : 1.5em; /* 1.5 min, 5em max */
-  --heading-group-gap   : 1.5em;
-}
+/*:root {*/
+/*  --heading-line-height : 1.5em; !* 1.5 min, 5em max *!*/
+/*  --heading-group-gap   : 1.5em;*/
+/*}*/
 
-.heading::before {
-  position   : absolute;
-  content    : '';
-  outline    : 1px solid #ff149315;
-  background : #ff149315;
-  inset      : calc(calc(calc(var(--heading-line-height, 2em) - 1em) * -.5) * -1) 0;
-  z-index    : -1;
-}
+/*.heading::before {*/
+/*  position   : absolute;*/
+/*  content    : '';*/
+/*  outline    : 1px solid #ff149315;*/
+/*  background : #ff149315;*/
+/*  inset      : calc(calc(calc(var(--heading-line-height, 2em) - 1em) * -.5) * -1) 0;*/
+/*  z-index    : -1;*/
+/*}*/
 
-/* Single headings */
-.heading {
-  position     : relative;
-  margin-block : calc(calc(var(--heading-line-height, 2em) - 1em) * -.5);
-  font-family  : var(--font-heading), sans-serif;
-  font-weight  : var(--weight-heading);
-  line-height  : var(--heading-line-height, 2em);
-  gap          : var(--heading-group-gap);
-}
+/*!* Single headings *!*/
+/*.heading {*/
+/*  position     : relative;*/
+/*  margin-block : calc(calc(var(--heading-line-height, 2em) - 1em) * -.5);*/
+/*  font-family  : var(--font-heading), sans-serif;*/
+/*  font-weight  : var(--weight-heading);*/
+/*  line-height  : var(--heading-line-height, 2em);*/
+/*  gap          : var(--heading-group-gap);*/
+/*}*/
 
-/* Evenly distribute line length */
-.heading > span {
-  text-wrap : balance;
-  display   : inline-block;
-}
-.heading > span span {
-  text-wrap : pretty;
+/*!* Evenly distribute line length *!*/
+/*.heading > span {*/
+/*  text-wrap : balance;*/
+/*  display   : inline-block;*/
+/*}*/
+/*.heading > span span {*/
+/*  text-wrap : pretty;*/
 
-}
+/*}*/
 
-.heading .subheading {
-  display      : block;
-  margin-block : calc(calc(var(--line-height, 2em) - 1em) * -.5);
-  font-size    : var(--text-h4);
-  line-height  : var(--line-height, 2em);
-}
+/*.heading .subheading {*/
+/*  display      : block;*/
+/*  margin-block : calc(calc(var(--line-height, 2em) - 1em) * -.5);*/
+/*  font-size    : var(--text-h4);*/
+/*  line-height  : var(--line-height, 2em);*/
+/*}*/
 
-/* Headings with sub-headings */
-hgroup {
-  display        : flex;
-  flex-direction : column;
-  gap            : var(--heading-group-gap);
-}
+/*!* Headings with sub-headings *!*/
+/*hgroup {*/
+/*  display        : flex;*/
+/*  flex-direction : column;*/
+/*  gap            : var(--heading-group-gap);*/
+/*}*/
