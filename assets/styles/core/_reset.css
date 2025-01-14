@@ -33,7 +33,6 @@
   padding                     : 0;
   min-width                   : 0;
   font                        : inherit;
-  font-size                   : var(--text-body);
   border                      : 0;
   letter-spacing              : inherit;
   color                       : inherit;
@@ -48,6 +47,7 @@ html {
   -moz-text-size-adjust    : none;
   -webkit-text-size-adjust : none;
   /* -webkit-text-size-adjust: 100%; */
+  font-size                : var(--text-body);
   text-size-adjust         : none;
   text-rendering           : optimizeLegibility;
   /* color-scheme: dark light;  */ /* We probably do not want this */

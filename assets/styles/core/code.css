@@ -15,7 +15,7 @@ code, kbd {
 
 /*block*/
 pre {
-
+  padding: .2em .5ch;
 }
 
 .hl-keyword {

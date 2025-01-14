@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Core\Service\DesignSystem\StyleFramework;
 
 /**
+ * Resources:
+ * - [What Makes a Typeface Legible? Ask Science](https://www.youtube.com/watch?v=XXkEqYp9jyA)
+ *
  * @internal
  * @author Martin Nielsen <mn@northrook.com>
  */
-final class Variables extends AtomicRule
+final class Typography extends AtomicRule
 {
     protected const array DOCUMENT = [
         // The size of something
@@ -49,7 +52,7 @@ final class Variables extends AtomicRule
 
     protected const array BOX = [
         'radius-inline' => '.2em',
-        'radius-block'  => '.5rem',
+        'radius-box'    => '.5rem',
     ];
 
     // TODO : Generate dynamic sizes:
@@ -75,7 +78,6 @@ final class Variables extends AtomicRule
         return [
             ...$this::DOCUMENT,
             ...$this::TYPOGRAPHY,
-            ...$this::BOX,
             ...$this::SIZES,
         ];
     }

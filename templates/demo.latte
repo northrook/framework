@@ -13,12 +13,12 @@
     <article>
         <header class="hero">
             <h1>
-                <icon:success class="decoration" />
+                {*                <icon:success class="decoration" />*}
                 <small>Definitive Guide:</small>
-                Make a Daily Productive Working Flow.
+                Make a Daily <em>Productive</em> Working Flow.
             </h1>
         </header>
-        <section class="flow">
+        <section class="content">
             <h2>Using a Query</h2>
             <p>
                 A <a href="#" target="_blank" rel="noreferrer noopener">CSS</a>
@@ -35,7 +35,7 @@
                 for the sign his support.
             </p>
             <figure>
-                <img src="https://flowbite.s3.amazonaws.com/typography-plugin/typography-image-1.png" alt="">
+                <img src="/assets/images/canyon.jpg" alt="">
                 <figcaption>Digital art by Anonymous</figcaption>
             </figure>
             <p>
@@ -45,7 +45,7 @@
                 <a href="#" target="_blank" rel="noreferrer noopener"><code lang="css">::after</code></a>.
             </p>
         </section>
-        <section class="flow">
+        <section class="content">
             <h2>
                 Trivia &amp; Notes
             </h2>
@@ -62,11 +62,11 @@
                 <code:css>.tutorial</code:css>
                 :
             </p>
-            <code:css:block>
+            <pre>
                 article:not(#featured):not(.tutorial) {
-                /* style the articles that match */
+                    /* style the articles that match */
                 }
-            </code:css:block>
+            </pre>
             <p>Just like other pseudo-elements and pseudo-class selectors, <code>:not()</code> can
                 be chained with other pseudo-classes and pseudo-elements. For example, the following
                 will add a “New!” word to list items that do not have a <code>.old</code> class
@@ -74,17 +74,17 @@
                 <a href="#" target="_blank" rel="noreferrer noopener"><code>::after</code></a>
                 pseudo-element:
             </p>
-            <code:css:block>
+            <pre>
                 li:not(.old)::after {
-                content: "New!";
-                color: deepPink;
+                    content: "New!";
+                    color: deepPink;
                 }
-            </code:css:block>
+            </pre>
             <p>
                 You can see a live demo in the Live Demo section below.
             </p>
         </section>
-        <section class="flow">
+        <section class="content">
             <h2>On the Specificity of Selectors</h2>
             <p>
                 The specificity of the <code>:not()</code> pseudo-class is the specificity of its
@@ -109,7 +109,7 @@
                 </li>
             </ul>
         </section>
-        <section class="flow">
+        <section class="content">
             <h2>Reference</h2>
             <p>
                 The argument passed to <code>:not()</code> can <em>not</em>, however, be a
