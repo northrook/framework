@@ -7,6 +7,7 @@ namespace Core;
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
 use Core\Service\{AssetManager, ToastService};
+use Core\Http\ErrorResponse;
 use Core\Symfony\DependencyInjection\Autodiscover;
 use Core\Symfony\Interface\ServiceContainerInterface;
 use Core\View\{ComponentFactory, Document, TemplateEngine};
@@ -54,8 +55,8 @@ final class HttpEventHandler implements EventSubscriberInterface
 
     private readonly bool $ignoredEvent;
 
-    /** @var 'content'|'document'|'string'|'template' */
-    private string $type = 'document';
+    /** @var string */
+    private string $type = Template::DOCUMENT;
 
     private readonly Document $document;
 
@@ -80,9 +81,9 @@ final class HttpEventHandler implements EventSubscriberInterface
     public static function getSubscribedEvents() : array
     {
         return [
-            KernelEvents::REQUEST   => 'onKernelRequest',
-            KernelEvents::VIEW      => 'onKernelView',
-            KernelEvents::RESPONSE  => ['onKernelResponse', 32],
+            KernelEvents::REQUEST  => 'onKernelRequest',
+            KernelEvents::VIEW     => 'onKernelView',
+            KernelEvents::RESPONSE => ['onKernelResponse', 32],
             // KernelEvents::EXCEPTION => 'onKernelException',
             KernelEvents::TERMINATE => 'onKernelTerminate',
         ];
@@ -111,8 +112,8 @@ final class HttpEventHandler implements EventSubscriberInterface
         $event->getRequest()->attributes->set( 'view-type', $htmx ? Template::CONTENT : Template::DOCUMENT );
         $event->getRequest()->attributes->add(
             [
-                '_view_document' => $this->documentTemplate,
-                '_view_template' => $this->contentTemplate,
+                Template::DOCUMENT => $this->documentTemplate,
+                Template::CONTENT  => $this->contentTemplate,
             ],
         );
 
@@ -210,27 +211,21 @@ final class HttpEventHandler implements EventSubscriberInterface
             return;
         }
 
-        /** @var string $use */
-        $use = $event->getRequest()->attributes->get( 'use_template' );
+        $this->type = (string) $event->getRequest()->attributes->get( 'view-type', Template::DOCUMENT );
 
-        /** @var array{_document_template: ?string, _content_template: ?string} $templates */
-        $templates = $event->getRequest()->attributes->get( 'templates' );
+        // dump( $this->content, $event->getRequest()->attributes );
 
-        if ( \str_ends_with( $this->content, '.latte' ) ) {
-            $template = $this->content;
+        $template = match ( true ) {
+            \str_ends_with( $this->content, '.latte' ) => $this->content,
+            Template::CONTENT  === $this->type          => $this->contentTemplate,
+            Template::DOCUMENT === $this->type         => $this->documentTemplate,
+            default                                    => false,
+        };
 
-            $this->type = $use ? 'document' : 'template';
-        }
-        else {
-            if ( ! $template = $templates[$use] ?? null ) {
-                throw new NotFoundHttpException( 'Template "'.$this->content.'" not found.' );
-            }
-
-            $this->type = match ( $use ) {
-                '_document_template' => 'document',
-                '_content_template'  => 'content',
-                default              => 'template',
-            };
+        if ( ! $template ) {
+            throw new NotFoundHttpException(
+                'Template "'.$this->controller.'::'.$this->action.'" not found.',
+            );
         }
 
         $this->templateEngine->clearTemplateCache();
@@ -263,7 +258,7 @@ final class HttpEventHandler implements EventSubscriberInterface
 
         $event->getResponse()->headers->set( 'Content-Type', 'text/html', false );
 
-        if ( 'content' === $this->type ) {
+        if ( Template::CONTENT === $this->type ) {
             return;
         }
 
@@ -288,6 +283,15 @@ final class HttpEventHandler implements EventSubscriberInterface
 
         // Ignore raised Exceptions
         if ( $event instanceof ExceptionEvent ) {
+            $this->logger->info(
+                'Skipped event {event}.',
+                ['event' => $event],
+            );
+            return true;
+        }
+
+        // Ignore Error Responses
+        if ( $event instanceof ResponseEvent && $event->getResponse() instanceof ErrorResponse ) {
             $this->logger->info(
                 'Skipped event {event}.',
                 ['event' => $event],

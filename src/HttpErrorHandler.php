@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Core;
 
-use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
 use Core\Service\{AssetManager, ToastService};
+use Core\Http\ErrorResponse;
 use Core\Symfony\DependencyInjection\Autodiscover;
 use Core\View\{ComponentFactory, Document, TemplateEngine};
 use Core\View\Template\DocumentView;
@@ -25,27 +25,10 @@ use Symfony\Contracts\Cache\CacheInterface;
 )]
 final class HttpErrorHandler implements EventSubscriberInterface
 {
-    /** @var string the current `_route` name */
-    protected string $route;
-
-    /** @var class-string<Controller>|false The `Controller` used. */
-    protected string|false $controller;
-
-    /** @var false|string The `Controller::method` called. */
-    protected string|false $action;
-
-    protected string|false $documentTemplate;
-
-    protected string|false $contentTemplate;
-
-    private readonly bool $ignoredEvent;
-
-    /** @var 'content'|'document'|'string'|'template' */
+    /** @var string */
     private string $type = 'document';
 
     private readonly Document $document;
-
-    private string $content;
 
     public function __construct(
         protected readonly DocumentView     $documentView,
@@ -72,10 +55,13 @@ final class HttpErrorHandler implements EventSubscriberInterface
 
     public function onKernelException( ExceptionEvent $event ) : void
     {
-        $content = $this->templateEngine->render( 'error/404.latte' );
-        // $event->
+        $this->type = (string) $event->getRequest()->attributes->get( 'view-type', Template::DOCUMENT );
 
-        dump( \spl_object_id( $this ).'\\'.__METHOD__, $this, $event, $content );
+        $content  = $this->templateEngine->render( 'error/404.latte' );
+        $document = new DocumentView( $this->document );
+        $document->setInnerHtml( $content );
+        $event->setResponse( new ErrorResponse( $document->renderDocument() ) );
+        // dump( \spl_object_id( $this ).'\\'.__METHOD__, $this, $event, $content );
     }
 
     final protected function handleToastMessages() : void
