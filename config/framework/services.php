@@ -9,10 +9,8 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Core\Action\Headers;
-use Core\View\Document;
-use Core\View\Parameters;
+use Core\View\{Document, Parameters};
 use Core\Pathfinder;
-use Core\Framework\Settings;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -36,7 +34,7 @@ return static function( ContainerConfigurator $container ) : void {
                     // Document::class   => service( Document::class ),
                     Parameters::class => service( Parameters::class ),
                     // Headers::class    => service( Headers::class ),
-                    Settings::class   => service( Settings::class ),
+                    // Settings::class => service( Settings::class ),
 
                     // Symfony
                     RequestStack::class          => service( 'request_stack' ),

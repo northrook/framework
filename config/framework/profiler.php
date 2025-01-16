@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\Framework\Settings;
+// use Core\Framework\Settings;
 use Northrook\Clerk;
 use Core\Framework\Profiler\{ClerkProfiler, ParameterSettingsCollector, PipelineCollector};
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -36,7 +36,12 @@ return static function( ContainerConfigurator $container ) : void {
         ->tag( 'data_collector' )
             //
         ->set( ParameterSettingsCollector::class )
-        ->args( [service( 'parameter_bag' ), service( Settings::class )] )
+        ->args(
+            [
+                service( 'parameter_bag' ),
+                // service( Settings::class )
+            ],
+        )
         ->tag(
             'data_collector',
             [

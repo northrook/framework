@@ -48,16 +48,6 @@ final class StyleFramework
         code, pre {
           tab-size : 4ch;
         }
-        [role=list] {
-          display        : flex;
-          flex-direction : column;
-        }
-        [role=list].right {
-          align-items : flex-end;
-        }
-        [role=list].reverse {
-          flex-direction : column-reverse;
-        }
         .gap {
           gap: var(--gap-row) var(--gap-col);
         }

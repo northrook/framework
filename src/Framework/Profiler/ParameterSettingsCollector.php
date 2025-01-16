@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Core\Framework\Profiler;
 
-use Core\Framework\Settings;
 use Override;
 use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -22,9 +21,8 @@ final class ParameterSettingsCollector extends AbstractDataCollector
 
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
-        private readonly Settings     $settings,
-    ) {
-    }
+        // private readonly Settings     $settings,
+    ) {}
 
     #[Override]
     public function collect( Request $request, Response $response, ?Throwable $exception = null ) : void
@@ -37,11 +35,17 @@ final class ParameterSettingsCollector extends AbstractDataCollector
             $this->data['parameter'][] = $this->setItem( $key, $value );
         }
 
-        foreach ( $this->settings->all() as $key => $value ) {
-            $this->data['setting'][$key] = $this->setItem( $key, $value );
-        }
+        // foreach ( $this->settings->all() as $key => $value ) {
+        //     $this->data['setting'][$key] = $this->setItem( $key, $value );
+        // }
     }
 
+    /**
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return array{label: string, value: null|string}
+     */
     protected function setItem( string $key, mixed $value ) : array
     {
         return [

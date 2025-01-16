@@ -37,7 +37,6 @@
     "northrook/core-symfony": "dev-main",
     "northrook/pathfinder": "dev-main",
     "northrook/assets": "dev-main",
-    "northrook/settings": "dev-main",
     "northrook/view": "dev-main",
     "northrook/view-icons": "dev-main",
     "northrook/view-components": "dev-main",
