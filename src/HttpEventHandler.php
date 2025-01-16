@@ -83,7 +83,7 @@ final class HttpEventHandler implements EventSubscriberInterface
             KernelEvents::REQUEST   => 'onKernelRequest',
             KernelEvents::VIEW      => 'onKernelView',
             KernelEvents::RESPONSE  => ['onKernelResponse', 32],
-            KernelEvents::EXCEPTION => 'onKernelException',
+            // KernelEvents::EXCEPTION => 'onKernelException',
             KernelEvents::TERMINATE => 'onKernelTerminate',
         ];
     }
@@ -180,10 +180,10 @@ final class HttpEventHandler implements EventSubscriberInterface
         Clerk::stop( __METHOD__ );
     }
 
-    public function onKernelException( ExceptionEvent $event ) : void
-    {
-        dump( \spl_object_id( $this ).'\\'.__METHOD__, $this, $event );
-    }
+    // public function onKernelException( ExceptionEvent $event ) : void
+    // {
+    //     dump( \spl_object_id( $this ).'\\'.__METHOD__, $this, $event );
+    // }
 
     public function onKernelTerminate( TerminateEvent $event ) : void
     {
