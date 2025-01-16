@@ -93,7 +93,7 @@ final class CoreBundle extends AbstractBundle
             ->addCompilerPass( new AutowireActionsPass() )
             ->addCompilerPass( new RegisterCoreServicesPass() )
             ->addCompilerPass( new ApplicationConfigPass() )
-            ->addCompilerPass( new SettingsCompilerPass() )
+                // ->addCompilerPass( new SettingsCompilerPass() )
             ->addCompilerPass( new RegisterViewComponentsPass() )
             ->addCompilerPass(
                 pass : new RegisterComponentAssetsPass(),
@@ -114,6 +114,18 @@ final class CoreBundle extends AbstractBundle
         ContainerConfigurator $container,
         ContainerBuilder      $builder,
     ) : void {
+        foreach ( CoreBundle::PARAMETERS as $name => $value ) {
+            if ( \is_array( $value ) ) {
+                \assert(
+                    // @phpstan-ignore-next-line | asserts are here to _assert_, we cannot assume type safety
+                    \is_string( $value[0] ) && \is_int( $value[1] ),
+                    CoreBundle::class.'::PARAMETERS only accepts strings, or an array of [__DIR__, LEVEL]',
+                );
+                $value = \dirname( $value[0], $value[1] );
+            }
+            $container->parameters()->set( $name, Pathfinder::normalize( $value ) );
+        }
+
         \array_map( [$container, 'import'], $this::CONFIG );
     }
 }
