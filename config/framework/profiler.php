@@ -19,9 +19,8 @@ return static function( ContainerConfigurator $container ) : void {
         ->args(
             [
                 service( Stopwatch::class ),
-                PHP_SAPI          !== 'cli', // $immutable outside of CLI
-                $container->env() !== 'prod', // never throw on in production
-                param( 'kernel.debug' ), // only enable when debugging
+                service( 'logger' ),
+                param( 'kernel.debug' ), // enabled when debugging, regardless of env
             ],
         )
 

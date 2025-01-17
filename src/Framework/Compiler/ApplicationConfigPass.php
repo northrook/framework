@@ -103,6 +103,10 @@ final class ApplicationConfigPass extends CompilerPass
                 final class Kernel extends HttpKernel
                 {
                     use FrameworkKernel\MicroKernelTrait;
+                       
+                    public function hasContainer(): bool {
+                        return isset( \$this->container );
+                    }
                 }
                 PHP,
             $override,
