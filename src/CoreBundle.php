@@ -58,13 +58,11 @@ final class CoreBundle extends AbstractBundle
         '../config/framework/assets.php',
         '../config/framework/cache.php',
         '../config/framework/services.php',
-        // '../config/framework/settings.php',
         '../config/framework/pathfinder.php',
         '../config/framework/profiler.php',
         '../config/framework/toasts.php',
         '../config/framework/controllers/public.php',
         '../config/view/components.php',
-        // '../config/view/latte.php',
         '../config/view/renderer.php',
     ];
 
