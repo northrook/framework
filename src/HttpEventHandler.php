@@ -228,6 +228,8 @@ final class HttpEventHandler implements EventSubscriberInterface
             );
         }
 
+        $this->assetManager->factory->locator()->scan();
+
         $this->templateEngine->clearTemplateCache();
 
         $this->content = $this->templateEngine->render( $template );

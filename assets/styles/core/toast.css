@@ -1,5 +1,13 @@
 #notifications {
-  max-width : 80vw;
+  --animation-speed : 200ms;
+  max-width         : 80vw;
+}
+
+toast.hidden {
+  opacity       : 0;
+  transform     : translateX(50%);
+  max-height    : 0;
+  margin-bottom : 0;
 }
 
 toast {
@@ -13,7 +21,7 @@ toast {
 
   font-size       : var(--text-body);
 
-  transition      : opacity 200ms ease, transform 200ms ease, max-height 200ms ease, margin 200ms ease, background-color 200ms ease;
+  transition      : opacity var(--animation-speed) ease, transform var(--animation-speed) ease, max-height var(--animation-speed) ease, margin var(--animation-speed) ease, background-color var(--animation-speed) ease;
   transform       : translateX(0);
   opacity         : 1;
 
@@ -36,13 +44,6 @@ toast::before {
 /* Background:Hover */
 toast:hover::before, toast:focus-within::before, toast:focus::before {
   opacity : .95;
-}
-
-toast.hidden {
-  opacity       : 0;
-  transform     : translateX(50%);
-  max-height    : 0;
-  margin-bottom : 0;
 }
 
 

@@ -103,6 +103,7 @@ final class StyleFramework
 
         $this->style = \implode( PHP_EOL, $rules );
 
+        // dump( $this->style);
         return $this;
     }
 

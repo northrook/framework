@@ -95,7 +95,7 @@ final class ToastMessage
     }
 
     /**
-     * @return array{id: string, status: string, message: null|string, description: null|string, timeout: null|int, instances: string[], timestamp: null|int, icon: null|string}
+     * @return array{id: string, status: string, message: null|string, description: null|string, timeout: null|int, instances: string[], timestamp: null|int, icon: null|string, attributes: array<string, string>}
      */
     public function getArguments() : array
     {
@@ -111,6 +111,7 @@ final class ToastMessage
             'instances'   => $this->occurrences,
             'timestamp'   => (int) \array_key_first( $this->occurrences ),
             'icon'        => $this->icon,
+            'attributes'  => ['class' => 'hidden'],
         ];
     }
 

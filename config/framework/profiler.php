@@ -15,13 +15,12 @@ use Symfony\Component\Stopwatch\Stopwatch;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
-            // Stopwatch
         ->set( Clerk::class )
         ->args(
             [
                 service( Stopwatch::class ),
-                true, // single instance
-                true, // throw on reinstantiation attempt
+                PHP_SAPI          !== 'cli', // $immutable outside of CLI
+                $container->env() !== 'prod', // never throw on in production
                 param( 'kernel.debug' ), // only enable when debugging
             ],
         )

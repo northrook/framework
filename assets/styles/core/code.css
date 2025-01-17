@@ -1,8 +1,8 @@
 
 pre, code, kbd {
   font-family      : var(--font-code), monospace;
-  color            : #4c4f69;
-  background-color : #eff1f5;
+  color            : var(--baseline-400);
+  background-color : var(--baseline-800);
 }
 
 
@@ -15,7 +15,10 @@ code, kbd {
 
 /*block*/
 pre {
-  padding: .2em .5ch;
+  padding                 : .5em .75em;
+  border-start-end-radius : var(--radius-block);
+  border-end-end-radius   : var(--radius-block);
+  border-inline-start     : var(--outline) .125em solid;
 }
 
 .hl-keyword {
@@ -51,7 +54,7 @@ pre {
 }
 
 .hl-variable {
-  color : #000;
+  color : #000000;
 }
 
 .hl-comment {
@@ -85,7 +88,7 @@ pre {
 .hl-gutter {
   display      : inline-block;
   font-size    : 0.9em;
-  color        : #555;
+  color        : #555555;
   padding      : 0 1ch;
   margin-right : 1ch;
   user-select  : none;
@@ -93,11 +96,10 @@ pre {
 
 .hl-gutter-addition {
   background-color : #34a853;
-  color            : #fff;
+  color            : #ffffff;
 }
 
 .hl-gutter-deletion {
   background-color : #ea4334;
-  color            : #fff;
+  color            : #ffffff;
 }
-g

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare( strict_types = 1 );
 
 namespace Core\Service\DesignSystem\StyleFramework;
 
@@ -12,7 +12,7 @@ final class Variables extends AtomicRule
 {
     protected const array DOCUMENT = [
         // The size of something
-        'size' => '1em',
+        'size'               => '1em',
         // Spacing between items
         'gap'                => '1rem',
         'gap-row'            => '1rem',
@@ -28,28 +28,28 @@ final class Variables extends AtomicRule
     ];
 
     protected const array TYPOGRAPHY = [
-        'font-body'    => 'Inter',
-        'font-heading' => 'Inter',
-        'font-code'    => 'monospace',
-        'line-height'  => '1.6em',
-        'line-spacing' => '.5em', // spacing between inline elements
-        'line-length'  => '64ch', // limits inline text elements, like p and h#
+            'font-body'    => 'Inter',
+            'font-heading' => 'Inter',
+            'font-code'    => 'monospace',
+            'line-height'  => '1.6em',
+            'line-spacing' => '.5em', // spacing between inline elements
+            'line-length'  => '64ch', // limits inline text elements, like p and h#
 
-        'weight-body'    => '400',
-        'weight-bold'    => '600',
-        'weight-heading' => '500',
+            'weight-body'    => '400',
+            'weight-bold'    => '600',
+            'weight-heading' => '500',
 
-        'text-body'  => '1rem',
-        'text-h1'    => 'min(max(1.8em, 6vw), 3.05rem)',
-        'text-h2'    => 'min(max(1.6em, 6vw), 2rem)',
-        'text-h3'    => 'min(max(1.25em, 6vw), 1.5rem)',
-        'text-h4'    => 'min(max(1.1em, 6vw), 1.2rem)',
-        'text-small' => '.875rem',
+            'text-body'  => '1rem',
+            'text-h1'    => 'min(max(1.8em, 6vw), 3.05rem)',
+            'text-h2'    => 'min(max(1.6em, 6vw), 2rem)',
+            'text-h3'    => 'min(max(1.25em, 6vw), 1.5rem)',
+            'text-h4'    => 'min(max(1.1em, 6vw), 1.2rem)',
+            'text-small' => '.875rem',
     ];
 
     protected const array BOX = [
-        'radius-inline' => '.2em',
-        'radius-block'  => '.5rem',
+            'radius-inline' => '.2em',
+            'radius-block'  => '.5rem',
     ];
 
     // TODO : Generate dynamic sizes:
@@ -73,10 +73,10 @@ final class Variables extends AtomicRule
     protected function variables() : array
     {
         return [
-            ...$this::DOCUMENT,
-            ...$this::TYPOGRAPHY,
-            ...$this::BOX,
-            ...$this::SIZES,
+                ...$this::DOCUMENT,
+                ...$this::TYPOGRAPHY,
+                ...$this::BOX,
+                ...$this::SIZES,
         ];
     }
 
@@ -92,94 +92,107 @@ final class Variables extends AtomicRule
                 default => "--{$size}",
             };
 
-            $sizes["space-h-{$size} > * + *"] = [
-                '--mt'       => $value,
-                'margin-top' => 'var(--mt)',
+            $sizes[ "space-h-{$size} > * + *" ] = [
+                    '--mt'       => $value,
+                    'margin-top' => 'var(--mt)',
             ];
 
-            $sizes["space-v-{$size} > * + *"] = [
-                '--mt'        => $value,
-                'margin-left' => 'var(--mt)',
+            $sizes[ "space-v-{$size} > * + *" ] = [
+                    '--mt'        => $value,
+                    'margin-left' => 'var(--mt)',
             ];
 
-            $sizes["m-{$size}"] = [
-                '--m'    => $value,
-                'margin' => 'var(--m)',
+            $sizes[ "m-{$size}" ]  = [
+                    '--m'    => $value,
+                    'margin' => 'var(--m)',
             ];
-            $sizes["mt-{$size}"] = [
-                '--mt'       => $value,
-                'margin-top' => 'var(--mt)',
+            $sizes[ "mt-{$size}" ] = [
+                    '--mt'       => $value,
+                    'margin-top' => 'var(--mt)',
             ];
-            $sizes["mr-{$size}"] = [
-                '--mr'         => $value,
-                'margin-right' => 'var(--mr)',
+            $sizes[ "mr-{$size}" ] = [
+                    '--mr'         => $value,
+                    'margin-right' => 'var(--mr)',
             ];
-            $sizes["mb-{$size}"] = [
-                '--mb'          => $value,
-                'margin-bottom' => 'var(--mb)',
+            $sizes[ "mb-{$size}" ] = [
+                    '--mb'          => $value,
+                    'margin-bottom' => 'var(--mb)',
             ];
-            $sizes["ml-{$size}"] = [
-                '--ml'        => $value,
-                'margin-left' => 'var(--ml)',
+            $sizes[ "ml-{$size}" ] = [
+                    '--ml'        => $value,
+                    'margin-left' => 'var(--ml)',
             ];
-            $sizes["mh-{$size}"] = [
-                '--mh'         => $value,
-                'margin-left'  => 'var(--mh)',
-                'margin-right' => 'var(--mh)',
+            $sizes[ "mh-{$size}" ] = [
+                    '--mh'         => $value,
+                    'margin-left'  => 'var(--mh)',
+                    'margin-right' => 'var(--mh)',
             ];
-            $sizes["mv-{$size}"] = [
-                '--mv'          => $value,
-                'margin-top'    => 'var(--mv)',
-                'margin-bottom' => 'var(--mv)',
+            $sizes[ "mv-{$size}" ] = [
+                    '--mv'          => $value,
+                    'margin-top'    => 'var(--mv)',
+                    'margin-bottom' => 'var(--mv)',
             ];
-            $sizes["p-{$size}"] = [
-                '--p'     => $value,
-                'padding' => 'var(--p)',
+            $sizes[ "p-{$size}" ]  = [
+                    '--p'     => $value,
+                    'padding' => 'var(--p)',
             ];
-            $sizes["pt-{$size}"] = [
-                '--pt'        => $value,
-                'padding-top' => 'var(--pt)',
+            $sizes[ "pt-{$size}" ] = [
+                    '--pt'        => $value,
+                    'padding-top' => 'var(--pt)',
             ];
-            $sizes["pr-{$size}"] = [
-                '--pr'          => $value,
-                'padding-right' => 'var(--pr)',
+            $sizes[ "pr-{$size}" ] = [
+                    '--pr'          => $value,
+                    'padding-right' => 'var(--pr)',
             ];
-            $sizes["pb-{$size}"] = [
-                '--pb'           => $value,
-                'padding-bottom' => 'var(--pb)',
+            $sizes[ "pb-{$size}" ] = [
+                    '--pb'           => $value,
+                    'padding-bottom' => 'var(--pb)',
             ];
-            $sizes["pl-{$size}"] = [
-                '--pl'         => $value,
-                'padding-left' => 'var(--pl)',
+            $sizes[ "pl-{$size}" ] = [
+                    '--pl'         => $value,
+                    'padding-left' => 'var(--pl)',
             ];
-            $sizes["ph-{$size}"] = [
-                '--ph'          => $value,
-                'padding-left'  => 'var(--ph)',
-                'padding-right' => 'var(--ph)',
+            $sizes[ "ph-{$size}" ] = [
+                    '--ph'          => $value,
+                    'padding-left'  => 'var(--ph)',
+                    'padding-right' => 'var(--ph)',
             ];
-            $sizes["pv-{$size}"] = [
-                '--pv'           => $value,
-                'padding-top'    => 'var(--pv)',
-                'padding-bottom' => 'var(--pv)',
+            $sizes[ "pv-{$size}" ] = [
+                    '--pv'           => $value,
+                    'padding-top'    => 'var(--pv)',
+                    'padding-bottom' => 'var(--pv)',
             ];
         }
 
         return [
-            'fixed'        => ['position' => 'fixed', 'z-index' => '125'],
-            'fixed.top'    => ['top' => '--offset-top'],
-            'fixed.right'  => ['right' => '--offset-right'],
-            'fixed.bottom' => ['bottom' => '--offset-bottom'],
-            'fixed.left'   => ['left' => '--offset-left'],
-            'text:body'    => ['font-size' => '--text-body'],
-            'text:h1'      => ['font-size' => '--text-h1'],
-            'text:h2'      => ['font-size' => '--text-h2'],
-            'text:h3'      => ['font-size' => '--text-h3'],
-            'text:h4'      => ['font-size' => '--text-h4'],
-            'text:small'   => [
-                'font-size'     => '--text-small',
-                '--line-height' => '1rem',
-            ],
-            ...$sizes,
+                'fixed' => [ 'position' => 'fixed', 'z-index' => '125' ],
+
+                'fixed.top'    => [ 'top' => '0' ],
+                'fixed.right'  => [ 'right' => '0' ],
+                'fixed.bottom' => [ 'bottom' => '0' ],
+                'fixed.left'   => [ 'left' => '0' ],
+
+                'fixed.offset-top'    => [ 'top' => '--offset-top' ],
+                'fixed.offset-right'  => [ 'right' => '--offset-right' ],
+                'fixed.offset-bottom' => [ 'bottom' => '--offset-bottom' ],
+                'fixed.offset-left'   => [ 'left' => '--offset-left' ],
+
+                'fixed.top.full'    => [ 'left' => '0', 'right' => '0' ],
+                'fixed.bottom.full' => [ 'left' => '0', 'right' => '0' ],
+                'fixed.right.full'  => [ 'top' => '0', 'bottom' => '0' ],
+                'fixed.left.full'   => [ 'top' => '0', 'bottom' => '0' ],
+
+                'font-code'  => [ 'font-family' => '--font-code' ],
+                'text:body'  => [ 'font-size' => '--text-body' ],
+                'text:h1'    => [ 'font-size' => '--text-h1' ],
+                'text:h2'    => [ 'font-size' => '--text-h2' ],
+                'text:h3'    => [ 'font-size' => '--text-h3' ],
+                'text:h4'    => [ 'font-size' => '--text-h4' ],
+                'text:small' => [
+                        'font-size'     => '--text-small',
+                        '--line-height' => '1rem',
+                ],
+                ...$sizes,
         ];
     }
 }

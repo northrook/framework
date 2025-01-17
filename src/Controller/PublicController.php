@@ -65,11 +65,11 @@ final class PublicController extends Controller
         $assetManager->factory->locator()->scan();
         $document( 'Index Demo Template' );
 
-        $toast(
-            'info',
-            'Useful information Toast.',
-            'It has some details as well. How thoughtful.',
-        );
+        // $toast(
+        //     'info',
+        //     'Useful information Toast.',
+        //     'It has some details as well. How thoughtful.',
+        // );
 
         // foreach ( \range( 0, \rand( 2, 7 ) ) as $key => $value ) {
         //     $status      = (string) $toast::STATUS[ \array_rand( $toast::STATUS ) ];
