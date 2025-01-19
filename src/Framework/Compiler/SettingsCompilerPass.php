@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core\Framework\Compiler;
 
 use Core\Symfony\DependencyInjection\CompilerPass;
+use JetBrains\PhpStorm\Deprecated;
 use Northrook\ArrayStore;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Override;
@@ -22,6 +23,7 @@ use UnitEnum;
  *
  * @author Martin Nielsen <mn@northrook.com>
  */
+#[Deprecated( 'on hold' )]
 final class SettingsCompilerPass extends CompilerPass
 {
     #[Override]

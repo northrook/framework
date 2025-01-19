@@ -104,7 +104,8 @@ final class ApplicationConfigPass extends CompilerPass
                 {
                     use FrameworkKernel\MicroKernelTrait;
                        
-                    public function hasContainer(): bool {
+                    public function hasContainer() : bool
+                    {
                         return isset( \$this->container );
                     }
                 }
