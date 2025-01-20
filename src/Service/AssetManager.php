@@ -35,10 +35,7 @@ class AssetManager extends \Core\Assets\AssetManager
 
                 $asset->addSource( $style->style() );
 
-                $localAssets = $asset->pathfinder->getFileInfo(
-                    path      : 'dir.core.assets/styles/core',
-                    assertive : true,
-                );
+                $localAssets = $asset->pathfinder->getFileInfo( 'dir.core.assets/styles/core' );
 
                 foreach ( $localAssets->glob( '/*.css' ) as $localAsset ) {
                     $asset->addSource( $localAsset );
