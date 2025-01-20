@@ -33,7 +33,8 @@ final class CoreBundle extends AbstractBundle
         'dir.assets.cache'  => __DIR__.'/var/assets',
         //
         //
-        'path.asset_manifest' => '%dir.root%/var/asset.manifest',
+        'path.asset_manifest'   => '%dir.root%/var/asset.manifest',
+        'path.pathfinder_cache' => '%dir.root%/var/pathfinder.cache',
 
         // Templates
         'dir.templates'      => '%dir.root%/templates',
@@ -57,7 +58,7 @@ final class CoreBundle extends AbstractBundle
         '../config/framework/assets.php',
         '../config/framework/cache.php',
         '../config/framework/services.php',
-        '../config/framework/pathfinder.php',
+        // '../config/framework/pathfinder.php',
         '../config/framework/profiler.php',
         '../config/framework/toasts.php',
         '../config/framework/controllers/public.php',

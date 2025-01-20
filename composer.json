@@ -26,7 +26,6 @@
     "symfony/security-bundle": "@stable",
     "symfony/serializer": "@stable",
     "symfony/yaml": "@stable",
-    "symfony/form": "@stable",
     "symfony/monolog-bundle": "@stable",
     "symfony/profiler-pack": "@stable",
     "symfony/debug-bundle": "@stable",
@@ -39,8 +38,7 @@
     "northrook/assets": "dev-main",
     "northrook/view": "dev-main",
     "northrook/view-icons": "dev-main",
-    "northrook/view-components": "dev-main",
-    "latte/latte": "^3.0"
+    "northrook/view-components": "dev-main"
   },
   "require-dev": {
     "northrook/dev-env": "dev-main"
