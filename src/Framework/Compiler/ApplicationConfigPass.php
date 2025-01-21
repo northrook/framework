@@ -9,6 +9,10 @@ final class ApplicationConfigPass extends CompilerPass
 {
     public function compile( ContainerBuilder $container ) : void
     {
-        dump( $this->parameterBag->all() );
+        foreach ( $this->parameterBag->all() as $key => $value ) {
+            if ( \str_starts_with( $key, 'config.' ) ) {
+                dump( [$key => $container->getParameter( $key )] );
+            }
+        }
     }
 }

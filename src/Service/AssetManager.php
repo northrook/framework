@@ -10,7 +10,7 @@ use Core\Service\DesignSystem\StyleFramework;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class AssetManager extends \Core\Assets\AssetManager
+class AssetManager extends \Core\Assets\AbstractAssetManager
 {
     final public function __construct(
         AssetFactory     $factory,
