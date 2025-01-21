@@ -7,9 +7,7 @@ namespace Core;
 use Core\Symfony\Compiler\{AutodiscoverServicesPass, AutowireActionsPass};
 use Core\View\Compiler\{RegisterComponentAssetsPass, RegisterViewComponentsPass};
 use Override;
-use Core\Framework\Compiler\{ApplicationConfigPass,
-    RegisterCoreServicesPass
-};
+use Core\Framework\Compiler\{ApplicationConfigPass, ApplicationInitializationPass, RegisterCoreServicesPass};
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -67,15 +65,6 @@ final class CoreBundle extends AbstractBundle
     ];
 
     /**
-     * @return string
-     */
-    #[Override]
-    public function getPath() : string
-    {
-        return \dirname( __DIR__ );
-    }
-
-    /**
      * @param ContainerBuilder $container
      *
      * @return void
@@ -90,12 +79,18 @@ final class CoreBundle extends AbstractBundle
             )
             ->addCompilerPass( new AutowireActionsPass() )
             ->addCompilerPass( new RegisterCoreServicesPass() )
-            ->addCompilerPass( new ApplicationConfigPass() )
+            ->addCompilerPass( new ApplicationInitializationPass() )
             ->addCompilerPass( new RegisterViewComponentsPass() )
             ->addCompilerPass(
                 pass : new RegisterComponentAssetsPass(),
                 type : PassConfig::TYPE_OPTIMIZE,
             );
+
+        $container->addCompilerPass(
+            pass     : new ApplicationConfigPass(),
+            type     : PassConfig::TYPE_OPTIMIZE,
+            priority : -1_024,
+        );
     }
 
     /**
