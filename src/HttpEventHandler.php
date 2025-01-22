@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Core;
 
+use Core\Assets\AssetManager;
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
-use Core\Service\{AssetManager, ToastService};
 use Core\Http\ErrorResponse;
+use Core\Service\ToastService;
 use Core\Symfony\DependencyInjection\Autodiscover;
 use Core\Symfony\Interface\ServiceContainerInterface;
 use Core\View\{ComponentFactory, Document, TemplateEngine};
@@ -228,7 +229,7 @@ final class HttpEventHandler implements EventSubscriberInterface
             );
         }
 
-        $this->assetManager->factory->locator()->scan();
+        // $this->assetManager->factory->locator()->scan();
 
         $this->templateEngine->clearTemplateCache();
 

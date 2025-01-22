@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Core;
 
 use Core\Framework\Controller\Template;
-use Core\Service\{AssetManager, ToastService};
 use Core\Http\ErrorResponse;
+use Core\Assets\AssetManager;
+use Core\Service\ToastService;
 use Core\Symfony\DependencyInjection\Autodiscover;
 use Core\View\{ComponentFactory, Document, TemplateEngine};
 use Core\View\Template\DocumentView;

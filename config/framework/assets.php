@@ -8,11 +8,9 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\Assets\{AssetFactory,
-    AssetManager,
-    AssetManifest,
-    Interface\AssetManifestInterface
-};
+use Core\Assets\{AssetFactory, AssetManager, AssetManifest, Factory\Asset\StyleAsset, Interface\AssetManifestInterface};
+use Core\Pathfinder;
+use Core\Service\DesignSystem\StyleFramework;
 
 return static function( ContainerConfigurator $container ) : void {
     /**
@@ -25,7 +23,35 @@ return static function( ContainerConfigurator $container ) : void {
         ->alias( AssetManifestInterface::class, AssetManifest::class );
 
     $container->services()
-        ->set( AssetFactory::class );
+        ->set( AssetFactory::class )
+            // ->lazy( true )
+        ->args(
+            [
+                service( AssetManifest::class ),
+                service( Pathfinder::class ),
+                param( 'dir.assets' ),
+                [
+                    param( 'dir.assets' ),
+                    param( 'dir.core.assets' ),
+                ],
+                service( 'logger' ),
+            ],
+        )
+        ->call(
+            'addAssetModelCallback',
+            [
+                'style.core',
+                function( StyleAsset $asset ) : StyleAsset {
+                    $style = new StyleFramework();
+
+                    $asset->addSource( $style->style(), true );
+
+                    $asset->prefersInline();
+
+                    return $asset;
+                },
+            ],
+        );
 
     $container->services()
             //
