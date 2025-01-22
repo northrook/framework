@@ -8,26 +8,26 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\Assets\{AssetFactory, AssetManifest, Factory\Asset\Type, Factory\AssetReference};
-use Core\Service\AssetManager;
+use Core\Assets\{AssetFactory,
+    AssetManager,
+    AssetManifest,
+    Interface\AssetManifestInterface
+};
 
 return static function( ContainerConfigurator $container ) : void {
-    $container->parameters()->set(
-        'config.asset.core_styles',
-        AssetReference::config(
-            'core.styles',
-            Type::STYLE,
-            'dir.assets/styles/core',
-            'dir.core.assets/styles/core',
-        ),
-    );
-
+    /**
+     * Register AssetManifest as a service
+     */
     $container->services()
         ->set( AssetManifest::class )
-        ->arg( 0, param( 'path.asset_manifest' ) )
-
-            // Asset Manager Services
+        ->args( [param( 'path.asset_manifest' )] )
         ->tag( 'monolog.logger', ['channel' => 'asset_manager'] )
+        ->alias( AssetManifestInterface::class, AssetManifest::class );
+
+    $container->services()
+        ->set( AssetFactory::class );
+
+    $container->services()
             //
             // Framework Asset Manager
         ->set( AssetManager::class )

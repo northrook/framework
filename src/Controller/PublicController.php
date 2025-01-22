@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Core\Controller;
 
+use Core\Assets\AssetManager;
 use Core\Framework\Controller\Attribute\OnDocument;
-use Core\Service\AssetManager;
 use Core\View\{ComponentFactory, Document};
 use Symfony\Component\HttpFoundation\Request;
 use Core\Action\{Toast};
@@ -62,7 +62,8 @@ final class PublicController extends Controller
         AssetManager     $assetManager,
         ComponentFactory $componentFactory,
     ) : string {
-        $assetManager->factory->locator()->scan();
+        dump( $assetManager );
+        // $assetManager->factory->locator()->scan();
         $document( 'Index Demo Template' );
 
         // $toast(
