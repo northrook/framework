@@ -8,9 +8,13 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Core\Assets\{AssetFactory, AssetManager, AssetManifest, Factory\Asset\StyleAsset, Interface\AssetManifestInterface};
+use Core\Assets\{AssetFactory,
+    AssetManager,
+    AssetManifest,
+    CoreStyleFilter,
+    Interface\AssetManifestInterface
+};
 use Core\Pathfinder;
-use Core\Service\DesignSystem\StyleFramework;
 
 return static function( ContainerConfigurator $container ) : void {
     /**
@@ -39,18 +43,7 @@ return static function( ContainerConfigurator $container ) : void {
         )
         ->call(
             'addAssetModelCallback',
-            [
-                'style.core',
-                function( StyleAsset $asset ) : StyleAsset {
-                    $style = new StyleFramework();
-
-                    $asset->addSource( $style->style(), true );
-
-                    $asset->prefersInline();
-
-                    return $asset;
-                },
-            ],
+            CoreStyleFilter::callback( 'style.core' ),
         );
 
     $container->services()
