@@ -5,24 +5,11 @@ declare(strict_types=1);
 namespace Core\Assets;
 
 use Core\Assets\Factory\Asset\StyleAsset;
+use Core\Assets\Factory\Compiler\AssetArgument;
 use Core\Service\DesignSystem\StyleFramework;
-use Core\Symfony\Interface\FilterInterface;
 
-final class CoreStyleFilter implements FilterInterface
+final class CoreStyle extends AssetArgument
 {
-    /**
-     * @param string $reference
-     *
-     * @return array{string, callable}
-     */
-    public static function callback( string $reference ) : array
-    {
-        return [
-            $reference,
-            [self::class, 'filter'],
-        ];
-    }
-
     public static function filter( StyleAsset $asset ) : StyleAsset
     {
         $style = new StyleFramework();

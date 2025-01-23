@@ -11,7 +11,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Core\Assets\{AssetFactory,
     AssetManager,
     AssetManifest,
-    CoreStyleFilter,
+    CoreStyle,
     Interface\AssetManifestInterface
 };
 use Core\Pathfinder;
@@ -41,10 +41,7 @@ return static function( ContainerConfigurator $container ) : void {
                 service( 'logger' ),
             ],
         )
-        ->call(
-            'addAssetModelCallback',
-            CoreStyleFilter::callback( 'style.core' ),
-        );
+        ->call( ...CoreStyle::callback( 'style.core' ) );
 
     $container->services()
             //
