@@ -24,6 +24,8 @@
     "ext-mbstring": "*",
     "symfony/framework-bundle": "@stable",
     "symfony/security-bundle": "@stable",
+    "symfony/uid": "@stable",
+    "symfony/validator": "^7.2",
     "symfony/serializer": "@stable",
     "symfony/yaml": "@stable",
     "symfony/monolog-bundle": "@stable",
@@ -38,7 +40,8 @@
     "northrook/assets": "dev-main",
     "northrook/view": "dev-main",
     "northrook/view-icons": "dev-main",
-    "northrook/view-components": "dev-main"
+    "northrook/view-components": "dev-main",
+    "symfony/orm-pack": "^2.4"
   },
   "require-dev": {
     "northrook/dev-env": "dev-main"

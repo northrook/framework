@@ -8,16 +8,19 @@ use Core\Assets\Factory\Asset\StyleAsset;
 use Core\Assets\Factory\Compiler\AssetArgument;
 use Core\Service\DesignSystem\StyleFramework;
 
+/**
+ * @internal
+ */
 final class CoreStyle extends AssetArgument
 {
-    public static function filter( StyleAsset $asset ) : StyleAsset
+    public static function filter( StyleAsset $model ) : StyleAsset
     {
         $style = new StyleFramework();
 
-        $asset->addSource( $style->style(), true );
+        $model->addSource( $style->style(), true );
 
-        $asset->prefersInline();
+        $model->prefersInline();
 
-        return $asset;
+        return $model;
     }
 }

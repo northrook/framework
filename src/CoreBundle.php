@@ -56,6 +56,7 @@ final class CoreBundle extends AbstractBundle
         '../config/framework/application.php',
         '../config/framework/assets.php',
         '../config/framework/cache.php',
+        '../config/framework/security.php',
         '../config/framework/services.php',
         // '../config/framework/pathfinder.php',
         '../config/framework/profiler.php',
