@@ -10,15 +10,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 // use Core\Framework\Settings;
 use Northrook\Clerk;
-use Core\Framework\Profiler\{ClerkProfiler, ParameterSettingsCollector, PipelineCollector, ProfilerEventHandler};
+use Core\Framework\Profiler\{ClerkProfiler, ParameterSettingsCollector, PipelineCollector};
 use Symfony\Component\Stopwatch\Stopwatch;
 
 return static function( ContainerConfigurator $container ) : void {
     $container->services()
-        ->set( ProfilerEventHandler::class )
-        ->args( [service( 'profiler' )] )
-        ->tag( 'kernel.event_listener', ['priority' => 0] )
-            //
         ->set( Clerk::class )
         ->args(
             [

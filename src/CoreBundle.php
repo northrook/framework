@@ -56,7 +56,6 @@ final class CoreBundle extends AbstractBundle
         '../config/framework/application.php',
         '../config/framework/assets.php',
         '../config/framework/cache.php',
-        '../config/framework/security.php',
         '../config/framework/services.php',
         // '../config/framework/pathfinder.php',
         '../config/framework/profiler.php',
@@ -81,7 +80,7 @@ final class CoreBundle extends AbstractBundle
             )
             ->addCompilerPass( new AutowireActionsPass() )
             ->addCompilerPass( new RegisterCoreServicesPass() )
-            ->addCompilerPass( new ApplicationInitializationPass() )
+            ->addCompilerPass( new ApplicationInitializationPass( __DIR__ ) )
             ->addCompilerPass( new RegisterViewComponentsPass() )
             ->addCompilerPass(
                 pass : new RegisterComponentAssetsPass(),

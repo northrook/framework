@@ -18,11 +18,11 @@ return static function( ContainerConfigurator $container ) : void {
             'password_hashers' => [PasswordAuthenticatedUserInterface::class => 'auto'],
             'firewalls'        => [
                 'main' => [
-                    'lazy'                 => true,
-                    'provider'             => 'app_user_provider',
-                    'custom_authenticator' => LoginAuthenticator::class,
-                    'entry_point'          => AuthorizationCheckpoint::class,
-                    'logout'               => [
+                    'lazy'     => true,
+                    'provider' => 'app_user_provider',
+                    // 'custom_authenticator' => LoginAuthenticator::class,
+                    // 'entry_point'          => AuthorizationCheckpoint::class,
+                    'logout' => [
                         'path' => 'auth:logout',
                     ],
                 ],

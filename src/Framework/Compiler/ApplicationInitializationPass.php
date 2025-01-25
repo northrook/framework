@@ -7,12 +7,19 @@ namespace Core\Framework\Compiler;
 use Core\Action\Toast;
 use Core\Symfony\Console\Output;
 use Core\Symfony\DependencyInjection\CompilerPass;
-use Support\{Normalize, Reflect};
+use Support\{FileInfo, Normalize, Reflect};
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Override, Exception, ReflectionClassConstant;
 
 final class ApplicationInitializationPass extends CompilerPass
 {
+    protected readonly FileInfo $bundleDirectory;
+
+    public function __construct( string $__DIR__ )
+    {
+        $this->bundleDirectory = new FileInfo( \dirname( $__DIR__, 1 ) );
+    }
+
     #[Override]
     public function compile( ContainerBuilder $container ) : void
     {
@@ -20,7 +27,10 @@ final class ApplicationInitializationPass extends CompilerPass
 
         $this->normalizePathParameters();
 
-        $this->cacheConfiguration();
+        $this->initializeDefaultConfiguration();
+
+        // $this->cacheConfiguration();
+        // $this->securityConfiguration();
 
         $this
             ->generateToastMeta()
@@ -140,6 +150,25 @@ final class ApplicationInitializationPass extends CompilerPass
         );
 
         return $this;
+    }
+
+    protected function initializeDefaultConfiguration() : void
+    {
+        $app_defaults = $this->bundleDirectory
+            ->append( 'config/app_defaults' )
+            ->glob( '/*.{php,yaml}', asFileInfo : true );
+
+        $defaults = [];
+
+        foreach ( $app_defaults as $app_default ) {
+        }
+
+        dd( $defaults );
+    }
+
+    private function securityConfiguration() : void
+    {
+        $this->path( 'config/packages/security.yaml' )->remove();
     }
 
     private function cacheConfiguration() : void
