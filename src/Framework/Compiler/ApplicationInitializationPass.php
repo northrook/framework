@@ -73,9 +73,9 @@ final class ApplicationInitializationPass extends CompilerPass
             '.phpstorm.meta.php/.toast_action.meta.php',
             <<<PHP
                 <?php 
-                
+                    
                 namespace PHPSTORM_META;
-                
+                    
                 expectedArguments(
                     \Core\Action\Toast::__invoke(),
                     0,
@@ -94,18 +94,18 @@ final class ApplicationInitializationPass extends CompilerPass
             'src/Kernel.php',
             <<<PHP
                 <?php
-                
+                       
                 declare(strict_types=1);
-                
+                       
                 namespace App;
-                
+                       
                 use Symfony\Bundle\FrameworkBundle\Kernel as FrameworkKernel;
                 use Symfony\Component\HttpKernel\Kernel as HttpKernel;
-                
+                       
                 final class Kernel extends HttpKernel
                 {
                     use FrameworkKernel\MicroKernelTrait;
-                
+                       
                     public function hasContainer() : bool
                     {
                         return isset( \$this->container );
@@ -125,11 +125,11 @@ final class ApplicationInitializationPass extends CompilerPass
             'public/index.php',
             <<<PHP
                 <?php
-                
+                       
                 declare(strict_types=1);
-                
+                       
                 require_once dirname( __DIR__ ).'/vendor/autoload_runtime.php';
-                
+                       
                 return static fn( array \$context ) => new \App\Kernel(
                     (string) \$context['APP_ENV'],
                     (bool) \$context['APP_DEBUG'],
@@ -144,16 +144,16 @@ final class ApplicationInitializationPass extends CompilerPass
 
     private function cacheConfiguration() : void
     {
-        $this->path( 'config/cache.yaml' )->remove();
+        $this->path( 'config/packages/cache.yaml' )->remove();
         $this->createPhpFile(
-            'config/cache.php',
+            'config/packages/cache.php',
             <<<PHP
                 <?php
-                
+                    
                 declare(strict_types=1);
-                
+                    
                 namespace Symfony\Config;
-                
+                    
                 return static function ( FrameworkConfig \$framework ): void {
                     \$framework->cache()
                         ->app( 'cache.adapter.filesystem' )
@@ -171,21 +171,21 @@ final class ApplicationInitializationPass extends CompilerPass
             'config/services.php',
             <<<PHP
                 <?php
-                
+                    
                 declare(strict_types=1);
-                
+                    
                 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-                
+                    
                 return static function( ContainerConfigurator \$container ) : void {
-                
+                    
                     \$services = \$container->services();
-                
+                    
                     // Defaults for App services.
                     \$services
                         ->defaults()
                         ->autowire()
                         ->autoconfigure();
-                
+                    
                     \$services
                         // Make classes in src/ available to be used as services.
                         ->load( "App\\\\", __DIR__ . '/../src/' )
@@ -210,9 +210,9 @@ final class ApplicationInitializationPass extends CompilerPass
             'config/preload.php',
             <<<'PHP'
                 <?php
-                
+                    
                 declare(strict_types=1);
-                
+                    
                 if (\file_exists(\dirname(__DIR__).'/var/cache/prod/App_KernelProdContainer.preload.php')) {
                     \opcache_compile_file(\dirname(__DIR__).'/var/cache/prod/App_KernelProdContainer.preload.php');
                 }
