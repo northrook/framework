@@ -6,11 +6,14 @@ namespace Core\Controller;
 
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
+use Core\Symfony\DependencyInjection\Autodiscover;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[
+    Autodiscover,
     Route( '/admin/', 'admin:' ),
     // Template( 'welcome.latte' ) // wrapping body - like Admin UI
+
 ]
 final class AdminController extends Controller
 {

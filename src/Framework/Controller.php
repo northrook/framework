@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\Framework;
 
 use Core\Action\Headers;
-use Core\Symfony\DependencyInjection\{Autodiscover, ServiceContainer};
+use Core\Symfony\DependencyInjection\{ServiceContainer};
 use Core\Symfony\Interface\ServiceContainerInterface;
 use Core\Pathfinder;
 use Core\Framework\Controller\Attribute\OnContent;
@@ -15,10 +15,11 @@ use Core\Framework\Controller\ResponseMethods;
 use Northrook\Logger\Log;
 use ReflectionClass;
 use ReflectionException;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\HttpFoundation\Response;
 
-#[Autodiscover(
-    tag      : [
+#[Autoconfigure(
+    tags     : [
         'controller.service_arguments',
         'monolog.logger' => ['channel' => 'controller'],
     ],
