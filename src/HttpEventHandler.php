@@ -218,7 +218,7 @@ final class HttpEventHandler implements EventSubscriberInterface
 
         $template = match ( true ) {
             \str_ends_with( $this->content, '.latte' ) => $this->content,
-            Template::CONTENT  === $this->type          => $this->contentTemplate,
+            Template::CONTENT  === $this->type         => $this->contentTemplate,
             Template::DOCUMENT === $this->type         => $this->documentTemplate,
             default                                    => false,
         };

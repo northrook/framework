@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace Core\Framework;
 
+use Core\Symfony\DependencyInjection\Autodiscover;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+#[Autodiscover(
+    tag      : 'core.service_locator',
+    autowire : true,
+)]
 final readonly class Security
 {
     public function __construct(

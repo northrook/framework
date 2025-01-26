@@ -44,7 +44,8 @@
     "symfony/orm-pack": "^2.4"
   },
   "require-dev": {
-    "northrook/dev-env": "dev-main"
+    "northrook/dev-env": "dev-main",
+    "nette/neon": "^3.4"
   },
   "scripts": {
     "phpstan": "vendor/bin/phpstan analyse"
