@@ -7,19 +7,16 @@ namespace Core\Controller;
 use Core\Assets\AssetManager;
 use Core\Framework\Controller\Attribute\OnDocument;
 use Core\View\{ComponentFactory, Document};
-use Core\Symfony\DependencyInjection\Autodiscover;
 use Symfony\Component\HttpFoundation\Request;
 use Core\Action\{Toast};
 use Core\Framework\Controller;
 use Core\Framework\Controller\Template;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[
-    Autodiscover,
-    Route(
-        path : '/',
-        name : 'public:',
-    )]
+#[Route(
+    path : '/',
+    name : 'public:',
+)]
 final class PublicController extends Controller
 {
     #[OnDocument]

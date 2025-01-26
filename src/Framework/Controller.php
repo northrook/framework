@@ -18,13 +18,6 @@ use ReflectionException;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\HttpFoundation\Response;
 
-#[Autoconfigure(
-    tags     : [
-        'controller.service_arguments',
-        'monolog.logger' => ['channel' => 'controller'],
-    ],
-    autowire : true,
-)]
 abstract class Controller implements ServiceContainerInterface
 {
     use ServiceContainer, ResponseMethods;
