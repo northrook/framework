@@ -2,6 +2,7 @@
 
 namespace Core\Security;
 
+use Core\Symfony\DependencyInjection\Autodiscover;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -16,6 +17,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
+#[Autodiscover( autowire : true )]
 class LoginAuthenticator extends AbstractAuthenticator
 {
     public const string HEADER = 'Authorization';

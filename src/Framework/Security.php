@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\Framework;
 
 use Core\Symfony\DependencyInjection\Autodiscover;
-use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Authorization\{AuthorizationCheckerInterface};
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Autodiscover(
@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 final readonly class Security
 {
     public function __construct(
-        public AuthorizationChecker $authorizationChecker,
+        public AuthorizationCheckerInterface $authorizationChecker,
     ) {}
 
     /**
