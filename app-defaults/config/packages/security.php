@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Symfony\Config;
 
-use Core\Security\{AuthorizationCheckpoint, Entity\User, LoginAuthenticator};
+use Core\Security\{AccessCheckpoint, AccessDenied, Entity\User, LoginAuthenticator};
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherAwareInterface;
+use const Time\MONTH;
 
 /**
  * @param SecurityConfig $security
@@ -16,26 +17,12 @@ return static function( SecurityConfig $security ) : void {
     /**
      * https://symfony.com/doc/current/security/access_control.html
      */
-    $security->accessControl();
+    // $security->accessControl();
 
     $security->passwordHasher(
         PasswordHasherAwareInterface::class,
         'auto',
     );
-
-    $security->firewall( 'main' )
-        ->lazy( true )
-        ->provider( 'user_provider' )
-        ->customAuthenticators( [LoginAuthenticator::class] )
-        ->entryPoint( AuthorizationCheckpoint::class )
-        ->logout( ['path' => 'auth:logout'] )
-        ->rememberMe(
-            [
-                'secret'   => '%kernel.secret%',
-                'lifetime' => 86_400 * 30,
-                'path'     => '/',
-            ],
-        );
 
     $security->provider(
         'user_provider',
@@ -46,4 +33,21 @@ return static function( SecurityConfig $security ) : void {
             ],
         ],
     );
+
+    $mainFirewall = $security
+        ->firewall( 'main' )
+        ->lazy( true );
+
+    $mainFirewall
+        ->provider( 'user_provider' )
+        ->entryPoint( AccessCheckpoint::class )
+        ->accessDeniedHandler( AccessDenied::class )
+        ->logout( ['path' => 'auth:logout'] );
+
+    $mainFirewall
+        ->customAuthenticators( [LoginAuthenticator::class] )
+        ->rememberMe()
+        ->secret( '%kernel.secret%' )
+        ->lifetime( MONTH )
+        ->path( '/' );
 };

@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
 #[Autodiscover( autowire : true )]
-final readonly class AuthorizationCheckpoint implements AuthenticationEntryPointInterface
+final readonly class AccessCheckpoint implements AuthenticationEntryPointInterface
 {
     public function __construct( private UrlGeneratorInterface $url ) {}
 

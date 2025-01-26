@@ -3,6 +3,7 @@
 namespace Core\Security;
 
 use Core\Security\Entity\User;
+use Core\Symfony\DependencyInjection\Autodiscover;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -11,6 +12,7 @@ use Symfony\Component\Security\Core\User\{PasswordAuthenticatedUserInterface, Pa
 /**
  * @extends ServiceEntityRepository<User>
  */
+#[Autodiscover( autowire : true )]
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     public function __construct( ManagerRegistry $registry )

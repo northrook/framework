@@ -1,11 +1,13 @@
 <?php
 
-namespace Core\Http;
+namespace Core\Security;
 
+use Core\Symfony\DependencyInjection\Autodiscover;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Authorization\AccessDeniedHandlerInterface;
 
+#[Autodiscover( autowire : true )]
 final class AccessDenied implements AccessDeniedHandlerInterface
 {
     public const string MESSAGE = 'Access Denied';
