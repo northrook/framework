@@ -2,22 +2,19 @@
 
 declare(strict_types=1);
 
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+namespace Symfony\Component\Routing\Loader\Configurator;
 
 return static function( RoutingConfigurator $routes ) : void {
-    $routes->import(
-        [
-            'path'      => '../src/Controller/',
-            'namespace' => 'App\Controller',
-        ],
-        'attribute',
-    );
+    $appControllers = [
+        'path'      => '../src/Controller/',
+        'namespace' => 'App\Controller',
+    ];
 
-    $routes->import(
-        [
-            'path'      => '@CoreBundle/src/Controller',
-            'namespace' => 'Core\Controller',
-        ],
-        'attribute',
-    );
+    $coreControllers = [
+        'path'      => '@CoreBundle/src/Controller',
+        'namespace' => 'Core\Controller',
+    ];
+
+    $routes->import( $appControllers, 'attribute' );
+    $routes->import( $coreControllers, 'attribute' );
 };

@@ -17,10 +17,11 @@ final class CoreBundle extends AbstractBundle
 {
     /** @var array<string, array{0: non-empty-string, 1: int}|string> */
     public const array PARAMETERS = [
-        'dir.root'   => '%kernel.project_dir%',
-        'dir.var'    => '%dir.root%/var',
-        'dir.public' => '%dir.root%/public',
-        'dir.core'   => [__DIR__, 1],
+        'dir.root'     => '%kernel.project_dir%',
+        'dir.var'      => '%dir.root%/var',
+        'dir.public'   => '%dir.root%/public',
+        'dir.core'     => [__DIR__, 1],
+        'dir.core_src' => '%dir.core%/src',
 
         // Assets
         'dir.assets'        => '%dir.root%/assets',

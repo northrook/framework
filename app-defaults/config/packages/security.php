@@ -17,7 +17,7 @@ return static function( SecurityConfig $security ) : void {
     /**
      * https://symfony.com/doc/current/security/access_control.html
      */
-    // $security->accessControl();
+    $security->accessControl();
 
     $security->passwordHasher(
         PasswordHasherAwareInterface::class,
@@ -33,6 +33,11 @@ return static function( SecurityConfig $security ) : void {
             ],
         ],
     );
+
+    $nullFirewall = $security
+        ->firewall( 'null' )
+        ->pattern( '^/(_(profiler|wdt)|css|images|js)/' )
+        ->security( false );
 
     $mainFirewall = $security
         ->firewall( 'main' )
