@@ -17,7 +17,7 @@ return static function( SecurityConfig $security ) : void {
     /**
      * https://symfony.com/doc/current/security/access_control.html
      */
-    $security->accessControl();
+    // $security->accessControl();
 
     $security->passwordHasher(
         PasswordHasherAwareInterface::class,

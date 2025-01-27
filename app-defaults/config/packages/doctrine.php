@@ -43,15 +43,15 @@ return static function( DoctrineConfig $doctrine ) : void {
             'alias'  => 'App',
         ],
     );
-    $entityManager->mapping(
-        'core',
-        [
-            'type'   => 'attribute',
-            'dir'    => '%dir.core_src%/Entity',
-            'prefix' => 'Core\Entity',
-            'alias'  => 'Core',
-        ],
-    );
+    // $entityManager->mapping(
+    //     'core',
+    //     [
+    //         'type'   => 'attribute',
+    //         'dir'    => '%dir.core_src%/Entity',
+    //         'prefix' => 'Core\Entity',
+    //         'alias'  => 'Core',
+    //     ],
+    // );
     $entityManager->mapping(
         'security',
         [
